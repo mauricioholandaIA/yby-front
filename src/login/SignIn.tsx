@@ -13,6 +13,7 @@ import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -60,15 +61,16 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-  const [open, setOpen] = React.useState(false);
+  const navigate = useNavigate();
+  // const [open, setOpen] = React.useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  // const handleClickOpen = () => {
+  //   setOpen(true);
+  // };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  // const handleClose = () => {
+  //   setOpen(false);
+  // };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     if (emailError || passwordError) {
@@ -107,6 +109,13 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     }
 
     return isValid;
+  };
+
+  const handleSingIn = () => {
+    const isValid = validateInputs();
+    if (isValid) {
+      navigate("/ponto-coleta");
+    }
   };
 
   return (
@@ -153,15 +162,15 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             <FormControl>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <FormLabel htmlFor="password">Password</FormLabel>
-                <Link
+                {/* <Link
                   component="button"
                   type="button"
-                  onClick={handleClickOpen}
+                  // onClick={handleClickOpen}
                   variant="body2"
                   sx={{ alignSelf: "baseline" }}
                 >
                   Forgot your password?
-                </Link>
+                </Link> */}
               </Box>
               <TextField
                 error={passwordError}
@@ -178,20 +187,15 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                 color={passwordError ? "error" : "primary"}
               />
             </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            {/* <ForgotPassword open={open} handleClose={handleClose} /> */}
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              onClick={validateInputs}
+              onClick={handleSingIn}
             >
               Sign in
             </Button>
-            <Typography sx={{ textAlign: "center" }}>
+            {/* <Typography sx={{ textAlign: "center" }}>
               Don&apos;t have an account?{" "}
               <span>
                 <Link
@@ -202,24 +206,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                   Sign up
                 </Link>
               </span>
-            </Typography>
-          </Box>
-          <Divider>or</Divider>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert("Sign in with Google")}
-            >
-              Sign in with Google
-            </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert("Sign in with Facebook")}
-            >
-              Sign in with Facebook
-            </Button>
+            </Typography> */}
           </Box>
         </Card>
       </SignInContainer>

@@ -1,8 +1,8 @@
 import {
+  Button,
   Checkbox,
   FormControl,
   FormControlLabel,
-  FormLabel,
   OutlinedInput,
   Radio,
   RadioGroup,
@@ -10,17 +10,9 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { styled } from "@mui/system";
-import { useEffect, useState } from "react";
-
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { styled as styledComponents } from "styled-components";
-
-const StyledCenteredContainer = styledComponents.div`
-  display: flex;
-  flex-direction: column;
-  width: 90%;
-  max-width: 1200px;
-  margin: 0 auto;
-`;
 
 const StyledContainer = styledComponents.div`
   display: flex;
@@ -31,81 +23,142 @@ const StyledContainer = styledComponents.div`
   padding: 2rem 0;
 `;
 
-const StyledFlexRowContent = styledComponents.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  width: 100%;
-  
-`;
-
-const StyledFlexColumnContent = styledComponents.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 300px;
- 
-`;
-
-const StyledItem = styledComponents.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding: 1rem;
-  border:   1px solid #ccc;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
-  &:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-`;
-
-const StyledImageContainer = styledComponents.div`
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-  width: 100%;
+const StyledCenteredContainer = styledComponents.div`
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
 `;
 
 const StyledImageArea = styledComponents.div`
   display: flex;
   flex-direction: column;
-  width: calc(50% - 0.5rem);
+  gap: 1rem;
 `;
 
+const StyledImage = styled("img")({
+  marginTop: "10px",
+  width: "222px",
+  height: "200px",
+  objectFit: "fill",
+  objectPosition: "center",
+});
+
+const FormField = styled("div")(({ theme }) => ({
+  marginBottom: theme.spacing(3),
+  "& .MuiTypography-root": {
+    marginBottom: theme.spacing(1),
+  },
+}));
+const StyledImagePlaceholder = styled("div")({
+  marginTop: "10px",
+  width: "100%",
+  height: "200px",
+  backgroundColor: "#e0e0e0",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+});
+
+const StyledColetorImage = styled("img")({
+  marginTop: "10px",
+  width: "222px",
+  height: "282px", // Increased height
+  objectFit: "fill",
+  objectPosition: "center",
+});
+
+const StyledColetorImagePlaceholder = styled("div")({
+  marginTop: "10px",
+  width: "100%",
+  height: "282px", // Increased height
+  backgroundColor: "#e0e0e0",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+});
+
 export default function CollectionPoint() {
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [previewUrlAvaria, setPreviewUrlAvaria] = useState<string | null>(null);
+  const { control, handleSubmit } = useForm({
+    defaultValues: {
+      collectionPoint: "",
+      mtr: "",
+      residuos: "",
+      weight: "",
+      hasAvaria: "",
+      avariaDescription: "",
+      coletorImage: null,
+      avariaImage: null,
+    },
+  });
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      setSelectedImage(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  };
+  const [coletorPreviewUrl, setColetorPreviewUrl] = useState<string | null>(
+    null
+  );
+  const [avariaPreviewUrl, setAvariaPreviewUrl] = useState<string | null>(null);
 
-  const handleImageChangeAvaria = (
-    event: React.ChangeEvent<HTMLInputElement>
+  const handleImageChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    fieldName: string
   ) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
-      setSelectedImage(file);
-      setPreviewUrlAvaria(URL.createObjectURL(file));
+      const previewUrl = URL.createObjectURL(file);
+      if (fieldName === "coletorImage") {
+        setColetorPreviewUrl(previewUrl);
+      } else {
+        setAvariaPreviewUrl(previewUrl);
+      }
     }
   };
 
-  useEffect(() => {
-    return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
+  const fetchAndConvertToBase64 = async (url: string): Promise<string> => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  const onSubmit = async (data: any) => {
+    const formData = new FormData();
+
+    // Add all form fields to formData
+    Object.entries(data).forEach(([key, value]) => {
+      if (typeof value === "string" || value instanceof Blob) {
+        formData.append(key, value);
+      } else if (value !== null && value !== undefined) {
+        formData.append(key, String(value));
       }
-    };
-  }, [previewUrl]);
+    });
+
+    if (coletorPreviewUrl) {
+      const coletorBase64 = await fetchAndConvertToBase64(coletorPreviewUrl);
+      formData.append("coletorImage", coletorBase64);
+    }
+
+    if (avariaPreviewUrl) {
+      const avariaBase64 = await fetchAndConvertToBase64(avariaPreviewUrl);
+      formData.append("avariaImage", avariaBase64);
+    }
+
+    console.log("Form data:", Object.fromEntries(formData));
+    // Here you can send the formData to your server
+
+    // Example of how you might send this data to a server
+    // fetch('/api/submit-form', {
+    //   method: 'POST',
+    //   body: formData
+    // }).then(response => response.json())
+    //   .then(result => {
+    //     console.log('Success:', result);
+    //   })
+    //   .catch(error => {
+    //     console.error('Error:', error);
+    //   });
+  };
 
   return (
     <StyledContainer>
@@ -114,152 +167,235 @@ export default function CollectionPoint() {
           Ponto de Coleta
         </Typography>
 
-        <StyledFlexRowContent>
-          <StyledFlexColumnContent>
-            <FormLabel htmlFor="first-name" required>
-              Seu ponto de coleta
-            </FormLabel>
-            <OutlinedInput
-              id="collection-point"
-              name="collection-point"
-              type="collection-point"
-              placeholder="SELECT"
-              size="small"
-            />
-
-            <FormLabel htmlFor="last-name" required>
-              MTR
-            </FormLabel>
-            <OutlinedInput
-              id="mtr"
-              name="mtr"
-              type="mtr"
-              placeholder="Numero de MTR"
-              required
-              size="small"
-            />
-
-            <FormLabel htmlFor="address1" required>
-              Residuos
-            </FormLabel>
-            <OutlinedInput
-              id="address1"
-              name="address1"
-              type="address1"
-              placeholder="Street name and number"
-              autoComplete="shipping address-line1"
-              required
-              size="small"
-            />
-          </StyledFlexColumnContent>
-
-          <StyledFlexColumnContent>
-            <Typography variant="h6" component="h2" gutterBottom>
-              Imagens
-            </Typography>
-            <StyledImageContainer>
-              <StyledImageArea>
-                <FormLabel htmlFor="image-upload-coletor" required>
-                  Coletor
-                </FormLabel>
-                {previewUrl && (
-                  <img
-                    src={previewUrl}
-                    alt="Preview Coletor"
-                    style={{
-                      marginTop: "10px",
-                      maxWidth: "100%",
-                      maxHeight: "200px",
-                    }}
-                  />
-                )}
-                <input
-                  id="image-upload-coletor"
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageChange(e)}
-                  style={{ display: "none" }}
-                />
-                <OutlinedInput
-                  type="button"
-                  onClick={() =>
-                    document.getElementById("image-upload-coletor")?.click()
-                  }
-                  value="Choose Image"
-                  size="small"
-                />
-
-                <OutlinedInput
-                  id="weight"
-                  name="weight"
-                  type="weight"
-                  placeholder="peso em kg"
-                  size="small"
-                />
-              </StyledImageArea>
-
-              <StyledImageArea>
-                <FormLabel htmlFor="image-upload-avaria" required>
-                  Avaria (s)
-                </FormLabel>
-                <FormControl>
-                  <FormLabel id="avaria-buttons-group-label">
-                    O PEV visitado possui avarias?
-                  </FormLabel>
-                  <RadioGroup
-                    row
-                    aria-labelledby="avaria-group-label"
-                    name="avaria-buttons-group"
-                  >
-                    <FormControlLabel
-                      value="yes"
-                      control={<Radio />}
-                      label="Sim"
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <FormField>
+                <Typography
+                  variant="body1"
+                  component="label"
+                  htmlFor="collection-point"
+                  fontWeight="bold"
+                >
+                  Seu ponto de coleta
+                </Typography>
+                <Controller
+                  name="collectionPoint"
+                  control={control}
+                  render={({ field }) => (
+                    <OutlinedInput
+                      {...field}
+                      id="collection-point"
+                      type="text"
+                      placeholder="SELECT"
+                      fullWidth
                     />
-                    <FormControlLabel
-                      value="no"
-                      control={<Radio />}
-                      label="No"
+                  )}
+                />
+              </FormField>
+              <FormField>
+                <Typography
+                  variant="body1"
+                  component="label"
+                  htmlFor="mtr"
+                  fontWeight="bold"
+                >
+                  MTR
+                </Typography>
+                <Controller
+                  name="mtr"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <OutlinedInput
+                      {...field}
+                      id="mtr"
+                      type="text"
+                      placeholder="Numero de MTR"
+                      required
+                      fullWidth
                     />
-                  </RadioGroup>
-                </FormControl>
-                {previewUrlAvaria && (
-                  <img
-                    src={previewUrlAvaria}
-                    alt="Preview Avaria"
-                    style={{
-                      marginTop: "10px",
-                      maxWidth: "100%",
-                      maxHeight: "200px",
-                    }}
-                  />
-                )}
-                <input
-                  id="image-upload-avaria"
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageChangeAvaria(e)}
-                  style={{ display: "none" }}
+                  )}
                 />
-                <OutlinedInput
-                  type="button"
-                  onClick={() =>
-                    document.getElementById("image-upload-avaria")?.click()
-                  }
-                  value="Choose Image"
-                  size="small"
+              </FormField>
+              <FormField>
+                <Typography
+                  variant="body1"
+                  component="label"
+                  htmlFor="residuos"
+                  fontWeight="bold"
+                >
+                  Residuos
+                </Typography>
+                <Controller
+                  name="residuos"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <OutlinedInput
+                      {...field}
+                      id="residuos"
+                      type="text"
+                      placeholder="Tipo de residuos"
+                      required
+                      fullWidth
+                    />
+                  )}
                 />
-                <OutlinedInput
-                  id="avaria"
-                  name="avaria"
-                  type="avaria"
-                  placeholder="Descreva a avaria"
-                  size="small"
-                />
-              </StyledImageArea>
-            </StyledImageContainer>
-          </StyledFlexColumnContent>
-        </StyledFlexRowContent>
+              </FormField>
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Typography variant="h6" component="h2" gutterBottom>
+                Imagens
+              </Typography>
+              <Grid container justifyContent={"space-between"} spacing={1}>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <StyledImageArea>
+                    <Typography
+                      variant="body1"
+                      component="label"
+                      htmlFor="image-upload-coletor"
+                      sx={{ fontWeight: "bold" }}
+                    >
+                      Coletor
+                    </Typography>
+                    {coletorPreviewUrl ? (
+                      <StyledColetorImage
+                        src={coletorPreviewUrl}
+                        alt="Preview Coletor"
+                      />
+                    ) : (
+                      <StyledColetorImagePlaceholder>
+                        <Typography variant="body2" color="textSecondary">
+                          No image selected
+                        </Typography>
+                      </StyledColetorImagePlaceholder>
+                    )}
+                    <input
+                      id="image-upload-coletor"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageChange(e, "coletorImage")}
+                      style={{ display: "none" }}
+                    />
+                    <Button
+                      variant="outlined"
+                      onClick={() =>
+                        document.getElementById("image-upload-coletor")?.click()
+                      }
+                    >
+                      Choose Image
+                    </Button>
+                    <Controller
+                      name="weight"
+                      control={control}
+                      render={({ field }) => (
+                        <OutlinedInput
+                          {...field}
+                          id="weight"
+                          type="text"
+                          placeholder="peso em kg"
+                          fullWidth
+                        />
+                      )}
+                    />
+                  </StyledImageArea>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <StyledImageArea>
+                    <Typography
+                      variant="body1"
+                      component="label"
+                      htmlFor="image-upload-avaria"
+                      sx={{ fontWeight: "bold" }}
+                    >
+                      Avaria (s)
+                    </Typography>
+                    <FormControl>
+                      <Typography
+                        variant="body1"
+                        component="label"
+                        id="avaria-buttons-group-label"
+                        sx={{ fontWeight: "bold" }}
+                      >
+                        O PEV visitado possui avarias?
+                      </Typography>
+                      <Controller
+                        name="hasAvaria"
+                        control={control}
+                        render={({ field }) => (
+                          <RadioGroup
+                            {...field}
+                            row
+                            aria-labelledby="avaria-group-label"
+                          >
+                            <FormControlLabel
+                              value="yes"
+                              control={<Radio />}
+                              label="Sim"
+                            />
+                            <FormControlLabel
+                              value="no"
+                              control={<Radio />}
+                              label="No"
+                            />
+                          </RadioGroup>
+                        )}
+                      />
+                    </FormControl>
+                    {avariaPreviewUrl ? (
+                      <StyledImage
+                        src={avariaPreviewUrl}
+                        alt="Preview Avaria"
+                      />
+                    ) : (
+                      <StyledImagePlaceholder>
+                        <Typography variant="body2" color="textSecondary">
+                          No image selected
+                        </Typography>
+                      </StyledImagePlaceholder>
+                    )}
+                    <input
+                      id="image-upload-avaria"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageChange(e, "avariaImage")}
+                      style={{ display: "none" }}
+                    />
+                    <Button
+                      variant="outlined"
+                      onClick={() =>
+                        document.getElementById("image-upload-avaria")?.click()
+                      }
+                    >
+                      Choose Image
+                    </Button>
+                    <Controller
+                      name="avariaDescription"
+                      control={control}
+                      render={({ field }) => (
+                        <OutlinedInput
+                          {...field}
+                          id="avaria"
+                          type="text"
+                          placeholder="Descreva a avaria"
+                          fullWidth
+                        />
+                      )}
+                    />
+                  </StyledImageArea>
+                </Grid>
+              </Grid>
+              <Grid container justifyContent="flex-end" sx={{ mt: 2 }}>
+                <Grid>
+                  <Button type="submit" variant="contained" color="primary">
+                    Submit
+                  </Button>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </form>
       </StyledCenteredContainer>
     </StyledContainer>
   );

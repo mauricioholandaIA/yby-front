@@ -128,8 +128,9 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             variant="h4"
             sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
           >
-            Sign in
+            Conecte-se à YBY
           </Typography>
+          <Divider />
           <Box
             component="form"
             onSubmit={handleSubmit}
@@ -142,7 +143,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             }}
           >
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormLabel htmlFor="email">Endereço de e-mail</FormLabel>
               <TextField
                 error={emailError}
                 helperText={emailErrorMessage}
@@ -161,16 +162,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             </FormControl>
             <FormControl>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <FormLabel htmlFor="password">Password</FormLabel>
-                {/* <Link
-                  component="button"
-                  type="button"
-                  // onClick={handleClickOpen}
-                  variant="body2"
-                  sx={{ alignSelf: "baseline" }}
-                >
-                  Forgot your password?
-                </Link> */}
+                <FormLabel htmlFor="password">Senha</FormLabel>
               </Box>
               <TextField
                 error={passwordError}
@@ -187,26 +179,28 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                 color={passwordError ? "error" : "primary"}
               />
             </FormControl>
+
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-start",
+              }}
+            >
+              <FormControlLabel
+                control={<Checkbox />}
+                label={<Typography>Eu aceito os Termos e Condições</Typography>}
+              />
+            </Box>
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
               onClick={handleSingIn}
             >
-              Sign in
+              Entrar
             </Button>
-            {/* <Typography sx={{ textAlign: "center" }}>
-              Don&apos;t have an account?{" "}
-              <span>
-                <Link
-                  href="/material-ui/getting-started/templates/sign-in/"
-                  variant="body2"
-                  sx={{ alignSelf: "center" }}
-                >
-                  Sign up
-                </Link>
-              </span>
-            </Typography> */}
           </Box>
         </Card>
       </SignInContainer>

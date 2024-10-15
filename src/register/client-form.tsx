@@ -1,19 +1,20 @@
-import { Button, Divider, OutlinedInput, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid2";
+import { Button, Divider, TextField, Typography } from "@mui/material";
 import { Box, styled } from "@mui/system";
-import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { styled as styledComponents } from "styled-components";
 
 const FormContainer = styled(Box)({
   display: "flex",
   flexWrap: "wrap",
   gap: "24px",
+  marginTop: "16px",
+  marginBottom: "16px",
 });
 
 const FormField = styled(Box)({
-  flex: "1 1 calc(50% - 12px)",
-  maxWidth: "250px",
+  width: "30%",
+  maxWidth: "390px",
+  minWidth: "200px",
+  flexGrow: 1,
 });
 
 const SubmitButton = styled(Button)({
@@ -30,6 +31,13 @@ export default function ClientForm() {
       phone: "",
       username: "",
       password: "",
+      cep: "",
+      rua: "",
+      numero: "",
+      numeroRua: "",
+      bairro: "",
+      estado: "",
+      cidade: "",
     },
   });
 
@@ -48,94 +56,177 @@ export default function ClientForm() {
     console.log("Form data:", Object.fromEntries(formData));
   };
 
+  const formFields = [
+    {
+      section: "Dados básicos",
+      fields: [
+        {
+          name: "socialName",
+          label: "Razão Social",
+          placeholder: "Razão Social",
+          required: true,
+        },
+        {
+          name: "cnpj",
+          label: "CNPJ",
+          placeholder: "Número de CNPJ",
+          required: true,
+        },
+        {
+          name: "responsibleName",
+          label: "Nome do Responsável",
+          placeholder: "Nome do responsável",
+          required: true,
+        },
+        {
+          name: "email",
+          label: "E-mail",
+          placeholder: "E-mail",
+          required: true,
+        },
+        {
+          name: "phone",
+          label: "Telefone",
+          placeholder: "Telefone",
+          required: true,
+        },
+        {
+          name: "username",
+          label: "Usuário",
+          placeholder: "Nome de usuário",
+          required: true,
+        },
+        {
+          name: "password",
+          label: "Senha de acesso",
+          placeholder: "Senha",
+          type: "password",
+          required: true,
+        },
+      ],
+    },
+    {
+      section: "Endereço",
+      fields: [
+        { name: "cep", label: "CEP", placeholder: "CEP", required: true },
+        {
+          name: "rua",
+          label: "Rua",
+          placeholder: "Nome da rua",
+          required: true,
+        },
+        {
+          name: "numeroRua",
+          label: "Nº",
+          placeholder: "Número",
+          required: true,
+        },
+        {
+          name: "bairro",
+          label: "Bairro",
+          placeholder: "Bairro",
+          required: true,
+        },
+        {
+          name: "estado",
+          label: "Estado",
+          placeholder: "Estado",
+          required: true,
+        },
+        {
+          name: "cidade",
+          label: "Cidade",
+          placeholder: "Cidade",
+          required: true,
+        },
+      ],
+    },
+  ];
+
   return (
     <div>
-      <Typography variant="h4" component="h1" gutterBottom>
-        dados basicos
-      </Typography>
-      <Divider />
       <form onSubmit={handleSubmit(onSubmit)}>
+        <Typography fontSize={20} marginTop={"16px"}>
+          Dados básicos
+        </Typography>
+        <Divider />
+
         <FormContainer>
-          {[
-            {
-              name: "socialName",
-              label: "Razão Social",
-              placeholder: "Razão Social",
-              required: true,
-            },
-            {
-              name: "cnpj",
-              label: "CNPJ",
-              placeholder: "Numero de MTR",
-              required: true,
-            },
-            {
-              name: "responsibleName",
-              label: "Nome Responsavel",
-              placeholder: "Nome do responsável",
-              required: true,
-            },
-            {
-              name: "email",
-              label: "E-mail",
-              placeholder: "E-mail",
-              required: true,
-            },
-            {
-              name: "phone",
-              label: "Telefone",
-              placeholder: "Telefone",
-              required: true,
-            },
-            {
-              name: "username",
-              label: "Usuario",
-              placeholder: "Nome de usuário",
-              required: true,
-            },
-            {
-              name: "password",
-              label: "Senha de acesso",
-              placeholder: "Senha",
-              required: true,
-              type: "password",
-            },
-          ].map(({ name, label, placeholder, required, type = "text" }) => (
-            <FormField key={name}>
-              <Typography
-                variant="body1"
-                component="label"
-                htmlFor={name}
-                fontWeight="bold"
-              >
-                {label}
-              </Typography>
-              <Controller
-                name={
-                  name as
-                    | "email"
-                    | "cnpj"
-                    | "socialName"
-                    | "responsibleName"
-                    | "phone"
-                    | "username"
-                    | "password"
-                }
-                control={control}
-                rules={{ required }}
-                render={({ field }) => (
-                  <OutlinedInput
-                    {...field}
-                    id={name}
-                    type={type}
-                    placeholder={placeholder}
-                    required={required}
-                    fullWidth
-                  />
-                )}
-              />
-            </FormField>
-          ))}
+          {formFields[0].fields.map(
+            ({ name, label, placeholder, required, type = "outlined" }) => (
+              <FormField key={name}>
+                <Controller
+                  name={
+                    name as
+                      | "cnpj"
+                      | "socialName"
+                      | "responsibleName"
+                      | "email"
+                      | "phone"
+                      | "username"
+                      | "password"
+                  }
+                  control={control}
+                  rules={{ required }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      id={name}
+                      type={type}
+                      placeholder={placeholder}
+                      required={required}
+                      fullWidth
+                      label={label}
+                      variant="outlined"
+                      size="small"
+                    />
+                  )}
+                />
+              </FormField>
+            )
+          )}
+        </FormContainer>
+
+        <Typography fontSize={20} gutterBottom>
+          Endereço
+        </Typography>
+
+        <Divider />
+
+        <FormContainer>
+          {formFields[1].fields.map(
+            ({ name, label, placeholder, required, type = "outlined" }) => (
+              <FormField key={name}>
+                <Controller
+                  name={
+                    name as
+                      | "cep"
+                      | "rua"
+                      | "numero"
+                      | "numeroRua"
+                      | "bairro"
+                      | "estado"
+                      | "cidade"
+                  }
+                  control={control}
+                  rules={{ required }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      id={name}
+                      type={type}
+                      placeholder={placeholder}
+                      required={required}
+                      fullWidth
+                      label={label}
+                      variant="outlined"
+                      size="small"
+                    />
+                  )}
+                />
+              </FormField>
+            )
+          )}
         </FormContainer>
 
         <SubmitButton type="submit" variant="contained" color="primary">

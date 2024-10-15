@@ -6,6 +6,14 @@ import ClientForm from "./client-form";
 const StyledContainer = styledComponents.div`
     display: flex;
     flex-direction: column;
+    background-color: rgba(221, 195, 147, 0.2);
+    min-height: 100vh;
+    height: 100%;
+    width: 100%;
+`;
+
+const StyledCenterContainer = styledComponents.div`
+    padding: 40px 40px 0;
 `;
 
 export default function Register() {
@@ -17,19 +25,21 @@ export default function Register() {
 
   return (
     <StyledContainer>
-      <Typography variant="h4" component="h1">
-        Cadastro
-      </Typography>
+      <StyledCenterContainer>
+        <Typography variant="h4" component="h1">
+          Cadastro
+        </Typography>
 
-      <Tabs value={value} onChange={handleChange}>
-        <Tab label="Cliente" />
-        <Tab label="Cooperativa" />
-        <Tab label="Colaborador" />
-      </Tabs>
+        <Tabs value={value} onChange={handleChange}>
+          <Tab label="Cliente" />
+          <Tab label="Cooperativa" />
+          <Tab label="Colaborador" />
+        </Tabs>
 
-      {value === 0 && <ClientForm />}
-      {value === 1 && <></>}
-      {value === 2 && <></>}
+        {value === 0 && <ClientForm />}
+        {value === 1 && <></>}
+        {value === 2 && <></>}
+      </StyledCenterContainer>
     </StyledContainer>
   );
 }

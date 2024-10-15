@@ -229,7 +229,12 @@ export default function ClientForm() {
           )}
         </FormContainer>
 
-        <SubmitButton type="submit" variant="contained" color="primary">
+        <SubmitButton
+          style={{ color: "#ffff" }}
+          type="submit"
+          variant="contained"
+          color="primary"
+        >
           Submit
         </SubmitButton>
       </form>

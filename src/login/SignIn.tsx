@@ -1,60 +1,64 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import MuiCard from "@mui/material/Card";
 import Checkbox from "@mui/material/Checkbox";
-import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormLabel from "@mui/material/FormLabel";
-import Link from "@mui/material/Link";
-import Stack from "@mui/material/Stack";
-import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import { styled as styledComponents } from "styled-components";
+import YbyMarca from "../assets/yby-marca";
 
-const Card = styled(MuiCard)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignSelf: "center",
-  width: "100%",
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: "auto",
-  [theme.breakpoints.up("sm")]: {
-    maxWidth: "450px",
-  },
-  boxShadow:
-    "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
-  ...theme.applyStyles("dark", {
-    boxShadow:
-      "hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px",
-  }),
-}));
+const Card = styledComponents.div`
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  width: 30%;
+  max-width: 550px;
+  min-width: 300px;
+  margin: auto;
+  box-shadow: hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px,
+    hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: white;
 
-const SignInContainer = styled(Stack)(({ theme }) => ({
-  minHeight: "100%",
-  padding: theme.spacing(2),
-  [theme.breakpoints.up("sm")]: {
-    padding: theme.spacing(4),
-  },
-  "&::before": {
-    content: '""',
-    display: "block",
-    position: "absolute",
-    zIndex: -1,
-    inset: 0,
-    backgroundImage:
-      "radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))",
-    backgroundRepeat: "no-repeat",
-    ...theme.applyStyles("dark", {
-      backgroundImage:
-        "radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))",
-    }),
-  },
-}));
+  @media (max-width: 768px) {
+    width: 90%;
+    max-width: 100%;
+    min-width: 100%;
+    gap: 5px;
+    height: 100%;
+    width: 100vw;
+    padding: 40px;
+    margin: 0px;
+  }
+  @media (max-width: 480px) {
+    padding: 10px;
+    gap: 2px;
+    height: 100%;
+    width: 100vw;
+    padding: 40px;
+    margin: 0px;
+  }
+  overflow-x: hidden;
+  overflow-y: hidden;
+`;
+
+const SignInContainer = styledComponents.div`
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(221, 195, 147, 0.2);
+    min-height: 100vh;
+    height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+`;
 
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [emailError, setEmailError] = React.useState(false);
@@ -119,91 +123,89 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   };
 
   return (
-    <>
-      <CssBaseline enableColorScheme />
-      <SignInContainer direction="column" justifyContent="space-between">
-        <Card variant="outlined">
-          <Typography
-            component="h1"
-            variant="h4"
-            sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
-          >
-            Conecte-se à YBY
-          </Typography>
-          <Divider />
+    <SignInContainer>
+      <Card>
+        <YbyMarca
+          style={{ width: "100%", maxWidth: "100px", height: "auto" }}
+        />
+        <Typography fontSize={20}>Conecte-se à YBY</Typography>
+        <Divider />
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          noValidate
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            gap: 2,
+          }}
+        >
+          <FormControl>
+            <FormLabel htmlFor="email">Endereço de e-mail</FormLabel>
+            <TextField
+              error={emailError}
+              helperText={emailErrorMessage}
+              // label={label}
+
+              id="email"
+              type="email"
+              name="email"
+              placeholder="your@email.com"
+              autoComplete="email"
+              autoFocus
+              required
+              fullWidth
+              variant="outlined"
+              color={emailError ? "error" : "primary"}
+              sx={{ ariaLabel: "email" }}
+            />
+          </FormControl>
+          <FormControl>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <FormLabel htmlFor="password">Senha</FormLabel>
+            </Box>
+            <TextField
+              error={passwordError}
+              helperText={passwordErrorMessage}
+              // label={label}
+
+              name="password"
+              placeholder="••••••"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              autoFocus
+              required
+              fullWidth
+              variant="outlined"
+              color={passwordError ? "error" : "primary"}
+            />
+          </FormControl>
+
           <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
             sx={{
               display: "flex",
-              flexDirection: "column",
-              width: "100%",
-              gap: 2,
+              alignItems: "center",
+              justifyContent: "flex-start",
             }}
           >
-            <FormControl>
-              <FormLabel htmlFor="email">Endereço de e-mail</FormLabel>
-              <TextField
-                error={emailError}
-                helperText={emailErrorMessage}
-                id="email"
-                type="email"
-                name="email"
-                placeholder="your@email.com"
-                autoComplete="email"
-                autoFocus
-                required
-                fullWidth
-                variant="outlined"
-                color={emailError ? "error" : "primary"}
-                sx={{ ariaLabel: "email" }}
-              />
-            </FormControl>
-            <FormControl>
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <FormLabel htmlFor="password">Senha</FormLabel>
-              </Box>
-              <TextField
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                name="password"
-                placeholder="••••••"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                autoFocus
-                required
-                fullWidth
-                variant="outlined"
-                color={passwordError ? "error" : "primary"}
-              />
-            </FormControl>
-
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-start",
-              }}
-            >
-              <FormControlLabel
-                control={<Checkbox />}
-                label={<Typography>Eu aceito os Termos e Condições</Typography>}
-              />
-            </Box>
-
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={handleSingIn}
-            >
-              Entrar
-            </Button>
+            <FormControlLabel
+              control={<Checkbox />}
+              label={<Typography>Eu aceito os Termos e Condições</Typography>}
+            />
           </Box>
-        </Card>
-      </SignInContainer>
-    </>
+
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            onClick={handleSingIn}
+          >
+            Entrar
+          </Button>
+        </Box>
+      </Card>
+    </SignInContainer>
   );
 }

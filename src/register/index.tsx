@@ -33,7 +33,6 @@ export default function Register() {
         <Tabs value={value} onChange={handleChange}>
           <Tab label="Cliente" />
           <Tab label="Cooperativa" />
-          <Tab label="Colaborador" />
         </Tabs>
 
         {value === 0 && <ClientForm />}

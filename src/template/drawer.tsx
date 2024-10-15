@@ -1,14 +1,6 @@
-import {
-  ExpandLess,
-  ExpandMore,
-  MapsHomeWork,
-  Person,
-  Place,
-  StarBorder,
-} from "@mui/icons-material";
+import { ExpandLess, ExpandMore, Person, Place } from "@mui/icons-material";
 import MailIcon from "@mui/icons-material/Mail";
 import MenuIcon from "@mui/icons-material/Menu";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
 import {
   Collapse,
   ListItemIcon,
@@ -16,21 +8,16 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-import CssBaseline from "@mui/material/CssBaseline";
-import Divider from "@mui/material/Divider";
+
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
+
 import * as React from "react";
 import { Outlet } from "react-router-dom";
-import { text } from "stream/consumers";
-import YbySvg from "../assets/YbySvg";
+import YbySvg from "../assets/yby-simple";
 
 const drawerWidth = 240;
 

@@ -1,13 +1,32 @@
+import { green, purple } from "@mui/material/colors";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: green[500],
+    },
+    secondary: {
+      main: green[500],
+    },
+  },
+
+  typography: {
+    fontFamily: "Manrope",
+  },
+});
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
   </React.StrictMode>
 );

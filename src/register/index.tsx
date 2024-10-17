@@ -2,6 +2,7 @@ import { Box, Tab, Tabs, Typography } from "@mui/material";
 import { useState } from "react";
 import { styled as styledComponents } from "styled-components";
 import ClientForm from "./client-form";
+import CooperativeForm from "./cooperative-form";
 
 const StyledContainer = styledComponents.div`
     display: flex;
@@ -16,7 +17,7 @@ const StyledCenterContainer = styledComponents.div`
 `;
 
 export default function Register() {
-  const [value, setValue] = useState(2);
+  const [value, setValue] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -35,8 +36,7 @@ export default function Register() {
         </Tabs>
 
         {value === 0 && <ClientForm />}
-        {value === 1 && <></>}
-        {value === 2 && <></>}
+        {value === 1 && <CooperativeForm />}
       </StyledCenterContainer>
     </StyledContainer>
   );

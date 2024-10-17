@@ -6,7 +6,6 @@ import ClientForm from "./client-form";
 const StyledContainer = styledComponents.div`
     display: flex;
     flex-direction: column;
-    background-color: rgba(221, 195, 147, 0.2);
     min-height: 100vh;
     height: 100%;
     width: 100%;

@@ -1,6 +1,8 @@
 import { Button, Divider, TextField, Typography } from "@mui/material";
 import { Box, styled } from "@mui/system";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
+import WeekDayToggle from "./components/WeekDayToggle";
 
 const FormContainer = styled(Box)({
   display: "flex",
@@ -10,16 +12,12 @@ const FormContainer = styled(Box)({
   marginBottom: "16px",
 });
 
-const FormField = styled(Box)({
-  width: "30%",
-  maxWidth: "390px",
-  minWidth: "200px",
-  flexGrow: 1,
-});
-
-const SubmitButton = styled(Button)({
-  marginTop: "16px",
-});
+const FormField = styled(Box)<{ size?: string }>`
+  width: 30%;
+  max-width: ${(props) => props.size || "390px"};
+  min-width: 200px;
+  flex-grow: 1;
+`;
 
 export default function ClientForm() {
   const { control, handleSubmit } = useForm({
@@ -61,87 +59,112 @@ export default function ClientForm() {
       section: "Dados básicos",
       fields: [
         {
-          name: "socialName",
+          name: "client_socialName",
           label: "Razão Social",
           placeholder: "Razão Social",
           required: true,
+          size: "390px",
         },
         {
-          name: "cnpj",
+          name: "client_cnpj",
           label: "CNPJ",
           placeholder: "Número de CNPJ",
           required: true,
+          size: "390px",
         },
         {
-          name: "responsibleName",
+          name: "client_responsibleName",
           label: "Nome do Responsável",
           placeholder: "Nome do responsável",
           required: true,
+          size: "390px",
         },
         {
-          name: "email",
+          name: "client_email",
           label: "E-mail",
           placeholder: "E-mail",
           required: true,
+          size: "390px",
         },
         {
-          name: "phone",
+          name: "client_phone",
           label: "Telefone",
           placeholder: "Telefone",
           required: true,
+          size: "390px",
         },
         {
-          name: "username",
+          name: "client_username",
           label: "Usuário",
           placeholder: "Nome de usuário",
           required: true,
+          size: "390px",
         },
         {
-          name: "password",
+          name: "client_password",
           label: "Senha de acesso",
           placeholder: "Senha",
           type: "password",
           required: true,
+          size: "390px",
         },
       ],
     },
     {
       section: "Endereço",
       fields: [
-        { name: "cep", label: "CEP", placeholder: "CEP", required: true },
+        {
+          name: "cep",
+          label: "CEP",
+          placeholder: "CEP",
+          required: true,
+          size: "300px",
+        },
         {
           name: "rua",
           label: "Rua",
           placeholder: "Nome da rua",
           required: true,
+          size: "390px",
         },
         {
           name: "numeroRua",
           label: "Nº",
           placeholder: "Número",
           required: true,
+          size: "200px",
         },
         {
           name: "bairro",
           label: "Bairro",
           placeholder: "Bairro",
           required: true,
+          size: "250px",
         },
         {
           name: "estado",
           label: "Estado",
           placeholder: "Estado",
           required: true,
+          size: "300px",
         },
         {
           name: "cidade",
           label: "Cidade",
           placeholder: "Cidade",
           required: true,
+          size: "390px",
+          type: "outlined",
         },
       ],
     },
   ];
+
+  const [addressForms, setAddressForms] = React.useState([{}]);
+
+  const handleAddAddressForm = () => {
+    setAddressForms([...addressForms, {}]);
+  };
 
   return (
     <div>
@@ -179,6 +202,8 @@ export default function ClientForm() {
                       label={label}
                       variant="outlined"
                       size="small"
+                      focused
+                      autoComplete="off"
                     />
                   )}
                 />
@@ -192,51 +217,80 @@ export default function ClientForm() {
         </Typography>
 
         <Divider />
-
-        <FormContainer>
-          {formFields[1].fields.map(
-            ({ name, label, placeholder, required, type = "outlined" }) => (
-              <FormField key={name}>
-                <Controller
-                  name={
-                    name as
-                      | "cep"
-                      | "rua"
-                      | "numero"
-                      | "numeroRua"
-                      | "bairro"
-                      | "estado"
-                      | "cidade"
-                  }
-                  control={control}
-                  rules={{ required }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      id={name}
-                      type={type}
-                      placeholder={placeholder}
-                      required={required}
-                      fullWidth
-                      label={label}
-                      variant="outlined"
-                      size="small"
+        {addressForms.map((addressForm, index) => (
+          <div key={index}>
+            <FormContainer>
+              {formFields[1].fields.map(
+                ({
+                  name,
+                  label,
+                  placeholder,
+                  required,
+                  size,
+                  type = "outlined",
+                }) => (
+                  <FormField size={size} key={name}>
+                    <Controller
+                      name={
+                        name as
+                          | "cep"
+                          | "rua"
+                          | "numero"
+                          | "numeroRua"
+                          | "bairro"
+                          | "estado"
+                          | "cidade"
+                      }
+                      control={control}
+                      rules={{ required }}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          id={name}
+                          type={type}
+                          placeholder={placeholder}
+                          required={required}
+                          fullWidth
+                          label={label}
+                          variant="outlined"
+                          size="small"
+                          focused
+                          autoComplete="off"
+                        />
+                      )}
                     />
-                  )}
-                />
-              </FormField>
-            )
-          )}
-        </FormContainer>
+                  </FormField>
+                )
+              )}
+              <WeekDayToggle />
+            </FormContainer>
+          </div>
+        ))}
 
-        <SubmitButton
-          style={{ color: "#ffff" }}
-          type="submit"
-          variant="contained"
-          color="primary"
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: "10px",
+          }}
         >
-          Submit
-        </SubmitButton>
+          <Button
+            variant="outlined"
+            color="primary"
+            style={{ marginRight: "10px", color: "green" }}
+            onClick={handleAddAddressForm}
+          >
+            + Adicionar Endereço
+          </Button>
+          <Button
+            style={{ color: "#ffff" }}
+            type="submit"
+            variant="contained"
+            color="primary"
+          >
+            Cadastrar
+          </Button>
+        </div>
       </form>
     </div>
   );

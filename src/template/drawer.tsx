@@ -56,8 +56,15 @@ export default function ResponsiveDrawerLayout(props: Props) {
   };
 
   const drawer = (
-    <div>
-      <Box sx={{ textAlign: "center", p: 2 }}>
+    <div
+      style={{ backgroundColor: " rgba(221, 195, 147, 0.2)", height: "100%" }}
+    >
+      <Box
+        sx={{
+          textAlign: "center",
+          p: 2,
+        }}
+      >
         <YbySvg style={{ width: "100%", maxWidth: "100px", height: "auto" }} />
       </Box>
 
@@ -75,9 +82,6 @@ export default function ResponsiveDrawerLayout(props: Props) {
           </ListItemButton>
           <ListItemButton sx={{ pl: 4 }}>
             <ListItemText primary="Cooperativas" />
-          </ListItemButton>
-          <ListItemButton sx={{ pl: 4 }}>
-            <ListItemText primary="Colaboradores" />
           </ListItemButton>
         </List>
       </Collapse>
@@ -122,7 +126,10 @@ export default function ResponsiveDrawerLayout(props: Props) {
 
       <Box
         component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        sx={{
+          width: { sm: drawerWidth },
+          flexShrink: { sm: 0 },
+        }}
         aria-label="mailbox folders"
       >
         <Drawer

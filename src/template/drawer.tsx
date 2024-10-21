@@ -16,7 +16,7 @@ import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 
 import * as React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import YbySvg from "../assets/yby-simple";
 
 const drawerWidth = 240;
@@ -30,6 +30,7 @@ interface Props {
 }
 
 export default function ResponsiveDrawerLayout(props: Props) {
+  const navigate = useNavigate();
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
@@ -77,11 +78,14 @@ export default function ResponsiveDrawerLayout(props: Props) {
       </ListItemButton>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          <ListItemButton sx={{ pl: 4 }}>
+          <ListItemButton sx={{ pl: 4 }} onClick={() => navigate("/cadastro")}>
             <ListItemText primary="Clientes" />
           </ListItemButton>
           <ListItemButton sx={{ pl: 4 }}>
-            <ListItemText primary="Cooperativas" />
+            <ListItemText
+              primary="Cooperativas"
+              onClick={() => navigate("/cadastro")}
+            />
           </ListItemButton>
         </List>
       </Collapse>
@@ -93,12 +97,12 @@ export default function ResponsiveDrawerLayout(props: Props) {
         <ListItemText primary="Relatório" />
       </ListItemButton>
 
-      <ListItemButton onClick={handleClick}>
+      <ListItemButton onClick={() => navigate("/ponto-coleta")}>
         <ListItemIcon>
           <Place />
         </ListItemIcon>
         <ListItemText primary="PEVs" />
-        {open ? <ExpandLess /> : <ExpandMore />}
+        {/* {open ? <ExpandLess /> : <ExpandMore />} */}
       </ListItemButton>
     </div>
   );

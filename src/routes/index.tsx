@@ -1,4 +1,3 @@
-import React from "react";
 import { Route, Routes } from "react-router-dom";
 import CollectionPoint from "../collection-point/collection-point";
 import SignIn from "../login/SignIn";

@@ -1,24 +1,6 @@
-import {
-  Button,
-  Card,
-  CardContent,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  MenuItem,
-  OutlinedInput,
-  Radio,
-  RadioGroup,
-  Select,
-  SelectChangeEvent,
-  Typography,
-} from "@mui/material";
-import { Box, styled } from "@mui/system";
-import React, { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { styled as styledComponents } from "styled-components";
+import { Button, Card, CardContent, Typography } from "@mui/material";
 
-export default function CollectionList() {
+export default function PEVSList() {
   const cards = [
     { title: "Card 1", subtitle: "Subtitle 1" },
     { title: "Card 2", subtitle: "Subtitle 2" },

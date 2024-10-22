@@ -1,11 +1,8 @@
 import { ToggleButton } from "@mui/material";
-import { Box, styled, width } from "@mui/system";
-import { tab } from "@testing-library/user-event/dist/tab";
-import React, { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { MouseEvent, useState } from "react";
 import { styled as styledComponents } from "styled-components";
-import CollectionList from "./collection-list/collection-list";
-import PEVSForm from "./pevs-form/pevs-form";
+import CollectionForm from "./collection-form/collection-form";
+import PEVSList from "./pevs-list/pevs-list";
 
 const StyledContainer = styledComponents.div`
   display: flex;
@@ -21,12 +18,13 @@ const StyledTabContainer = styledComponents.div`
 `;
 
 export default function CollectionPoint() {
-  const [selectedTab, setSelectedTab] = React.useState("PEVS");
+  const [selectedTab, setSelectedTab] = useState("PEVS");
 
   const handleTabChange = (
-    event: React.ChangeEvent<unknown>,
-    value: string
+    event: React.MouseEvent<HTMLElement>,
+    value: any
   ) => {
+    console.log(value);
     setSelectedTab(value);
   };
 
@@ -40,7 +38,7 @@ export default function CollectionPoint() {
             key={index}
             value={tab}
             selected={selectedTab === tab}
-            onChange={handleTabChange}
+            onChange={(event, value) => handleTabChange(event, value)}
             style={{
               backgroundColor: selectedTab === tab ? "green" : "transparent",
               borderColor: "green",
@@ -58,8 +56,8 @@ export default function CollectionPoint() {
           </ToggleButton>
         ))}
       </StyledTabContainer>
-      {selectedTab === "PEVS" && <PEVSForm />}
-      {selectedTab === "Coleta" && <CollectionList />}
+      {selectedTab === "PEVS" && <PEVSList />}
+      {selectedTab === "Coleta" && <CollectionForm />}
     </StyledContainer>
   );
 }

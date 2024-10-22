@@ -1,3 +1,4 @@
+import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import {
   Button,
   FormControl,
@@ -14,71 +15,35 @@ import {
 import { Box, styled } from "@mui/system";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { styled as styledComponents } from "styled-components";
-
-const StyledCenteredContainer = styledComponents.div`
-      width: 80%;
-      max-width: 1200px;
-    `;
-
-const StyledImageArea = styledComponents.div`
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    `;
 
 const StyledImage = styled("img")({
-  marginTop: "10px",
-  width: "222px",
-  height: "200px",
   objectFit: "fill",
   objectPosition: "center",
+  width: "100%",
+  height: "150px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+});
+
+const StyledImagePlaceholder = styled("div")({
+  width: "100%",
+  height: "150px",
+  backgroundColor: "rgba(21, 133, 59, 0.08)",
+  border: "2px dashed #15853B",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  cursor: "pointer",
 });
 
 const FormField = styled(Box)<{ size?: string }>`
-  width: 30%;
   max-width: ${(props) => props.size || "390px"};
   min-width: 200px;
   flex-grow: 1;
 `;
 
-const FormContainer = styled(Box)({
-  display: "flex",
-  flexWrap: "wrap",
-  gap: "24px",
-  marginTop: "16px",
-  marginBottom: "16px",
-});
-
-const StyledImagePlaceholder = styled("div")({
-  marginTop: "10px",
-  width: "100%",
-  height: "200px",
-  backgroundColor: "#e0e0e0",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-});
-
-const StyledColetorImage = styled("img")({
-  marginTop: "10px",
-  width: "222px",
-  height: "282px", // Increased height
-  objectFit: "fill",
-  objectPosition: "center",
-});
-
-const StyledColetorImagePlaceholder = styled("div")({
-  marginTop: "10px",
-  width: "100%",
-  height: "282px", // Increased height
-  backgroundColor: "#e0e0e0",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-});
-
-export default function PEVSForm() {
+export default function CollectionForm() {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       collectionPoint: "",
@@ -166,14 +131,45 @@ export default function PEVSForm() {
     setCollectionPoint(event.target.value as string);
   };
 
+  const [selectedValue, setSelectedValue] = React.useState("a");
+
+  const handleChangeRadio = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedValue(event.target.value);
+  };
+
   return (
-    <StyledCenteredContainer>
-      <Typography variant="h6" component="h2" gutterBottom>
-        Sobre a coleta
-      </Typography>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+        width: "100%",
+        marginTop: "20px",
+        alignItems: "center",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          height: "40px",
+          width: "100%",
+          marginBottom: "5px",
+          backgroundColor: " rgba(221, 195, 147, 0.2)",
+          alignItems: "center",
+          justifyContent: "start",
+          borderRadius: "5px",
+          maxWidth: "390px",
+        }}
+      >
+        <Typography
+          style={{ marginLeft: "10px", fontSize: "20px", fontWeight: "500" }}
+        >
+          Sobre a coleta
+        </Typography>
+      </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <FormContainer>
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           <FormField key={"collectionPoint"}>
             <Controller
               name={"collectionPoint"}
@@ -205,7 +201,7 @@ export default function PEVSForm() {
               // rules={{ required }}
               render={({ field }) => (
                 <FormControl fullWidth>
-                  <InputLabel id="residuos">Ponto de coleta</InputLabel>
+                  <InputLabel id="residuos">Tipo de residuos</InputLabel>
                   <Select
                     labelId="residuos"
                     id="Tipo de residuos"
@@ -221,29 +217,57 @@ export default function PEVSForm() {
               )}
             />
           </FormField>
-        </FormContainer>
+        </div>
 
-        <Typography variant="h6" component="h2" gutterBottom>
-          Fotos da coleta
-        </Typography>
-
-        <StyledImageArea>
+        <div
+          style={{
+            marginTop: "20px",
+            display: "flex",
+            height: "40px",
+            width: "100%",
+            marginBottom: "5px",
+            backgroundColor: " rgba(221, 195, 147, 0.2)",
+            alignItems: "center",
+            justifyContent: "start",
+            borderRadius: "5px",
+            maxWidth: "390px",
+          }}
+        >
           <Typography
-            variant="body1"
-            component="label"
-            htmlFor="image-upload-coletor"
-            sx={{ fontWeight: "bold" }}
+            style={{ marginLeft: "10px", fontSize: "20px", fontWeight: "500" }}
           >
+            Carregar fotos
+          </Typography>
+        </div>
+
+        <div>
+          <Typography style={{ fontSize: "14px", fontWeight: "400" }}>
             Coletor
           </Typography>
           {coletorPreviewUrl ? (
-            <StyledColetorImage src={coletorPreviewUrl} alt="Preview Coletor" />
+            <StyledImage src={coletorPreviewUrl} alt="Preview Coletor" />
           ) : (
-            <StyledColetorImagePlaceholder>
-              <Typography variant="body2" color="textSecondary">
-                No image selected
-              </Typography>
-            </StyledColetorImagePlaceholder>
+            <StyledImagePlaceholder
+              onClick={() =>
+                document.getElementById("image-upload-coletor")?.click()
+              }
+            >
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <AddAPhotoIcon
+                  style={{
+                    fontSize: 40,
+                    color: "rgb(0, 0, 0, 0.35)",
+                    alignSelf: "center",
+                  }}
+                />
+                <Typography
+                  variant="body1"
+                  style={{ color: "rgb(0, 0, 0, 0.35)", textAlign: "center" }}
+                >
+                  Toque para inserir foto do coletor
+                </Typography>
+              </div>
+            </StyledImagePlaceholder>
           )}
           <input
             id="image-upload-coletor"
@@ -252,19 +276,13 @@ export default function PEVSForm() {
             onChange={(e) => handleImageChange(e, "coletorImage")}
             style={{ display: "none" }}
           />
-          <Button
-            variant="outlined"
-            onClick={() =>
-              document.getElementById("image-upload-coletor")?.click()
-            }
-          >
-            Choose Image
-          </Button>
+
           <Controller
             name="weight"
             control={control}
             render={({ field }) => (
               <OutlinedInput
+                style={{ marginTop: "10px" }}
                 {...field}
                 id="weight"
                 type="text"
@@ -273,84 +291,72 @@ export default function PEVSForm() {
               />
             )}
           />
-        </StyledImageArea>
+        </div>
 
-        <StyledImageArea>
-          <Typography
-            variant="body1"
-            component="label"
-            htmlFor="image-upload-avaria"
-            sx={{ fontWeight: "bold" }}
-          >
-            Avaria (s)
+        <div style={{ marginTop: "20px" }}>
+          <Typography style={{ fontSize: "14px", fontWeight: "400" }}>
+            Avaria
           </Typography>
-          <FormControl>
-            <Typography
-              variant="body1"
-              component="label"
-              id="avaria-buttons-group-label"
-              sx={{ fontWeight: "bold" }}
-            >
-              O PEV visitado possui avarias?
-            </Typography>
-            <Controller
-              name="hasAvaria"
-              control={control}
-              render={({ field }) => (
-                <RadioGroup {...field} row aria-labelledby="avaria-group-label">
-                  <FormControlLabel
-                    value="yes"
-                    control={<Radio />}
-                    label="Sim"
-                  />
-                  <FormControlLabel value="no" control={<Radio />} label="No" />
-                </RadioGroup>
-              )}
-            />
-          </FormControl>
-          {avariaPreviewUrl ? (
-            <StyledImage src={avariaPreviewUrl} alt="Preview Avaria" />
-          ) : (
-            <StyledImagePlaceholder>
-              <Typography variant="body2" color="textSecondary">
-                No image selected
-              </Typography>
-            </StyledImagePlaceholder>
-          )}
-          <input
-            id="image-upload-avaria"
-            type="file"
-            accept="image/*"
-            onChange={(e) => handleImageChange(e, "avariaImage")}
-            style={{ display: "none" }}
-          />
-          <Button
-            variant="outlined"
-            onClick={() =>
-              document.getElementById("image-upload-avaria")?.click()
-            }
-          >
-            Choose Image
-          </Button>
-          <Controller
-            name="avariaDescription"
-            control={control}
-            render={({ field }) => (
-              <OutlinedInput
-                {...field}
-                id="avaria"
-                type="text"
-                placeholder="Descreva a avaria"
-                fullWidth
-              />
-            )}
-          />
-        </StyledImageArea>
 
-        <Button type="submit" variant="contained" color="primary">
-          Submit
+          <Typography sx={{ fontWeight: "bold" }}>
+            O seu coletor apresenta avarias (está danificado)?
+          </Typography>
+
+          <RadioGroup row value={selectedValue} onChange={handleChangeRadio}>
+            <FormControlLabel value="yes" control={<Radio />} label="Sim" />
+            <FormControlLabel value="no" control={<Radio />} label="No" />
+          </RadioGroup>
+
+          {selectedValue === "yes" && (
+            <>
+              {avariaPreviewUrl ? (
+                <StyledImage src={avariaPreviewUrl} alt="Preview Avaria" />
+              ) : (
+                <StyledImagePlaceholder
+                  onClick={() =>
+                    document.getElementById("image-upload-avaria")?.click()
+                  }
+                >
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <AddAPhotoIcon
+                      style={{
+                        fontSize: 40,
+                        color: "rgb(0, 0, 0, 0.35)",
+                        alignSelf: "center",
+                      }}
+                    />
+                    <Typography
+                      variant="body1"
+                      style={{
+                        color: "rgb(0, 0, 0, 0.35)",
+                        textAlign: "center",
+                      }}
+                    >
+                      Toque para inserir foto da Avaria
+                    </Typography>
+                  </div>
+                </StyledImagePlaceholder>
+              )}
+              <input
+                id="image-upload-avaria"
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleImageChange(e, "avariaImage")}
+                style={{ display: "none" }}
+              />
+            </>
+          )}
+        </div>
+
+        <Button
+          style={{ marginTop: "20px", width: "100%", color: "white" }}
+          type="submit"
+          variant="contained"
+          color="primary"
+        >
+          Cadastrar
         </Button>
       </form>
-    </StyledCenteredContainer>
+    </div>
   );
 }

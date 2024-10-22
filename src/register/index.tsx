@@ -1,4 +1,4 @@
-import { Box, Tab, Tabs, Typography } from "@mui/material";
+import { Tab, Tabs, Typography } from "@mui/material";
 import { useState } from "react";
 import { styled as styledComponents } from "styled-components";
 import ClientForm from "./client-form";

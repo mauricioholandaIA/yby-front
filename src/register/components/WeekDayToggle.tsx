@@ -1,10 +1,28 @@
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-import React, { useState } from "react";
+import { ToggleButton } from "@mui/material";
+import { useState } from "react";
 
+interface Day {
+  [key: string]: boolean;
+}
 const WeekDayToggle = () => {
-  const [selected, setSelected] = React.useState(false);
+  const [selectedDays, setSelectedDays] = useState<Day>({
+    Seg: false,
+    Ter: false,
+    Qua: false,
+    Qui: false,
+    Sex: false,
+    Sáb: false,
+    Dom: false,
+  });
 
   const days = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+
+  const handleDayChange = (day: string) => {
+    setSelectedDays((prevSelectedDays: Day) => ({
+      ...prevSelectedDays,
+      [day]: !prevSelectedDays[day],
+    }));
+  };
 
   return (
     <div>
@@ -19,19 +37,19 @@ const WeekDayToggle = () => {
             <ToggleButton
               key={index}
               value={day}
-              selected={selected}
-              onChange={() => setSelected((prevSelected) => !prevSelected)}
+              selected={selectedDays[day]}
+              onChange={() => handleDayChange(day)}
               style={{
-                backgroundColor: selected ? "green" : "transparent",
+                backgroundColor: selectedDays[day] ? "green" : "transparent",
                 borderColor: "green",
-                width: "50px",
+                width: "13%",
                 height: "35px",
                 borderRadius: "5px",
                 border: "1px solid",
                 fontSize: "14px",
                 textAlign: "center",
                 cursor: "pointer",
-                color: selected ? "white" : "green",
+                color: selectedDays[day] ? "white" : "green",
               }}
             >
               {day}
@@ -44,13 +62,3 @@ const WeekDayToggle = () => {
 };
 
 export default WeekDayToggle;
-
-{
-  /* <ToggleButton
-  value="check"
-  selected={selected}
-  onChange={() => setSelected((prevSelected) => !prevSelected)}
->
-  S
-</ToggleButton>; */
-}

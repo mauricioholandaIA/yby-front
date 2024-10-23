@@ -1,13 +1,18 @@
 import { ToggleButton } from "@mui/material";
-import { MouseEvent, useState } from "react";
+import { useState } from "react";
+// import { useNavigate } from "react-router-dom";
+import { tab } from "@testing-library/user-event/dist/tab";
 import { styled as styledComponents } from "styled-components";
 import CollectionForm from "./collection-form/collection-form";
-import PEVSList from "./pevs-list/pevs-list";
+import { PEVSList } from "./pevs-list/pevs-list";
 
 const StyledContainer = styledComponents.div`
   display: flex;
   flex-direction: column;
-  width: 100vw;
+  width: 100%;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
 `;
 
 const StyledTabContainer = styledComponents.div`
@@ -15,10 +20,17 @@ const StyledTabContainer = styledComponents.div`
   align-items: center;
   justify-content: center;
   margin-top: 50px;
+  width: 100%;
+  height: 40px;
+  border-radius: 40px;
+  border: 1px solid #EBEBEB ;
+  background-color: #EBEBEB;
 `;
 
 export default function CollectionPoint() {
-  const [selectedTab, setSelectedTab] = useState("PEVS");
+  // const navigate = useNavigate();
+  const [selectedTab, setSelectedTab] = useState("pevs");
+  const [selectedPEVS, setSelectedPEVS] = useState();
 
   const handleTabChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -26,38 +38,59 @@ export default function CollectionPoint() {
   ) => {
     console.log(value);
     setSelectedTab(value);
+    setSelectedPEVS(undefined);
   };
 
-  const tabs = ["PEVS", "Coleta"];
+  const handleSelectedPevs = (pevs: any) => {
+    setSelectedPEVS(pevs);
+    console.log(pevs);
+    setSelectedTab("coleta");
+  };
 
   return (
     <StyledContainer>
       <StyledTabContainer>
-        {tabs.map((tab, index) => (
-          <ToggleButton
-            key={index}
-            value={tab}
-            selected={selectedTab === tab}
-            onChange={(event, value) => handleTabChange(event, value)}
-            style={{
-              backgroundColor: selectedTab === tab ? "green" : "transparent",
-              borderColor: "green",
-              width: "35%",
-              height: "30px",
-              borderRadius: "5px",
-              border: "1px solid",
-              fontSize: "14px",
-              textAlign: "center",
-              cursor: "pointer",
-              color: selectedTab === tab ? "white" : "green",
-            }}
-          >
-            {tab}
-          </ToggleButton>
-        ))}
+        <ToggleButton
+          style={{
+            backgroundColor: selectedTab === "pevs" ? "white" : "transparent",
+            flex: 1,
+            height: "40px",
+            borderRadius: "40px",
+            border: "0px",
+            fontSize: "14px",
+            textAlign: "center",
+            cursor: "pointer",
+            color: "green",
+          }}
+          value="pevs"
+          selected={selectedTab === "pevs"}
+          onChange={handleTabChange}
+        >
+          PEVs
+        </ToggleButton>
+        <ToggleButton
+          style={{
+            backgroundColor: selectedTab === "coleta" ? "white" : "transparent",
+            flex: 1,
+            height: "40px",
+            border: "0px",
+            borderRadius: "40px",
+            fontSize: "14px",
+            textAlign: "center",
+            cursor: "pointer",
+            color: "green",
+          }}
+          value="coleta"
+          selected={selectedTab === "coleta"}
+          onChange={handleTabChange}
+        >
+          Coleta
+        </ToggleButton>
       </StyledTabContainer>
-      {selectedTab === "PEVS" && <PEVSList />}
-      {selectedTab === "Coleta" && <CollectionForm />}
+      {selectedTab === "pevs" && (
+        <PEVSList handleSelectedPevs={handleSelectedPevs} />
+      )}
+      {selectedTab === "coleta" && <CollectionForm />}
     </StyledContainer>
   );
 }

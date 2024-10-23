@@ -37,12 +37,6 @@ const StyledImagePlaceholder = styled("div")({
   cursor: "pointer",
 });
 
-const FormField = styled(Box)<{ size?: string }>`
-  max-width: ${(props) => props.size || "390px"};
-  min-width: 200px;
-  flex-grow: 1;
-`;
-
 export default function CollectionForm() {
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -138,39 +132,37 @@ export default function CollectionForm() {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "10px",
-        width: "100%",
-        marginTop: "20px",
-        alignItems: "center",
-      }}
-    >
-      <div
+    <div>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
         style={{
-          display: "flex",
-          height: "40px",
           width: "100%",
-          marginBottom: "5px",
-          backgroundColor: " rgba(221, 195, 147, 0.2)",
-          alignItems: "center",
-          justifyContent: "start",
-          borderRadius: "5px",
-          maxWidth: "390px",
+          gap: "10px",
+          display: "flex",
+          flexDirection: "column",
+          marginTop: "20px",
         }}
       >
-        <Typography
-          style={{ marginLeft: "10px", fontSize: "20px", fontWeight: "500" }}
+        <div
+          style={{
+            display: "flex",
+            height: "40px",
+            width: "100%",
+            marginBottom: "5px",
+            backgroundColor: " rgba(221, 195, 147, 0.2)",
+            alignItems: "center",
+            justifyContent: "start",
+            borderRadius: "5px",
+          }}
         >
-          Sobre a coleta
-        </Typography>
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit)}>
+          <Typography
+            style={{ marginLeft: "10px", fontSize: "20px", fontWeight: "500" }}
+          >
+            Sobre a coleta
+          </Typography>
+        </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          <FormField key={"collectionPoint"}>
+          <div>
             <Controller
               name={"collectionPoint"}
               control={control}
@@ -192,9 +184,9 @@ export default function CollectionForm() {
                 </FormControl>
               )}
             />
-          </FormField>
+          </div>
 
-          <FormField key={"residuos"}>
+          <div>
             <Controller
               name={"residuos"}
               control={control}
@@ -216,21 +208,17 @@ export default function CollectionForm() {
                 </FormControl>
               )}
             />
-          </FormField>
+          </div>
         </div>
 
         <div
           style={{
-            marginTop: "20px",
             display: "flex",
             height: "40px",
-            width: "100%",
-            marginBottom: "5px",
             backgroundColor: " rgba(221, 195, 147, 0.2)",
             alignItems: "center",
             justifyContent: "start",
             borderRadius: "5px",
-            maxWidth: "390px",
           }}
         >
           <Typography
@@ -304,7 +292,7 @@ export default function CollectionForm() {
 
           <RadioGroup row value={selectedValue} onChange={handleChangeRadio}>
             <FormControlLabel value="yes" control={<Radio />} label="Sim" />
-            <FormControlLabel value="no" control={<Radio />} label="No" />
+            <FormControlLabel value="no" control={<Radio />} label="Não" />
           </RadioGroup>
 
           {selectedValue === "yes" && (

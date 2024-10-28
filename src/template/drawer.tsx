@@ -2,6 +2,7 @@ import { ExpandLess, ExpandMore, Person, Place } from "@mui/icons-material";
 import MailIcon from "@mui/icons-material/Mail";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
+  Button,
   Collapse,
   ListItemIcon,
   ListItemText,
@@ -16,8 +17,10 @@ import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 
 import * as React from "react";
+import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import YbySvg from "../assets/yby-simple";
+import { AuthContext } from "../context/auth-context";
 
 const drawerWidth = 240;
 
@@ -34,6 +37,17 @@ export default function ResponsiveDrawerLayout(props: Props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
+
+  const { user, logout } = useContext(AuthContext);
+
+  console.log(user);
+
+  // Remove this const when copying and pasting into your project.
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -56,6 +70,11 @@ export default function ResponsiveDrawerLayout(props: Props) {
     setOpen(!open);
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate("/signIn");
+  };
+
   const drawer = (
     <div
       style={{ backgroundColor: " rgba(221, 195, 147, 0.2)", height: "100%" }}
@@ -66,36 +85,41 @@ export default function ResponsiveDrawerLayout(props: Props) {
           p: 2,
         }}
       >
-        <YbySvg style={{ width: "100%", maxWidth: "100px", height: "auto" }} />
+        <YbySvg
+          style={{
+            width: "100px",
+            maxWidth: "100px",
+          }}
+        />
       </Box>
 
-      <ListItemButton onClick={handleClick}>
-        <ListItemIcon>
-          <Person />
-        </ListItemIcon>
-        <ListItemText primary="Cadastro" />
-        {open ? <ExpandLess /> : <ExpandMore />}
-      </ListItemButton>
-      <Collapse in={open} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <ListItemButton sx={{ pl: 4 }} onClick={() => navigate("/cadastro")}>
-            <ListItemText primary="Clientes" />
+      {user?.isAdmin && (
+        <>
+          <ListItemButton onClick={handleClick}>
+            <ListItemIcon>
+              <Person />
+            </ListItemIcon>
+            <ListItemText primary="Cadastro" />
+            {open ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
-          <ListItemButton sx={{ pl: 4 }}>
-            <ListItemText
-              primary="Cooperativas"
-              onClick={() => navigate("/cadastro")}
-            />
-          </ListItemButton>
-        </List>
-      </Collapse>
-
-      <ListItemButton>
-        <ListItemIcon>
-          <MailIcon />
-        </ListItemIcon>
-        <ListItemText primary="Relatório" />
-      </ListItemButton>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItemButton
+                sx={{ pl: 4 }}
+                onClick={() => navigate("/cadastro")}
+              >
+                <ListItemText primary="Clientes" />
+              </ListItemButton>
+              <ListItemButton sx={{ pl: 4 }}>
+                <ListItemText
+                  primary="Cooperativas"
+                  onClick={() => navigate("/cadastro")}
+                />
+              </ListItemButton>
+            </List>
+          </Collapse>
+        </>
+      )}
 
       <ListItemButton onClick={() => navigate("/ponto-coleta")}>
         <ListItemIcon>
@@ -104,15 +128,25 @@ export default function ResponsiveDrawerLayout(props: Props) {
         <ListItemText primary="PEVs" />
         {/* {open ? <ExpandLess /> : <ExpandMore />} */}
       </ListItemButton>
+
+      <Box sx={{ position: "absolute", bottom: 0, width: "100%" }}>
+        <Button
+          variant="contained"
+          onClick={() => {
+            handleLogout();
+          }}
+          style={{
+            width: "100%",
+            color: "black",
+            backgroundColor: "white",
+            borderRadius: 0,
+          }}
+        >
+          Sair
+        </Button>
+      </Box>
     </div>
   );
-
-  // Remove this const when copying and pasting into your project.
-  const container =
-    window !== undefined ? () => window().document.body : undefined;
-
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
     <Box sx={{ display: "flex" }}>

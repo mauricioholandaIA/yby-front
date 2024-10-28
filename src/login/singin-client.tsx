@@ -6,9 +6,10 @@ import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { styled as styledComponents } from "styled-components";
+import { authClient } from "../api/auth";
 import YbyMarca from "../assets/yby-marca";
 import { AuthContext } from "../context/auth-context";
 
@@ -67,17 +68,6 @@ export default function SignInClient() {
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (passwordError) {
-      event.preventDefault();
-      return;
-    }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      password: data.get("password"),
-    });
-  };
-
   const validateInputs = () => {
     const password = document.getElementById(
       "client-password"
@@ -96,30 +86,35 @@ export default function SignInClient() {
     return isValid;
   };
 
-  const handleSingIn = () => {
+  const handleSingIn = async () => {
     const isValid = validateInputs();
     if (isValid) {
       const password = document.getElementById(
         "client-password"
       ) as HTMLInputElement;
       // com a senha , fazer login e com os dados de usuario da resposta salvar no contexto
-      login({
-        id: "1",
-        nome: "YBY",
-        email: "QpL0x@example.com",
-        tipo: "cliente",
+
+      const client = await authClient({
+        identifier: password.value,
+        password: password.value,
       });
 
-      navigate("/ponto-coleta");
+      console.log(client);
+
+      const formattedClient = {
+        jwt: client.jwt,
+        username: client.user.username,
+        documentId: client.user.documentId,
+        email: client.user.email,
+        isAdmin: client.user.admin,
+        id: client.user.id,
+      };
+
+      if (client) {
+        login(formattedClient);
+        navigate("/ponto-coleta");
+      }
     }
-
-    // const resposta = await fetch('/api/login', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ email, senha }),
-    // });
-
-    // const dadosUsuario = await resposta.json();
   };
 
   return (
@@ -132,7 +127,6 @@ export default function SignInClient() {
         <Divider />
         <Box
           component="form"
-          onSubmit={handleSubmit}
           noValidate
           sx={{
             display: "flex",
@@ -142,10 +136,6 @@ export default function SignInClient() {
           }}
         >
           <FormControl>
-            {/* <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <FormLabel htmlFor="password">Código de acesso</FormLabel>
-            </Box> */}
-
             <TextField
               type={"outlined"}
               label={"Código de acesso"}
@@ -165,25 +155,9 @@ export default function SignInClient() {
             />
           </FormControl>
 
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-start",
-            }}
-          >
-            <FormControlLabel
-              control={<Checkbox />}
-              label={<Typography>Eu aceito os Termos e Condições</Typography>}
-            />
-          </Box>
+          <Link to="/signIn">Ir para tela de login</Link>
 
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            onClick={handleSingIn}
-          >
+          <Button fullWidth variant="contained" onClick={handleSingIn}>
             Entrar
           </Button>
         </Box>

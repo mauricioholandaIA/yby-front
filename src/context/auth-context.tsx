@@ -2,16 +2,20 @@ import { createContext, useEffect, useState } from "react";
 
 interface AuthContextProps {
   user: {
-    id: string;
-    nome: string;
+    jwt: string;
+    username: string;
+    documentId: string;
     email: string;
-    tipo: "admin" | "cliente";
+    isAdmin: boolean;
+    id: number;
   } | null;
   login: (user: {
-    id: string;
-    nome: string;
+    jwt: string;
+    username: string;
+    documentId: string;
     email: string;
-    tipo: "admin" | "cliente";
+    isAdmin: boolean;
+    id: number;
   }) => void;
   logout: () => void;
 }
@@ -33,12 +37,13 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const login = (user: {
-    id: string;
-    nome: string;
+    jwt: string;
+    username: string;
+    documentId: string;
     email: string;
-    tipo: "admin" | "cliente";
+    isAdmin: boolean;
+    id: number;
   }) => {
-    console.log(user);
     localStorage.setItem("usuario", JSON.stringify(user));
     setUser(user);
   };

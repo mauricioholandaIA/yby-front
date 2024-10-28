@@ -8,7 +8,7 @@ import FormLabel from "@mui/material/FormLabel";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { styled as styledComponents } from "styled-components";
 import YbyMarca from "../assets/yby-marca";
 
@@ -116,10 +116,10 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   };
 
   const handleSingIn = () => {
-    const isValid = validateInputs();
-    if (isValid) {
-      navigate("/ponto-coleta");
-    }
+    // const isValid = validateInputs();
+    // if (isValid) {
+    //   navigate("/ponto-coleta");
+    // }
   };
 
   return (
@@ -183,25 +183,9 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             />
           </FormControl>
 
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-start",
-            }}
-          >
-            <FormControlLabel
-              control={<Checkbox />}
-              label={<Typography>Eu aceito os Termos e Condições</Typography>}
-            />
-          </Box>
+          <Link to="/signIn-client">Ir para tela de cliente</Link>
 
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            onClick={handleSingIn}
-          >
+          <Button fullWidth variant="contained" onClick={() => handleSingIn}>
             Entrar
           </Button>
         </Box>

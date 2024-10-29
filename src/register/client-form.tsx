@@ -1,8 +1,10 @@
 import { Button, Divider, TextField, Typography } from "@mui/material";
 import { Box, styled } from "@mui/system";
+import qs from "qs";
 import React from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import WeekDayToggle from "./components/WeekDayToggle";
+import { AddressFormComponent } from "./components/address-form-component";
 
 const FormContainer = styled(Box)({
   display: "flex",
@@ -19,151 +21,111 @@ const FormField = styled(Box)<{ size?: string }>`
   flex-grow: 1;
 `;
 
+interface Address {
+  cep: string;
+  rua: string;
+  numeroRua: string;
+  bairro: string;
+  estado: string;
+  cidade: string;
+  weekDays: string[];
+}
+
+interface ClientFormData {
+  client_cnpj: string;
+  client_socialName: string;
+  client_responsibleName: string;
+  client_email: string;
+  client_phone: string;
+  client_username: string;
+  client_password: string;
+  addresses: Address[]; // Define o tipo para o array de endereços
+}
+
 export default function ClientForm() {
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit } = useForm<ClientFormData>({
     defaultValues: {
-      cnpj: "",
-      socialName: "",
-      responsibleName: "",
-      email: "",
-      phone: "",
-      username: "",
-      password: "",
-      cep: "",
-      rua: "",
-      numero: "",
-      numeroRua: "",
-      bairro: "",
-      estado: "",
-      cidade: "",
+      client_cnpj: "",
+      client_socialName: "",
+      client_responsibleName: "",
+      client_email: "",
+      client_phone: "",
+      client_username: "",
+      client_password: "",
+      addresses: [], // Inicializa como um array vazio
     },
   });
 
-  const onSubmit = async (data: any) => {
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "addresses",
+  });
+
+  const onSubmit = async (data: ClientFormData) => {
+    console.log("Form data:", data);
     const formData = new FormData();
 
-    // Add all form fields to formData
     Object.entries(data).forEach(([key, value]) => {
       if (typeof value === "string" || value instanceof Blob) {
         formData.append(key, value);
+      } else if (Array.isArray(value)) {
+        formData.append(key, JSON.stringify(value));
       } else if (value !== null && value !== undefined) {
         formData.append(key, String(value));
       }
     });
 
-    console.log("Form data:", Object.fromEntries(formData));
+    console.log("Form data processed:", Object.fromEntries(formData));
   };
 
-  const formFields = [
-    {
-      section: "Dados básicos",
-      fields: [
-        {
-          name: "client_socialName",
-          label: "Razão Social",
-          placeholder: "Razão Social",
-          required: true,
-          size: "390px",
-        },
-        {
-          name: "client_cnpj",
-          label: "CNPJ",
-          placeholder: "Número de CNPJ",
-          required: true,
-          size: "390px",
-        },
-        {
-          name: "client_responsibleName",
-          label: "Nome do Responsável",
-          placeholder: "Nome do responsável",
-          required: true,
-          size: "390px",
-        },
-        {
-          name: "client_email",
-          label: "E-mail",
-          placeholder: "E-mail",
-          required: true,
-          size: "390px",
-        },
-        {
-          name: "client_phone",
-          label: "Telefone",
-          placeholder: "Telefone",
-          required: true,
-          size: "390px",
-        },
-        {
-          name: "client_username",
-          label: "Usuário",
-          placeholder: "Nome de usuário",
-          required: true,
-          size: "390px",
-        },
-        {
-          name: "client_password",
-          label: "Senha de acesso",
-          placeholder: "Senha",
-          type: "password",
-          required: true,
-          size: "390px",
-        },
-      ],
-    },
-    {
-      section: "Endereço",
-      fields: [
-        {
-          name: "cep",
-          label: "CEP",
-          placeholder: "CEP",
-          required: true,
-          size: "300px",
-        },
-        {
-          name: "rua",
-          label: "Rua",
-          placeholder: "Nome da rua",
-          required: true,
-          size: "390px",
-        },
-        {
-          name: "numeroRua",
-          label: "Nº",
-          placeholder: "Número",
-          required: true,
-          size: "200px",
-        },
-        {
-          name: "bairro",
-          label: "Bairro",
-          placeholder: "Bairro",
-          required: true,
-          size: "250px",
-        },
-        {
-          name: "estado",
-          label: "Estado",
-          placeholder: "Estado",
-          required: true,
-          size: "300px",
-        },
-        {
-          name: "cidade",
-          label: "Cidade",
-          placeholder: "Cidade",
-          required: true,
-          size: "390px",
-          type: "outlined",
-        },
-      ],
-    },
-  ];
-
-  const [addressForms, setAddressForms] = React.useState([{}]);
-
-  const handleAddAddressForm = () => {
-    setAddressForms([...addressForms, {}]);
+  const formFields = {
+    section: "Dados básicos",
+    fields: [
+      {
+        name: "client_socialName",
+        label: "Razão Social",
+        placeholder: "Razão Social",
+        required: true,
+      },
+      {
+        name: "client_cnpj",
+        label: "CNPJ",
+        placeholder: "Número de CNPJ",
+        required: true,
+      },
+      {
+        name: "client_responsibleName",
+        label: "Nome do Responsável",
+        placeholder: "Nome do responsável",
+        required: true,
+      },
+      {
+        name: "client_email",
+        label: "E-mail",
+        placeholder: "E-mail",
+        required: true,
+      },
+      {
+        name: "client_phone",
+        label: "Telefone",
+        placeholder: "Telefone",
+        required: true,
+      },
+      {
+        name: "client_username",
+        label: "Usuário",
+        placeholder: "Nome de usuário",
+        required: true,
+      },
+      {
+        name: "client_password",
+        label: "Senha de acesso",
+        placeholder: "Senha",
+        type: "password",
+        required: true,
+        size: "390px",
+      },
+    ],
   };
 
   return (
@@ -173,22 +135,12 @@ export default function ClientForm() {
           Dados básicos
         </Typography>
         <Divider />
-
         <FormContainer>
-          {formFields[0].fields.map(
+          {formFields.fields.map(
             ({ name, label, placeholder, required, type = "outlined" }) => (
               <FormField key={name}>
                 <Controller
-                  name={
-                    name as
-                      | "cnpj"
-                      | "socialName"
-                      | "responsibleName"
-                      | "email"
-                      | "phone"
-                      | "username"
-                      | "password"
-                  }
+                  name={name as any}
                   control={control}
                   rules={{ required }}
                   render={({ field }) => (
@@ -211,66 +163,24 @@ export default function ClientForm() {
             )
           )}
         </FormContainer>
-
         <Typography fontSize={20} gutterBottom>
           Endereço
         </Typography>
-
         <Divider />
-        {addressForms.map((addressForm, index) => (
-          <div key={index}>
-            <FormContainer>
-              {formFields[1].fields.map(
-                ({
-                  name,
-                  label,
-                  placeholder,
-                  required,
-                  size,
-                  type = "outlined",
-                }) => (
-                  <FormField size={size} key={name}>
-                    <Controller
-                      name={
-                        name as
-                          | "cep"
-                          | "rua"
-                          | "numero"
-                          | "numeroRua"
-                          | "bairro"
-                          | "estado"
-                          | "cidade"
-                      }
-                      control={control}
-                      rules={{ required }}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          id={name}
-                          type={type}
-                          placeholder={placeholder}
-                          required={required}
-                          fullWidth
-                          label={label}
-                          variant="outlined"
-                          size="small"
-                          focused
-                          autoComplete="off"
-                        />
-                      )}
-                    />
-                  </FormField>
-                )
-              )}
-              <WeekDayToggle />
-            </FormContainer>
-          </div>
-        ))}
-
+        <div>
+          {fields.map((field, index) => (
+            <AddressFormComponent
+              key={field.id}
+              control={control}
+              index={index}
+              remove={remove}
+            />
+          ))}
+        </div>
         <div
           style={{
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "flex-end",
             marginTop: "10px",
           }}
         >
@@ -278,7 +188,17 @@ export default function ClientForm() {
             variant="outlined"
             color="primary"
             style={{ marginRight: "10px", color: "green" }}
-            onClick={handleAddAddressForm}
+            onClick={() =>
+              append({
+                cep: "",
+                rua: "",
+                numeroRua: "",
+                bairro: "",
+                estado: "",
+                cidade: "",
+                weekDays: [],
+              })
+            }
           >
             + Adicionar Endereço
           </Button>

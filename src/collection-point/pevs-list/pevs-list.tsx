@@ -84,7 +84,7 @@ export const PEVSList = ({
             </IconButton>
           </div>
 
-          <WeekDayToggle />
+          {/* <WeekDayToggle /> */}
 
           <Button
             variant="contained"

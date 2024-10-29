@@ -23,29 +23,12 @@ const Card = styledComponents.div`
   margin: auto;
   box-shadow: hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px,
     hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px;
-  align-items: center;
-  justify-content: center;
+  
+ 
   padding: 20px;
   background-color: white;
+  border-radius: 10px;
 
-  @media (max-width: 768px) {
-    width: 90%;
-    max-width: 100%;
-    min-width: 100%;
-    gap: 5px;
-    height: 100%;
-    width: 100vw;
-    padding: 40px;
-    margin: 0px;
-  }
-  @media (max-width: 480px) {
-    padding: 10px;
-    gap: 2px;
-    height: 100%;
-    width: 100vw;
-    padding: 40px;
-    margin: 0px;
-  }
   overflow-x: hidden;
   overflow-y: hidden;
 `;
@@ -121,9 +104,23 @@ export default function SignInClient() {
     <SignInContainer>
       <Card>
         <YbyMarca
-          style={{ width: "100%", maxWidth: "100px", height: "auto" }}
+          style={{
+            width: "100%",
+            maxWidth: "100px",
+            height: "auto",
+            margin: "auto",
+          }}
         />
-        <Typography fontSize={20}>Conecte-se à YBY</Typography>
+        <Typography
+          fontSize={20}
+          style={{
+            marginTop: "10px ",
+            marginBottom: "10px",
+            textAlign: "start",
+          }}
+        >
+          Conecte-se à YBY
+        </Typography>
         <Divider />
         <Box
           component="form"
@@ -133,6 +130,7 @@ export default function SignInClient() {
             flexDirection: "column",
             width: "100%",
             gap: 2,
+            marginTop: "20px",
           }}
         >
           <FormControl>

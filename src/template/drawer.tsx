@@ -19,7 +19,8 @@ import ListItemButton from "@mui/material/ListItemButton";
 import * as React from "react";
 import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import YbySvg from "../assets/yby-simple";
+// import YbySvg from "../assets/yby-simple";
+
 import { AuthContext } from "../context/auth-context";
 
 const drawerWidth = 240;
@@ -75,6 +76,7 @@ export default function ResponsiveDrawerLayout(props: Props) {
     navigate("/signIn");
   };
 
+  const ybyPng = require("../assets/ybyBlack.png");
   const drawer = (
     <div
       style={{ backgroundColor: " rgba(221, 195, 147, 0.2)", height: "100%" }}
@@ -85,12 +87,7 @@ export default function ResponsiveDrawerLayout(props: Props) {
           p: 2,
         }}
       >
-        <YbySvg
-          style={{
-            width: "100px",
-            maxWidth: "100px",
-          }}
-        />
+        <img src={ybyPng} alt="YBY Logo" width="100" height="100" />
       </Box>
 
       {user?.isAdmin && (

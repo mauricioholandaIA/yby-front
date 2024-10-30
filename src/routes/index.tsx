@@ -18,6 +18,9 @@ const MainRoutes = () => {
         <>
           <Route path="/signIn" element={<SignIn />} />
           <Route path="/signIn-client" element={<SignInClient />} />
+          {/*<Route element={<ResponsiveDrawerLayout />}>
+            <Route path="/ponto-coleta" element={<CollectionPoint />} />
+          </Route>*/}
         </>
       )}
 

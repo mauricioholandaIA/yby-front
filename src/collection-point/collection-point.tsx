@@ -9,10 +9,11 @@ import { PEVSList } from "./pevs-list/pevs-list";
 const StyledContainer = styledComponents.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 90%;
   padding: 20px;
   align-items: center;
   justify-content: center;
+  overflow-x: hidden;
 `;
 
 const StyledTabContainer = styledComponents.div`

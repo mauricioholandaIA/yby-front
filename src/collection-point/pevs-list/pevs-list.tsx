@@ -11,7 +11,6 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import WeekDayToggle from "../../register/components/WeekDayToggle";
 
 export const PEVSList = ({
   handleSelectedPevs,
@@ -22,6 +21,10 @@ export const PEVSList = ({
     { title: "Card 1", subtitle: "Subtitle 1" },
     { title: "Card 2", subtitle: "Subtitle 2" },
     { title: "Card 3", subtitle: "Subtitle 3" },
+    { title: "Card 4", subtitle: "Subtitle 4" },
+    { title: "Card 5", subtitle: "Subtitle 5" },
+    { title: "Card 6", subtitle: "Subtitle 6" },
+    { title: "Card 7", subtitle: "Subtitle 7" },
   ];
 
   const [open, setOpen] = useState(false);

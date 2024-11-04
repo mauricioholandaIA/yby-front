@@ -41,9 +41,6 @@ export default function ResponsiveDrawerLayout(props: Props) {
 
   const { user, logout } = useContext(AuthContext);
 
-  console.log(user);
-
-  // Remove this const when copying and pasting into your project.
   const container =
     window !== undefined ? () => window().document.body : undefined;
 
@@ -103,14 +100,14 @@ export default function ResponsiveDrawerLayout(props: Props) {
             <List component="div" disablePadding>
               <ListItemButton
                 sx={{ pl: 4 }}
-                onClick={() => navigate("/cadastro")}
+                onClick={() => navigate("/cadastro/cliente")}
               >
                 <ListItemText primary="Clientes" />
               </ListItemButton>
               <ListItemButton sx={{ pl: 4 }}>
                 <ListItemText
                   primary="Cooperativas"
-                  onClick={() => navigate("/cadastro")}
+                  onClick={() => navigate("/cadastro/cooperativa")}
                 />
               </ListItemButton>
             </List>

@@ -1,6 +1,18 @@
-import { Button, Divider, TextField, Typography } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import {
+  Button,
+  Divider,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Box, styled } from "@mui/system";
 import { Controller, useForm } from "react-hook-form";
+import { createCooperative } from "../api/cooperative";
 
 const FormContainer = styled(Box)({
   display: "flex",
@@ -26,41 +38,49 @@ export default function CooperativeForm() {
   });
 
   const onSubmit = async (data: any) => {
-    const formData = new FormData();
+    // const formData = new FormData();
 
-    // Add all form fields to formData
-    Object.entries(data).forEach(([key, value]) => {
-      if (typeof value === "string" || value instanceof Blob) {
-        formData.append(key, value);
-      } else if (value !== null && value !== undefined) {
-        formData.append(key, String(value));
-      }
+    // // Add all form fields to formData
+    // Object.entries(data).forEach(([key, value]) => {
+    //   if (typeof value === "string" || value instanceof Blob) {
+    //     formData.append(key, value);
+    //   } else if (value !== null && value !== undefined) {
+    //     formData.append(key, String(value));
+    //   }
+    // });
+
+    // console.log("Form data:", Object.fromEntries(formData));
+
+    console.log("Form data:", data);
+
+    const cooperative = await createCooperative({
+      cooperative_name: data.cooperative_name,
+      cooperative_code: data.cooperative_code,
     });
 
-    console.log("Form data:", Object.fromEntries(formData));
+    console.log(cooperative);
   };
 
-  const formFields = [
-    {
-      section: "Dados básicos",
-      fields: [
-        {
-          name: "cooperative_name",
-          label: "Nome da Cooperativa",
-          placeholder: "Nome da Cooperativa",
-          required: true,
-          size: "390px",
-        },
-        {
-          name: "cooperative_code",
-          label: "Código de acesso",
-          placeholder: "Código de acesso",
-          required: true,
-          size: "390px",
-        },
-      ],
-    },
-  ];
+  const formFields = {
+    section: "Dados básicos",
+    fields: [
+      {
+        name: "cooperative_name",
+        label: "Nome da Cooperativa",
+        placeholder: "Nome da Cooperativa",
+        required: true,
+        size: "390px",
+      },
+      {
+        name: "cooperative_code",
+        label: "Código de acesso",
+        placeholder: "Código de acesso",
+        required: true,
+        size: "390px",
+        copy: true,
+      },
+    ],
+  };
 
   return (
     <div>
@@ -77,8 +97,8 @@ export default function CooperativeForm() {
           }}
         >
           <FormContainer>
-            {formFields[0].fields.map(
-              ({ name, label, placeholder, required }) => (
+            {formFields.fields.map(
+              ({ name, label, placeholder, required, copy }) => (
                 <FormField key={name}>
                   <Controller
                     name={name as "cooperative_name" | "cooperative_code"}
@@ -97,7 +117,38 @@ export default function CooperativeForm() {
                         size="small"
                         focused
                         autoComplete="off"
+                        slotProps={{
+                          input: {
+                            endAdornment: (
+                              <>
+                                {copy && (
+                                  <ContentCopyIcon
+                                    style={{ cursor: "pointer" }}
+                                    onClick={() => {
+                                      navigator.clipboard.writeText(
+                                        field.value
+                                      );
+                                      field.onChange(field.value);
+                                      field.onBlur();
+                                      alert("Cópiado para a área");
+                                    }}
+                                  />
+                                )}
+                              </>
+                            ),
+                          },
+                        }}
                       />
+
+                      //   <ContentCopyIcon
+                      //     onClick={() => {
+                      //       navigator.clipboard.writeText(field.value);
+                      //       field.onChange(field.value);
+                      //       field.onBlur();
+                      //       alert("Cópiado para a área");
+                      //     }}
+                      //   />
+                      // </>
                     )}
                   />
                 </FormField>

@@ -148,6 +148,7 @@ export const PEVSList = ({
             >
               <Typography style={{ fontWeight: "600", fontSize: "16px" }}>
                 {card.title}
+                {"endereco"}
               </Typography>
               <div
                 style={{
@@ -167,9 +168,7 @@ export const PEVSList = ({
                 <Typography style={{ fontSize: "14px" }}>Disponível</Typography>
               </div>
             </div>
-            <Typography style={{ fontSize: "12px" }}>
-              {card.subtitle}
-            </Typography>
+
             <Button
               variant="outlined"
               color="primary"

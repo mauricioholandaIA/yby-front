@@ -8,4 +8,21 @@ const api = axios.create({
   },
 });
 
+// Interceptor para adicionar o token a todas as requisições
+api.interceptors.request.use(
+  (config) => {
+    const dadosUsuario = localStorage.getItem("usuario");
+    const token = dadosUsuario && JSON.parse(dadosUsuario)?.jwt;
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 export default api;

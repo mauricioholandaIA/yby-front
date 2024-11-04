@@ -35,6 +35,7 @@ const StyledImagePlaceholder = styled("div")({
   justifyContent: "center",
   alignItems: "center",
   cursor: "pointer",
+  borderRadius: "4px",
 });
 
 export default function CollectionForm() {

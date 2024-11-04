@@ -1,16 +1,16 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
 import Divider from "@mui/material/Divider";
 import FormControl from "@mui/material/FormControl";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormLabel from "@mui/material/FormLabel";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
+import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { styled as styledComponents } from "styled-components";
+import { authAdmin, authClient } from "../api/auth";
 import YbyMarca from "../assets/yby-marca";
+import { AuthContext } from "../context/auth-context";
 
 const Card = styledComponents.div`
   display: flex;
@@ -48,15 +48,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const navigate = useNavigate();
-  // const [open, setOpen] = React.useState(false);
-
-  // const handleClickOpen = () => {
-  //   setOpen(true);
-  // };
-
-  // const handleClose = () => {
-  //   setOpen(false);
-  // };
+  const { login } = useContext(AuthContext);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     if (emailError || passwordError) {
@@ -71,8 +63,12 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   };
 
   const validateInputs = () => {
-    const email = document.getElementById("email") as HTMLInputElement;
-    const password = document.getElementById("password") as HTMLInputElement;
+    const email = document.getElementById(
+      "admin-identifier"
+    ) as HTMLInputElement;
+    const password = document.getElementById(
+      "admin-password"
+    ) as HTMLInputElement;
 
     let isValid = true;
 
@@ -97,11 +93,38 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     return isValid;
   };
 
-  const handleSingIn = () => {
-    // const isValid = validateInputs();
-    // if (isValid) {
-    //   navigate("/ponto-coleta");
-    // }
+  const handleSingIn = async () => {
+    const isValid = validateInputs();
+
+    if (isValid) {
+      const email = document.getElementById(
+        "admin-identifier"
+      ) as HTMLInputElement;
+      const password = document.getElementById(
+        "admin-password"
+      ) as HTMLInputElement;
+
+      console.log(email.value, password.value);
+
+      const admin = await authAdmin({
+        identifier: email.value,
+        password: password.value,
+      });
+
+      const formattedAdmin = {
+        jwt: admin.jwt,
+        username: admin.user.username,
+        documentId: admin.user.documentId,
+        email: admin.user.email,
+        isAdmin: admin.user.admin,
+        id: admin.user.id,
+      };
+
+      if (admin) {
+        login(formattedAdmin);
+        navigate("/ponto-coleta");
+      }
+    }
   };
 
   return (
@@ -150,7 +173,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
               helperText={passwordErrorMessage}
               name="password"
               placeholder="••••••"
-              id="admin-password"
+              id="admin-identifier"
               autoFocus
               required
               fullWidth
@@ -177,9 +200,14 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             />
           </FormControl>
 
-          <Link to="/signIn-client">Ir para tela de cliente</Link>
+          <Link to="/signIn-client">Ir para login da cooperativa</Link>
 
-          <Button fullWidth variant="contained" onClick={() => handleSingIn}>
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={handleSingIn}
+            style={{ color: "white" }}
+          >
             Entrar
           </Button>
         </Box>

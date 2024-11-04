@@ -154,7 +154,7 @@ export default function ClientForm() {
                       label={label}
                       variant="outlined"
                       size="small"
-                      focused
+                      // focused
                       autoComplete="off"
                     />
                   )}
@@ -168,14 +168,14 @@ export default function ClientForm() {
         </Typography>
         <Divider />
         <div>
-          {fields.map((field, index) => (
-            <AddressFormComponent
-              key={field.id}
-              control={control}
-              index={index}
-              remove={remove}
-            />
-          ))}
+          {/* {fields.map((field, index) => ( */}
+          <AddressFormComponent
+            key={"AddressFormComponent"}
+            control={control}
+            index={0}
+            remove={remove}
+          />
+          {/* ))} */}
         </div>
         <div
           style={{
@@ -184,24 +184,6 @@ export default function ClientForm() {
             marginTop: "10px",
           }}
         >
-          <Button
-            variant="outlined"
-            color="primary"
-            style={{ marginRight: "10px", color: "green" }}
-            onClick={() =>
-              append({
-                cep: "",
-                rua: "",
-                numeroRua: "",
-                bairro: "",
-                estado: "",
-                cidade: "",
-                weekDays: [],
-              })
-            }
-          >
-            + Adicionar Endereço
-          </Button>
           <Button
             style={{ color: "#ffff" }}
             type="submit"

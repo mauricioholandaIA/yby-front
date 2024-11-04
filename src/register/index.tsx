@@ -1,5 +1,5 @@
 import { Tab, Tabs, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { styled as styledComponents } from "styled-components";
 import ClientForm from "./client-form";
 import CooperativeForm from "./cooperative-form";
@@ -16,12 +16,21 @@ const StyledCenterContainer = styledComponents.div`
     padding: 40px 40px 0;
 `;
 
-export default function Register() {
+export default function Register({ type }: { type: string }) {
   const [value, setValue] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    if (type === "cliente") {
+      setValue(0);
+    }
+    if (type === "cooperativa") {
+      setValue(1);
+    }
+  }, [type]);
 
   return (
     <StyledContainer>

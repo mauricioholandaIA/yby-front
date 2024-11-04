@@ -77,12 +77,6 @@ export const AddressFormComponent = ({
     ],
   };
 
-  const [weekDays, setWeekDays] = useState<string[]>([]); // Estado para os dias selecionados
-
-  const handleWeekDaysChange = (days: string[]) => {
-    setWeekDays(days);
-  };
-
   return (
     <div>
       <FormContainer>
@@ -113,25 +107,25 @@ export const AddressFormComponent = ({
           )
         )}
         <Controller
-          name={`addresses[${index}].weekDays`} // Conectar o WeekDayToggle com o estado do formulário
+          name={`addresses[${index}].weekDays`}
           control={control}
           render={({ field }) => (
             <WeekDayToggle
-              onChange={field.onChange} // Atualiza o estado no React Hook Form
-              selectedDays={field.value || []} // Passa os dias selecionados
+              onChange={field.onChange}
+              selectedDays={field.value || []}
             />
           )}
         />
       </FormContainer>
-      <Button
+      {/* <Button
         variant="outlined"
         color="primary"
         style={{ marginRight: "10px", color: "green" }}
-        onClick={() => remove(index)} // Remove o endereço atual
+        onClick={() => remove(index)} 
       >
         <DeleteIcon style={{ marginRight: "5px" }} />
         Excluir Endereço
-      </Button>
+      </Button> */}
     </div>
   );
 };

@@ -30,7 +30,18 @@ const MainRoutes = () => {
           <>
             {currentUser.isAdmin && (
               <>
-                <Route path="/cadastro" element={<Register />} />
+                <Route
+                  path="/cadastro"
+                  element={<Navigate to="/cadastro/cliente" />}
+                />
+                <Route
+                  path="/cadastro/cliente"
+                  element={<Register type="cliente" />}
+                />
+                <Route
+                  path="/cadastro/cooperativa"
+                  element={<Register type="cooperativa" />}
+                />
                 <Route path="/ponto-coleta" element={<CollectionPoint />} />
               </>
             )}

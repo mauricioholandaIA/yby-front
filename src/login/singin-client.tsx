@@ -1,15 +1,13 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
 import Divider from "@mui/material/Divider";
 import FormControl from "@mui/material/FormControl";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { styled as styledComponents } from "styled-components";
-import { authClient } from "../api/auth";
+import { authAdmin } from "../api/auth";
 import YbyMarca from "../assets/yby-marca";
 import { AuthContext } from "../context/auth-context";
 
@@ -77,7 +75,7 @@ export default function SignInClient() {
       ) as HTMLInputElement;
       // com a senha , fazer login e com os dados de usuario da resposta salvar no contexto
 
-      const client = await authClient({
+      const client = await authAdmin({
         identifier: password.value,
         password: password.value,
       });
@@ -153,9 +151,14 @@ export default function SignInClient() {
             />
           </FormControl>
 
-          <Link to="/signIn">Ir para tela de login</Link>
+          <Link to="/signIn">Ir para login do cliente</Link>
 
-          <Button fullWidth variant="contained" onClick={handleSingIn}>
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={handleSingIn}
+            style={{ color: "white" }}
+          >
             Entrar
           </Button>
         </Box>

@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { styled as styledComponents } from "styled-components";
-import { authAdmin } from "../api/auth";
+import { authClient } from "../api/auth";
 import YbyMarca from "../assets/yby-marca";
 import { AuthContext } from "../context/auth-context";
 
@@ -75,12 +75,10 @@ export default function SignInClient() {
       ) as HTMLInputElement;
       // com a senha , fazer login e com os dados de usuario da resposta salvar no contexto
 
-      const client = await authAdmin({
-        identifier: password.value,
+      const client = await authClient({
+        identifier: `${password.value}@coop.com`,
         password: password.value,
       });
-
-      console.log(client);
 
       const formattedClient = {
         jwt: client.jwt,
@@ -89,6 +87,7 @@ export default function SignInClient() {
         email: client.user.email,
         isAdmin: client.user.admin,
         id: client.user.id,
+        cooperative_id: client.user.cooperative_id,
       };
 
       if (client) {

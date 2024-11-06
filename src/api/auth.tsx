@@ -12,7 +12,6 @@ const authAdmin = async ({
       identifier,
       password,
     });
-    console.log(response.data);
 
     return response.data;
   } catch (error) {
@@ -34,7 +33,6 @@ const authClient = async ({
       identifier,
       password,
     });
-    console.log(response.data);
 
     return response.data;
   } catch (error) {

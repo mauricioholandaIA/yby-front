@@ -8,6 +8,8 @@ interface AuthContextProps {
     email: string;
     isAdmin: boolean;
     id: number;
+    cooperative_id?: string;
+    client_id?: string;
   } | null;
   login: (user: {
     jwt: string;

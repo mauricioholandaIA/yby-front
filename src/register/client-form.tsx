@@ -1,9 +1,7 @@
 import { Button, Divider, TextField, Typography } from "@mui/material";
 import { Box, styled } from "@mui/system";
-import qs from "qs";
-import React from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import WeekDayToggle from "./components/WeekDayToggle";
+import { createClient } from "../api/client";
 import { AddressFormComponent } from "./components/address-form-component";
 
 const FormContainer = styled(Box)({
@@ -28,7 +26,7 @@ interface Address {
   bairro: string;
   estado: string;
   cidade: string;
-  weekDays: string[];
+  // weekDays: string[];
 }
 
 interface ClientFormData {
@@ -63,19 +61,38 @@ export default function ClientForm() {
 
   const onSubmit = async (data: ClientFormData) => {
     console.log("Form data:", data);
-    const formData = new FormData();
 
-    Object.entries(data).forEach(([key, value]) => {
-      if (typeof value === "string" || value instanceof Blob) {
-        formData.append(key, value);
-      } else if (Array.isArray(value)) {
-        formData.append(key, JSON.stringify(value));
-      } else if (value !== null && value !== undefined) {
-        formData.append(key, String(value));
-      }
+    // const formData = new FormData();
+
+    // Object.entries(data).forEach(([key, value]) => {
+    //   if (typeof value === "string" || value instanceof Blob) {
+    //     formData.append(key, value);
+    //   } else if (Array.isArray(value)) {
+    //     formData.append(key, JSON.stringify(value));
+    //   } else if (value !== null && value !== undefined) {
+    //     formData.append(key, String(value));
+    //   }
+    // });
+
+    // console.log("Form data processed:", data);
+
+    const createdClient = await createClient({
+      cnpj: data.client_cnpj,
+      social_name: data.client_socialName,
+      responsible_name: data.client_responsibleName,
+      email: data.client_email,
+      phone: data.client_phone,
+      password: data.client_password,
+
+      adress_data: {
+        street: data.addresses[0].rua,
+        number: data.addresses[0].numeroRua,
+        neighborhood: data.addresses[0].bairro,
+        city: data.addresses[0].cidade,
+        state: data.addresses[0].estado,
+        cep: data.addresses[0].cep,
+      },
     });
-
-    console.log("Form data processed:", Object.fromEntries(formData));
   };
 
   const formFields = {

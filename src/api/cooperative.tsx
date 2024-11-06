@@ -24,4 +24,24 @@ const createCooperative = async ({
   }
 };
 
-export { createCooperative };
+const getCooperatives = async () => {
+  try {
+    const response = await api.get("/cooperatives");
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao buscar as cooperativas:", error);
+    return null;
+  }
+};
+
+const getListOfPevsByCooperative = async () => {
+  try {
+    const response = await api.get("/plannings?populate=*");
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao buscar os cooperativas:", error);
+    return null;
+  }
+};
+
+export { createCooperative, getCooperatives, getListOfPevsByCooperative };

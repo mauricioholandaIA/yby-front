@@ -19,7 +19,7 @@ const WeekDayToggle = ({ onChange, selectedDays }: WeekDayToggleProps) => {
     Qua: false,
     Qui: false,
     Sex: false,
-    Sáb: false,
+    Sab: false,
     Dom: false,
   });
 

@@ -2,7 +2,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, Button, styled, TextField } from "@mui/material";
 import { useState } from "react";
 import { Controller } from "react-hook-form";
-import WeekDayToggle from "./WeekDayToggle";
+// import WeekDayToggle from "./WeekDayToggle";
 
 const FormContainer = styled(Box)({
   display: "flex",
@@ -84,7 +84,7 @@ export const AddressFormComponent = ({
           ({ name, label, placeholder, required, size, type = "outlined" }) => (
             <FormField size={size} key={name}>
               <Controller
-                name={`addresses[${index}].${name}`} // Atualiza o caminho para cada endereço
+                name={`addresses[${index}].${name}`}
                 control={control}
                 rules={{ required }}
                 render={({ field }) => (
@@ -98,7 +98,7 @@ export const AddressFormComponent = ({
                     label={label}
                     variant="outlined"
                     size="small"
-                    focused
+                    // focused
                     autoComplete="off"
                   />
                 )}
@@ -106,7 +106,7 @@ export const AddressFormComponent = ({
             </FormField>
           )
         )}
-        <Controller
+        {/* <Controller
           name={`addresses[${index}].weekDays`}
           control={control}
           render={({ field }) => (
@@ -115,7 +115,7 @@ export const AddressFormComponent = ({
               selectedDays={field.value || []}
             />
           )}
-        />
+        /> */}
       </FormContainer>
       {/* <Button
         variant="outlined"

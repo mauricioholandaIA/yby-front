@@ -12,9 +12,11 @@ import {
   SelectChangeEvent,
   Typography,
 } from "@mui/material";
-import { Box, styled } from "@mui/system";
-import React, { useState } from "react";
+import { styled } from "@mui/system";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { uploadImage } from "../../api/collection";
+import Leaf from "../../assets/leaf";
 
 const StyledImage = styled("img")({
   objectFit: "fill",
@@ -38,7 +40,16 @@ const StyledImagePlaceholder = styled("div")({
   borderRadius: "4px",
 });
 
-export default function CollectionForm() {
+export default function CollectionForm({
+  selectedPEV,
+  pevs,
+}: {
+  selectedPEV: any;
+  pevs: any;
+}) {
+  // console.log("selected", selectedPEV);
+  // console.log("pevs", pevs);
+
   const { control, handleSubmit } = useForm({
     defaultValues: {
       collectionPoint: "",
@@ -51,79 +62,91 @@ export default function CollectionForm() {
     },
   });
 
-  const [coletorPreviewUrl, setColetorPreviewUrl] = useState<string | null>(
-    null
-  );
-  const [avariaPreviewUrl, setAvariaPreviewUrl] = useState<string | null>(null);
+  const [coletorFile, setColetorFile] = useState<any>(null);
+  const [avariaFile, setAvariaFile] = useState<any>(null);
 
-  const handleImageChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    fieldName: string
+  const [coletorImage, setColetorImage] = useState<any>(null);
+  const [avariaImage, setAvariaImage] = useState<any>(null);
+
+  const handleFileChangeColetor = (
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      const previewUrl = URL.createObjectURL(file);
-      if (fieldName === "coletorImage") {
-        setColetorPreviewUrl(previewUrl);
-      } else {
-        setAvariaPreviewUrl(previewUrl);
-      }
+    if (event.target.files) {
+      const selectedFile = event.target.files[0];
+      const previewUrl = URL.createObjectURL(selectedFile);
+      setColetorImage(previewUrl);
+      setColetorFile(selectedFile);
     }
   };
 
-  const fetchAndConvertToBase64 = async (url: string): Promise<string> => {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
+  const handleFileChangeAvaria = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files) {
+      const selectedFile = event.target.files[0];
+      const previewUrl = URL.createObjectURL(selectedFile);
+      setAvariaImage(previewUrl);
+      setAvariaFile(selectedFile);
+    }
   };
 
   const onSubmit = async (data: any) => {
-    const formData = new FormData();
+    // Verifica se o arquivo foi selecionado
+    if (!coletorFile) {
+      alert("Por favor, selecione um arquivo.");
+      return;
+    }
 
-    // Add all form fields to formData
-    Object.entries(data).forEach(([key, value]) => {
-      if (typeof value === "string" || value instanceof Blob) {
-        formData.append(key, value);
-      } else if (value !== null && value !== undefined) {
-        formData.append(key, String(value));
+    try {
+      const response = await uploadImage(coletorFile);
+
+      if (response?.ok) {
+        const data = await response.json();
+        console.log("Upload bem-sucedido:", data);
+        alert("Imagem carregada com sucesso!");
+      } else {
+        throw new Error("Falha no upload");
       }
-    });
-
-    if (coletorPreviewUrl) {
-      const coletorBase64 = await fetchAndConvertToBase64(coletorPreviewUrl);
-      formData.append("coletorImage", coletorBase64);
+    } catch (error) {
+      throw new Error("Falha no upload");
     }
 
-    if (avariaPreviewUrl) {
-      const avariaBase64 = await fetchAndConvertToBase64(avariaPreviewUrl);
-      formData.append("avariaImage", avariaBase64);
+    if (!avariaFile) {
+      alert("Por favor, selecione um arquivo.");
+      return;
     }
 
-    console.log("Form data:", Object.fromEntries(formData));
-    // Here you can send the formData to your server
+    try {
+      const response = await uploadImage(avariaFile);
+      if (response?.ok) {
+        const data = await response.json();
+        console.log("Upload bem-sucedido:", data);
+        alert("Imagem carregada com sucesso!");
+      } else {
+        throw new Error("Falha no upload");
+      }
+    } catch (error) {
+      throw new Error("Falha no upload");
+    }
 
-    // Example of how you might send this data to a server
-    // fetch('/api/submit-form', {
-    //   method: 'POST',
-    //   body: formData
-    // }).then(response => response.json())
-    //   .then(result => {
-    //     console.log('Success:', result);
-    //   })
-    //   .catch(error => {
-    //     console.error('Error:', error);
-    //   });
+    const { collectionPoint, residuos, weight, avariaDescription } = data;
+
+    console.log("collectionPoint", collectionPoint);
+    console.log("residuos", residuos);
+    console.log("weight", weight);
+    console.log("avariaDescription", avariaDescription);
+    console.log("coletorImage", coletorImage);
+    console.log("avariaImage", avariaImage);
   };
 
   const [collectionPoint, setCollectionPoint] = React.useState("");
-
   const handleChange = (event: SelectChangeEvent) => {
     setCollectionPoint(event.target.value as string);
+  };
+
+  const [residuos, setResiduos] = React.useState("");
+  const handleChangeResiduos = (event: SelectChangeEvent) => {
+    setResiduos(event.target.value as string);
   };
 
   const [selectedValue, setSelectedValue] = React.useState("a");
@@ -131,6 +154,12 @@ export default function CollectionForm() {
   const handleChangeRadio = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedValue(event.target.value);
   };
+
+  useEffect(() => {
+    if (selectedPEV) {
+      setCollectionPoint(selectedPEV.id.toString());
+    }
+  }, []);
 
   return (
     <div>
@@ -150,12 +179,12 @@ export default function CollectionForm() {
             height: "40px",
             width: "100%",
             marginBottom: "5px",
-            backgroundColor: " rgba(221, 195, 147, 0.2)",
             alignItems: "center",
             justifyContent: "start",
-            borderRadius: "5px",
+            flexDirection: "row",
           }}
         >
+          <Leaf />
           <Typography
             style={{ marginLeft: "10px", fontSize: "20px", fontWeight: "500" }}
           >
@@ -178,9 +207,20 @@ export default function CollectionForm() {
                     label="Ponto de coleta"
                     onChange={handleChange}
                   >
-                    <MenuItem value={10}>Ponto 1</MenuItem>
-                    <MenuItem value={20}>Ponto 2</MenuItem>
-                    <MenuItem value={30}>Ponto 3</MenuItem>
+                    {pevs.map(
+                      (pev: {
+                        adress_data: any;
+                        id: string;
+                        social_name: any;
+                        street: any;
+                        number: any;
+                        neighborhood: any;
+                      }) => (
+                        <MenuItem value={pev.id}>
+                          {`${pev.social_name} - ${pev.adress_data[0].street}, ${pev.adress_data[0].number} - ${pev.adress_data[0].neighborhood} `}
+                        </MenuItem>
+                      )
+                    )}
                   </Select>
                 </FormControl>
               )}
@@ -198,13 +238,13 @@ export default function CollectionForm() {
                   <Select
                     labelId="residuos"
                     id="Tipo de residuos"
-                    value={collectionPoint}
+                    value={residuos}
                     label="residuos"
-                    onChange={handleChange}
+                    onChange={handleChangeResiduos}
                   >
-                    <MenuItem value={10}>Ponto 1</MenuItem>
-                    <MenuItem value={20}>Ponto 2</MenuItem>
-                    <MenuItem value={30}>Ponto 3</MenuItem>
+                    <MenuItem value={10}>Residuo 1</MenuItem>
+                    <MenuItem value={20}>Residuo 2</MenuItem>
+                    <MenuItem value={30}>Residuo 3</MenuItem>
                   </Select>
                 </FormControl>
               )}
@@ -216,12 +256,11 @@ export default function CollectionForm() {
           style={{
             display: "flex",
             height: "40px",
-            backgroundColor: " rgba(221, 195, 147, 0.2)",
             alignItems: "center",
             justifyContent: "start",
-            borderRadius: "5px",
           }}
         >
+          <Leaf />
           <Typography
             style={{ marginLeft: "10px", fontSize: "20px", fontWeight: "500" }}
           >
@@ -233,8 +272,14 @@ export default function CollectionForm() {
           <Typography style={{ fontSize: "14px", fontWeight: "400" }}>
             Coletor
           </Typography>
-          {coletorPreviewUrl ? (
-            <StyledImage src={coletorPreviewUrl} alt="Preview Coletor" />
+          {coletorImage ? (
+            <StyledImage
+              onClick={() =>
+                document.getElementById("image-upload-coletor")?.click()
+              }
+              src={coletorImage}
+              alt="Preview Coletor"
+            />
           ) : (
             <StyledImagePlaceholder
               onClick={() =>
@@ -259,10 +304,11 @@ export default function CollectionForm() {
             </StyledImagePlaceholder>
           )}
           <input
-            id="image-upload-coletor"
             type="file"
+            id="image-upload-coletor"
+            name="file"
+            onChange={handleFileChangeColetor}
             accept="image/*"
-            onChange={(e) => handleImageChange(e, "coletorImage")}
             style={{ display: "none" }}
           />
 
@@ -298,8 +344,8 @@ export default function CollectionForm() {
 
           {selectedValue === "yes" && (
             <>
-              {avariaPreviewUrl ? (
-                <StyledImage src={avariaPreviewUrl} alt="Preview Avaria" />
+              {avariaImage ? (
+                <StyledImage src={avariaImage} alt="Preview Avaria" />
               ) : (
                 <StyledImagePlaceholder
                   onClick={() =>
@@ -327,10 +373,11 @@ export default function CollectionForm() {
                 </StyledImagePlaceholder>
               )}
               <input
-                id="image-upload-avaria"
                 type="file"
+                id="image-upload-avaria"
+                name="file"
+                onChange={handleFileChangeAvaria}
                 accept="image/*"
-                onChange={(e) => handleImageChange(e, "avariaImage")}
                 style={{ display: "none" }}
               />
             </>

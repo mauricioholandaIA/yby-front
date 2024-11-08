@@ -1,8 +1,11 @@
 import { ToggleButton } from "@mui/material";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 import { tab } from "@testing-library/user-event/dist/tab";
 import { styled as styledComponents } from "styled-components";
+import { getClients } from "../api/client";
+import { getListOfPevsByCooperative } from "../api/cooperative";
+import { AuthContext } from "../context/auth-context";
 import CollectionForm from "./collection-form/collection-form";
 import { PEVSList } from "./pevs-list/pevs-list";
 
@@ -30,8 +33,14 @@ const StyledTabContainer = styledComponents.div`
 
 export default function CollectionPoint() {
   // const navigate = useNavigate();
+  const { user: currentUser } = useContext(AuthContext);
+
+  console.log(currentUser);
+
   const [selectedTab, setSelectedTab] = useState("pevs");
   const [selectedPEVS, setSelectedPEVS] = useState();
+
+  const [pevs, setPevs] = useState<any[]>([]);
 
   const handleTabChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -44,9 +53,53 @@ export default function CollectionPoint() {
 
   const handleSelectedPevs = (pevs: any) => {
     setSelectedPEVS(pevs);
-    console.log(pevs);
     setSelectedTab("coleta");
   };
+
+  function buscarPorIds(ids: string | any[], getPevs: { data: any[] }) {
+    const empresasEncontradas = getPevs?.data.filter(
+      (item: { documentId: any }) => ids.includes(item.documentId)
+    );
+    if (empresasEncontradas.length > 0) {
+      return empresasEncontradas;
+    } else {
+      return [];
+      // return `Nenhuma empresa encontrada para os IDs fornecidos.`;
+    }
+  }
+
+  useEffect(() => {
+    console.log(currentUser);
+
+    const handleGetPevs = async () => {
+      try {
+        const response = await getListOfPevsByCooperative();
+
+        const resultadoDosIds = response.data
+          .filter((item: { cooperatives: any[] }) =>
+            item.cooperatives.some(
+              (cooperative) =>
+                cooperative.documentId === currentUser?.cooperative_id
+            )
+          )
+          .map(
+            (item: { client: { documentId: any } }) => item.client.documentId
+          );
+        console.log("listar os ids", resultadoDosIds);
+        const getPevs = await getClients();
+        console.log("all clients", getPevs);
+        const resultado = buscarPorIds(resultadoDosIds, getPevs);
+        console.log("listar os itens", resultado);
+
+        setPevs(resultado);
+      } catch (error) {
+        console.error("Erro ao buscar os Pevs:", error);
+        return null;
+      }
+    };
+
+    handleGetPevs();
+  }, []);
 
   return (
     <StyledContainer>
@@ -89,9 +142,11 @@ export default function CollectionPoint() {
         </ToggleButton>
       </StyledTabContainer>
       {selectedTab === "pevs" && (
-        <PEVSList handleSelectedPevs={handleSelectedPevs} />
+        <PEVSList handleSelectedPevs={handleSelectedPevs} pevs={pevs} />
       )}
-      {selectedTab === "coleta" && <CollectionForm />}
+      {selectedTab === "coleta" && (
+        <CollectionForm selectedPEV={selectedPEVS} pevs={pevs} />
+      )}
     </StyledContainer>
   );
 }

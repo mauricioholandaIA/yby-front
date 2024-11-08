@@ -10,85 +10,18 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
-import { getClients, getSingleClients } from "../../api/client";
-import { getListOfPevsByCooperative } from "../../api/cooperative";
-import { AuthContext } from "../../context/auth-context";
+import { Key, useState } from "react";
 
 export const PEVSList = ({
+  pevs,
   handleSelectedPevs,
 }: {
   handleSelectedPevs: any;
+  pevs: any;
 }) => {
-  const { user: currentUser } = useContext(AuthContext);
-  // const cards = [
-  //   { title: "Card 1", subtitle: "Subtitle 1" },
-  //   // { title: "Card 2", subtitle: "Subtitle 2" },
-  //   // { title: "Card 3", subtitle: "Subtitle 3" },
-  //   // { title: "Card 4", subtitle: "Subtitle 4" },
-  //   // { title: "Card 5", subtitle: "Subtitle 5" },
-  //   // { title: "Card 6", subtitle: "Subtitle 6" },
-  //   // { title: "Card 7", subtitle: "Subtitle 7" },
-  // ];
-
-  const [cards, setCardsData] = useState<any[]>([]);
-
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  //   const resultado = dados
-  //   .filter(item =>
-  //     item.cooperatives.some(cooperative => cooperative.documentId === cooperativaSelecionada)
-  //   )
-  //   .map(item => item.client.documentId);
-
-  // console.log(resultado);
-
-  function buscarPorIds(ids: string | any[], getPevs: { data: any[] }) {
-    const empresasEncontradas = getPevs?.data.filter(
-      (item: { documentId: any }) => ids.includes(item.documentId)
-    );
-    if (empresasEncontradas.length > 0) {
-      return empresasEncontradas;
-    } else {
-      return [];
-      // return `Nenhuma empresa encontrada para os IDs fornecidos.`;
-    }
-  }
-
-  useEffect(() => {
-    console.log(currentUser);
-
-    const handleGetPevs = async () => {
-      try {
-        const response = await getListOfPevsByCooperative();
-
-        const resultadoDosIds = response.data
-          .filter((item: { cooperatives: any[] }) =>
-            item.cooperatives.some(
-              (cooperative) =>
-                cooperative.documentId === currentUser?.cooperative_id
-            )
-          )
-          .map(
-            (item: { client: { documentId: any } }) => item.client.documentId
-          );
-        console.log("listar os ids", resultadoDosIds);
-        const getPevs = await getClients();
-        console.log("all clients", getPevs);
-        const resultado = buscarPorIds(resultadoDosIds, getPevs);
-        console.log("listar os itens", resultado);
-
-        setCardsData(resultado);
-      } catch (error) {
-        console.error("Erro ao buscar os Pevs:", error);
-        return null;
-      }
-    };
-
-    handleGetPevs();
-  }, []);
 
   return (
     <>
@@ -184,63 +117,76 @@ export const PEVSList = ({
           </IconButton>
         </div>
 
-        {cards.map((card, index) => (
-          <Card
-            key={index}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              width: "95%",
-              backgroundColor: " rgba(221, 195, 147, 0.2)",
-              padding: "10px",
-              gap: "8px",
-              flex: 1,
-            }}
-          >
-            <div
+        {pevs.map(
+          (
+            pev: {
+              adress_data: any;
+              social_name: string;
+            },
+            index: Key
+          ) => (
+            <Card
+              key={index}
               style={{
                 display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
+                flexDirection: "column",
+                width: "95%",
+                backgroundColor: " rgba(221, 195, 147, 0.2)",
+                padding: "10px",
+                gap: "8px",
+                flex: 1,
               }}
             >
-              <Typography style={{ fontWeight: "600", fontSize: "16px" }}>
-                {card.social_name}
-              </Typography>
               <div
                 style={{
-                  border: "1px solid #ccc",
-                  backgroundColor: "transparent",
-                  padding: "1px 2px",
                   display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                   alignItems: "center",
-                  borderRadius: "5px",
-                  justifyContent: "center",
-                  height: "24px",
                 }}
               >
-                <CheckCircleIcon
-                  style={{ fontSize: 14, marginRight: 10, color: "green" }}
-                />
-                <Typography style={{ fontSize: "14px" }}>Disponível</Typography>
+                <Typography style={{ fontWeight: "600", fontSize: "16px" }}>
+                  {pev.social_name}
+                </Typography>
+                <div
+                  style={{
+                    border: "1px solid #ccc",
+                    backgroundColor: "transparent",
+                    padding: "1px 2px",
+                    display: "flex",
+                    alignItems: "center",
+                    borderRadius: "5px",
+                    justifyContent: "center",
+                    height: "24px",
+                  }}
+                >
+                  <CheckCircleIcon
+                    style={{ fontSize: 14, marginRight: 10, color: "green" }}
+                  />
+                  <Typography style={{ fontSize: "14px" }}>
+                    Disponível
+                  </Typography>
+                </div>
               </div>
-            </div>
+              <Typography style={{ fontWeight: "400", fontSize: "14px" }}>
+                {`${pev.adress_data[0].street},No.${pev.adress_data[0].number}, ${pev.adress_data[0].neighborhood}, ${pev.adress_data[0].city}, ${pev.adress_data[0].state}, cep:${pev.adress_data[0].cep}`}
+              </Typography>
 
-            <Button
-              variant="outlined"
-              color="primary"
-              style={{
-                padding: "8px 16px",
-                borderRadius: "5px",
-                width: "100%",
-              }}
-              onClick={() => handleSelectedPevs(card)}
-            >
-              Coletar aqui
-            </Button>
-          </Card>
-        ))}
+              <Button
+                variant="outlined"
+                color="primary"
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: "5px",
+                  width: "100%",
+                }}
+                onClick={() => handleSelectedPevs(pev)}
+              >
+                Coletar aqui
+              </Button>
+            </Card>
+          )
+        )}
       </div>
     </>
   );

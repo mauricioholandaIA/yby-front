@@ -118,6 +118,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         email: admin.user.email,
         isAdmin: admin.user.admin,
         id: admin.user.id,
+        client_id: admin.user.client_id,
       };
 
       if (admin) {

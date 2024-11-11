@@ -1,4 +1,6 @@
-const uploadImage = async (file: any) => {
+import api from "./api";
+
+const uploadImage = async (file: any): Promise<any[]> => {
   const formData = new FormData();
   formData.append("files", file);
 
@@ -16,11 +18,24 @@ const uploadImage = async (file: any) => {
       },
     });
 
-    return response;
+    return response.json();
   } catch (error) {
     console.error("Erro ao fazer upload:", error);
+    return [];
+  }
+};
+
+const createCollection = async (data: any) => {
+  try {
+    const response = await api.post("/collections", {
+      data,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao criar a coleta:", error);
     return null;
   }
 };
 
-export { uploadImage };
+export { createCollection, uploadImage };

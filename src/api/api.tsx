@@ -8,6 +8,7 @@ const api = axios.create({
   },
 });
 
+
 // Interceptor para adicionar o token a todas as requisições
 api.interceptors.request.use(
   (config) => {
@@ -24,5 +25,8 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+
+
 
 export default api;

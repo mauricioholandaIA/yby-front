@@ -7,20 +7,17 @@ import { useContext } from "react";
 import { AuthContext } from "../context/auth-context";
 import SignInClient from "../login/singin-client";
 import Register from "../register";
+import PlanningList from "../plannings";
 
 const MainRoutes = () => {
   const { user: currentUser } = useContext(AuthContext);
 
   return (
     <Routes>
-      {/* Public Routes for non-logged-in users */}
       {!currentUser && (
         <>
           <Route path="/signIn" element={<SignIn />} />
           <Route path="/signIn-client" element={<SignInClient />} />
-          {/*<Route element={<ResponsiveDrawerLayout />}>
-            <Route path="/ponto-coleta" element={<CollectionPoint />} />
-          </Route>*/}
         </>
       )}
 
@@ -43,12 +40,14 @@ const MainRoutes = () => {
                   element={<Register type="cooperativa" />}
                 />
                 <Route path="/ponto-coleta" element={<CollectionPoint />} />
+
+                <Route path="/planejamento" element={<PlanningList />} />
               </>
             )}
             {!currentUser.isAdmin && (
               <Route path="/ponto-coleta" element={<CollectionPoint />} />
             )}
-            <Route path="*" element={<Navigate to="/ponto-coleta" />} />
+            <Route path="*" element={<Navigate to="/cadastro" />} />
           </>
         )}
       </Route>

@@ -4,7 +4,6 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { styled as styledComponents } from "styled-components";
 import ClientForm from "./client-form";
 import CooperativeForm from "./cooperative-form";
-import PlanningList from "./planning-list";
 
 const StyledContainer = styledComponents.div`
     display: flex;
@@ -56,8 +55,6 @@ export default function Register({ type }: { type: string }) {
 
         {value === 0 && <ClientForm />}
         {value === 1 && <CooperativeForm />}
-
-        {/* {value === 2 && <PlanningList />} */}
       </StyledCenterContainer>
     </StyledContainer>
   );

@@ -96,6 +96,7 @@ export default function ResponsiveDrawerLayout(props: Props) {
             <ListItemText primary="Cadastro" />
             {open ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
+
           <Collapse in={open} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               <ListItemButton
@@ -112,6 +113,13 @@ export default function ResponsiveDrawerLayout(props: Props) {
               </ListItemButton>
             </List>
           </Collapse>
+
+          <ListItemButton onClick={() => navigate("/planejamento")}>
+            <ListItemIcon>
+              <Person />
+            </ListItemIcon>
+            <ListItemText primary="Planejamento" />
+          </ListItemButton>
         </>
       )}
 
@@ -120,7 +128,6 @@ export default function ResponsiveDrawerLayout(props: Props) {
           <Place />
         </ListItemIcon>
         <ListItemText primary="PEVs" />
-        {/* {open ? <ExpandLess /> : <ExpandMore />} */}
       </ListItemButton>
 
       <Box sx={{ position: "absolute", bottom: 0, width: "100%" }}>

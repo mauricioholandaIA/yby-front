@@ -74,14 +74,16 @@ export default function CollectionPoint() {
     const handleGetPevs = async () => {
       try {
         const response = await getListOfPevsByCooperative();
-
+        console.log(response.data);
         const resultadoDosIds = response.data
-          .filter((item: { cooperatives: any[] }) =>
-            item.cooperatives.some(
-              (cooperative) =>
-                cooperative.documentId === currentUser?.cooperative_id
-            )
-          )
+          .filter((item: any) => {
+            const dias = ["seg", "ter", "qua", "qui", "sex", "sab", "dom"];
+            return dias.some(
+              (dia) =>
+                item[dia] &&
+                item[dia].documentId === currentUser?.cooperative_id
+            );
+          })
           .map(
             (item: { client: { documentId: any } }) => item.client.documentId
           );

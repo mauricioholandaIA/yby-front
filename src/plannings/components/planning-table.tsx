@@ -3,7 +3,7 @@ import { getCooperatives } from "../../api/cooperative";
 import PevForm from "./pev-form";
 
 const TableComponent = ({ planningList }: { planningList: any }) => {
-  const headerColumns = ["PEV", "SEG", "TER", "QUA", "QUI", "SEX", ""];
+  const headerColumns = ["SEG", "TER", "QUA", "QUI", "SEX", ""];
 
   const [cooperatives, setCooperatives] = React.useState<any[]>([]);
   console.log(planningList);
@@ -71,7 +71,7 @@ const TableComponent = ({ planningList }: { planningList: any }) => {
 
   return (
     <div>
-      <div
+      {/* <div
         style={{
           backgroundColor: "#F9F5ED",
           display: "flex",
@@ -84,7 +84,7 @@ const TableComponent = ({ planningList }: { planningList: any }) => {
             {column}
           </div>
         ))}
-      </div>
+      </div> */}
       <div>
         {dataPev.map((pev: any, index: any) => (
           <PevForm title={pev?.title} cooperatives={cooperatives} pev={pev} />

@@ -139,16 +139,6 @@ export default function CooperativeForm() {
                           },
                         }}
                       />
-
-                      //   <ContentCopyIcon
-                      //     onClick={() => {
-                      //       navigator.clipboard.writeText(field.value);
-                      //       field.onChange(field.value);
-                      //       field.onBlur();
-                      //       alert("Cópiado para a área");
-                      //     }}
-                      //   />
-                      // </>
                     )}
                   />
                 </FormField>

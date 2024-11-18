@@ -38,4 +38,14 @@ const createCollection = async (data: any) => {
   }
 };
 
-export { createCollection, uploadImage };
+const getCollection = async () => {
+  try {
+    const response = await api.get("/collections?populate=*");
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao buscar as coletas:", error);
+    return null;
+  }
+};
+
+export { createCollection, getCollection, uploadImage };

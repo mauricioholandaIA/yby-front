@@ -106,26 +106,7 @@ export const AddressFormComponent = ({
             </FormField>
           )
         )}
-        {/* <Controller
-          name={`addresses[${index}].weekDays`}
-          control={control}
-          render={({ field }) => (
-            <WeekDayToggle
-              onChange={field.onChange}
-              selectedDays={field.value || []}
-            />
-          )}
-        /> */}
       </FormContainer>
-      {/* <Button
-        variant="outlined"
-        color="primary"
-        style={{ marginRight: "10px", color: "green" }}
-        onClick={() => remove(index)} 
-      >
-        <DeleteIcon style={{ marginRight: "5px" }} />
-        Excluir Endereço
-      </Button> */}
     </div>
   );
 };

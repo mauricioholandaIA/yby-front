@@ -6,8 +6,9 @@ import ResponsiveDrawerLayout from "../template/drawer";
 import { useContext } from "react";
 import { AuthContext } from "../context/auth-context";
 import SignInClient from "../login/singin-client";
-import Register from "../register";
 import PlanningList from "../plannings";
+import Register from "../register";
+import Reports from "../reports";
 
 const MainRoutes = () => {
   const { user: currentUser } = useContext(AuthContext);
@@ -42,6 +43,8 @@ const MainRoutes = () => {
                 <Route path="/ponto-coleta" element={<CollectionPoint />} />
 
                 <Route path="/planejamento" element={<PlanningList />} />
+
+                <Route path="/relatorios" element={<Reports />} />
               </>
             )}
             {!currentUser.isAdmin && (

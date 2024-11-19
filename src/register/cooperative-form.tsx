@@ -38,19 +38,6 @@ export default function CooperativeForm() {
   });
 
   const onSubmit = async (data: any) => {
-    // const formData = new FormData();
-
-    // // Add all form fields to formData
-    // Object.entries(data).forEach(([key, value]) => {
-    //   if (typeof value === "string" || value instanceof Blob) {
-    //     formData.append(key, value);
-    //   } else if (value !== null && value !== undefined) {
-    //     formData.append(key, String(value));
-    //   }
-    // });
-
-    // console.log("Form data:", Object.fromEntries(formData));
-
     console.log("Form data:", data);
 
     const cooperative = await createCooperative({

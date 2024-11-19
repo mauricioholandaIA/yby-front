@@ -1,6 +1,9 @@
 import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ImageIcon from "@mui/icons-material/Image";
 import {
   Box,
+  Button,
   FormControl,
   FormHelperText,
   IconButton,
@@ -12,15 +15,44 @@ import {
   Typography,
 } from "@mui/material";
 import Modal from "@mui/material/Modal";
-import { type } from "os";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { editCollection } from "../../api/collection";
 
-const ModalFormComponent = ({ open, handleClose, images }: any) => {
-  const { control, handleSubmit } = useForm({});
+const ModalFormComponent = ({ open, handleClose, data }: any) => {
+  console.log(data);
 
-  const onSubmit = (data: any) => {
+  const documentId = data.documentId;
+  const { control, handleSubmit } = useForm({
+    defaultValues: {
+      residuos: data.wastesIds || [],
+      weight: data.weight || "",
+      justify: "",
+    },
+  });
+
+  const [coletorImage, setColetorImage] = useState<any>(true);
+  const [avariaImage, setAvariaImage] = useState<any>(true);
+
+  const onSubmit = async (data: any) => {
     console.log(data);
+
+    const formatData = {
+      justification: data.justify,
+      weight: data.weight,
+      wastes: data.residuos,
+      ...(coletorImage === false && { colector: null }),
+      ...(avariaImage === false && { breakdown: null }),
+    };
+
+    await editCollection({
+      documentId,
+      data: formatData,
+    });
+    handleClose();
+    alert("Editado com sucesso!");
   };
+
   return (
     <Modal open={open} onClose={handleClose}>
       <>
@@ -30,8 +62,7 @@ const ModalFormComponent = ({ open, handleClose, images }: any) => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 600,
-
+            width: 400,
             bgcolor: "background.paper",
             boxShadow: 24,
             padding: "20px",
@@ -40,8 +71,10 @@ const ModalFormComponent = ({ open, handleClose, images }: any) => {
           <div
             style={{
               display: "flex",
+              gap: "8px",
+              flexDirection: "row",
+              alignItems: "center",
               justifyContent: "space-between",
-              alignContent: "center",
             }}
           >
             <Typography id="modal-modal-title" variant="h6" component="h2">
@@ -61,7 +94,7 @@ const ModalFormComponent = ({ open, handleClose, images }: any) => {
             onSubmit={handleSubmit(onSubmit)}
             style={{
               width: "100%",
-              gap: "10px",
+              gap: "16px",
               display: "flex",
               flexDirection: "column",
               marginTop: "20px",
@@ -79,10 +112,15 @@ const ModalFormComponent = ({ open, handleClose, images }: any) => {
                       {...field}
                       labelId="residuos"
                       id="Tipo de residuos"
-                      label="residuos"
+                      label="Tipo de residuos"
+                      multiple
                     >
-                      <MenuItem value={"papel"}>Pape</MenuItem>
-                      <MenuItem value={"plastico"}>Plastico</MenuItem>
+                      <MenuItem value={"11"}>Papel</MenuItem>
+                      <MenuItem value={"13"}>Plástico</MenuItem>
+                      <MenuItem value={"12"}>Metal</MenuItem>
+                      <MenuItem value={"14"}>Vidro</MenuItem>
+                      <MenuItem value={"15"}>Orgânicos</MenuItem>
+                      <MenuItem value={"16"}>Reciclaveis Geral</MenuItem>
                     </Select>
                     {fieldState.error && (
                       <FormHelperText style={{ color: "red" }}>
@@ -95,50 +133,174 @@ const ModalFormComponent = ({ open, handleClose, images }: any) => {
             </div>
 
             <Controller
-              name="weight"
+              name={"weight"}
               control={control}
-              render={({ field }) => (
-                <OutlinedInput
-                  style={{ marginTop: "10px" }}
-                  {...field}
-                  id="weight"
-                  type="text"
-                  placeholder="peso em kg"
-                  fullWidth
-                />
+              render={({ field, fieldState }) => (
+                <FormControl fullWidth>
+                  <TextField
+                    error={fieldState.error ? true : false}
+                    {...field}
+                    id="weight"
+                    type="text"
+                    placeholder="Coleta em kg"
+                    label="Coleta em kg"
+                  ></TextField>
+                  {fieldState.error && (
+                    <FormHelperText style={{ color: "red" }}>
+                      {fieldState.error.message}
+                    </FormHelperText>
+                  )}
+                </FormControl>
               )}
             />
+
+            <div>
+              <Typography style={{ fontSize: "14px" }}>COLETOR</Typography>
+
+              {data.imageColectorUrl ? (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    backgroundColor: "rgba(21, 133, 59, 0.08)",
+                    padding: "8px",
+                    borderRadius: "8px",
+                    marginTop: "16px",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "8px",
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <ImageIcon
+                      style={{ color: coletorImage ? "#9B9794" : "#C7C4C2" }}
+                    />
+                    <Typography
+                      style={{
+                        fontSize: "14px",
+                        textDecoration: coletorImage ? "none" : "line-through",
+                        color: coletorImage ? "#9B9794" : "#C7C4C2",
+                      }}
+                    >
+                      Imagem do coletor
+                    </Typography>
+                  </div>
+                  <IconButton
+                    onClick={() => setColetorImage(!coletorImage)}
+                    size="medium"
+                  >
+                    <DeleteIcon style={{ color: "#9B9794" }} />
+                  </IconButton>
+                </div>
+              ) : (
+                <Typography style={{ fontSize: "14px", color: "#C7C4C2" }}>
+                  Nao possui imagem do coletor
+                </Typography>
+              )}
+            </div>
+
+            <div>
+              <Typography style={{ fontSize: "14px" }}>AVARIA</Typography>
+              {data.imageAvariaUrl ? (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    backgroundColor: "rgba(21, 133, 59, 0.08)",
+                    padding: "8px",
+                    borderRadius: "8px",
+                    marginTop: "16px",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "8px",
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <ImageIcon
+                      style={{ color: avariaImage ? "#9B9794" : "#C7C4C2" }}
+                    />
+                    <Typography
+                      style={{
+                        fontSize: "14px",
+                        textDecoration: avariaImage ? "none" : "line-through",
+                        color: avariaImage ? "#9B9794" : "#C7C4C2",
+                      }}
+                    >
+                      Imagem da avaria
+                    </Typography>
+                  </div>
+
+                  <IconButton
+                    onClick={() => setAvariaImage(!avariaImage)}
+                    size="medium"
+                  >
+                    <DeleteIcon style={{ color: "#9B9794" }} />
+                  </IconButton>
+                </div>
+              ) : (
+                <Typography style={{ fontSize: "14px", color: "#C7C4C2" }}>
+                  Nao possui imagem da avaria
+                </Typography>
+              )}
+            </div>
+            <div>
+              <Typography>Justificativa</Typography>
+              <Controller
+                name={`justify`}
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    style={{ marginTop: "10px" }}
+                    id="justify"
+                    type="text"
+                    placeholder={"editei o PEV porque..."}
+                    fullWidth
+                    label={"Motivo da edicao"}
+                    variant="outlined"
+                    size="small"
+                    rows={4}
+                    multiline
+                    autoComplete="off"
+                  />
+                )}
+              />
+            </div>
+
+            <div
+              style={{ display: "flex", justifyContent: "end", gap: "16px" }}
+            >
+              <Button
+                variant="outlined"
+                style={{
+                  marginTop: "20px",
+                  color: "primary",
+                  width: "120px",
+                }}
+                onClick={handleClose}
+              >
+                Cancelar
+              </Button>
+
+              <Button
+                type="submit"
+                variant="contained"
+                style={{ marginTop: "20px", color: "white", width: "120px" }}
+              >
+                Editar
+              </Button>
+            </div>
           </form>
-
-          <div>
-            <Typography>coletor</Typography>
-          </div>
-
-          <div>
-            <Typography>avaria</Typography>
-          </div>
-
-          <div>
-            <Typography>Justificativa</Typography>
-            <Controller
-              name={`justify`}
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  id="justify"
-                  type="text"
-                  placeholder={"editei o PEV porque..."}
-                  fullWidth
-                  label={"Justificativa"}
-                  variant="outlined"
-                  size="small"
-                  // focused
-                  autoComplete="off"
-                />
-              )}
-            />
-          </div>
         </Box>
       </>
     </Modal>

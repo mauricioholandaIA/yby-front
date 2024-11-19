@@ -137,6 +137,7 @@ const TableComponent = ({ collections }: any) => {
           createdAt: collection.createdAt,
           imageAvaria: collection.imageAvaria,
           imageColectorUrl: collection.imageColectorUrl,
+          wastesIds: collection.wastesIds,
         };
       });
 

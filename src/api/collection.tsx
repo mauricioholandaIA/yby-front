@@ -48,4 +48,16 @@ const getCollection = async () => {
   }
 };
 
-export { createCollection, getCollection, uploadImage };
+const editCollection = async ({ documentId, data }: any) => {
+  try {
+    const response = await api.put(`/collections/${documentId}`, {
+      data,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao editar:", error);
+    return null;
+  }
+};
+
+export { createCollection, editCollection, getCollection, uploadImage };

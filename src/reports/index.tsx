@@ -24,36 +24,26 @@ export default function Reports() {
   const [collections, setCollections] = useState<any>([]);
 
   const formatCollection = (data: any) => {
-    // createdAt: "2024-11-11T14:08:48.933Z";
-    // documentId: "bjnby5in8nhlglbgwat2r70f";
-    // id: 8;
-    // locale: null;
-    // publishedAt: "2024-11-11T14:08:48.931Z";
-    // updatedAt: "2024-11-11T14:08:48.933Z";
-    // waste: "metal";
-    // weight: "200";
-
     const formattedData = data.map((collection: any) => {
+      const wastes =
+        collection?.wastes.map((item: any) => item.name).join(", ") || "";
+
+      const wastesIds = collection?.wastes.map((item: any) => item.id);
+
       return {
         documentId: collection.documentId,
-        id: collection.id,
-        pev: collection.client.social_name,
-        waste: collection.waste,
-        weight: collection.weight,
-        createdAt: collection.createdAt,
-        imageAvaria: collection.breakdown.url,
-        imageColectorUrl: collection.colector.url,
+        id: collection.id || "",
+        pev: collection?.client?.social_name || "",
+        waste: wastes || "",
+        weight: collection?.weight || "",
+        createdAt: collection?.createdAt || "",
+        imageAvaria: collection?.breakdown?.url || "",
+        imageColectorUrl: collection.colector?.url || "",
+        wastesIds: wastesIds || [],
       };
     });
 
     return formattedData;
-
-    // return {
-    //   id: collection.id,
-    //   name: collection.name,
-    //   status: collection.status,
-    //   date: collection.date,
-    // };
   };
 
   useEffect(() => {

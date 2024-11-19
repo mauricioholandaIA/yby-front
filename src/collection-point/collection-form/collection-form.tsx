@@ -45,7 +45,7 @@ const StyledImagePlaceholder = styled("div")({
 
 const schema = yup.object().shape({
   collectionPoint: yup.string().required("Ponto de coleta é obrigatório"),
-  residuos: yup.string().required("Tipo de residuos é obrigatório"),
+  residuos: yup.array().required("Residuos é obrigatório"),
   weight: yup.string().required("Peso é obrigatório"),
   // hasAvaria: yup.string().required("Avaria é obrigatório"),
 
@@ -64,7 +64,7 @@ export default function CollectionForm({
   const { control, handleSubmit } = useForm({
     defaultValues: {
       collectionPoint: selectedPEV?.id?.toString() || "",
-      residuos: "",
+      residuos: [],
       weight: "0",
       // hasAvaria: "",
       // avariaDescription: "",
@@ -117,8 +117,14 @@ export default function CollectionForm({
 
       const { weight, collectionPoint, residuos } = data;
 
+      const wastes = residuos.map((residuo: any) => {
+        return {
+          id: residuo,
+        };
+      });
+
       const formatData = {
-        waste: residuos,
+        wastes: wastes,
         weight,
         client: {
           id: collectionPoint,
@@ -234,11 +240,15 @@ export default function CollectionForm({
                     {...field}
                     labelId="residuos"
                     id="Tipo de residuos"
-                    label="residuos"
+                    label="Tipo de residuo"
+                    multiple
                   >
-                    <MenuItem value={10}>Residuo 1</MenuItem>
-                    <MenuItem value={20}>Residuo 2</MenuItem>
-                    <MenuItem value={30}>Residuo 3</MenuItem>
+                    <MenuItem value={"11"}>Papel</MenuItem>
+                    <MenuItem value={"13"}>Plástico</MenuItem>
+                    <MenuItem value={"12"}>Metal</MenuItem>
+                    <MenuItem value={"14"}>Vidro</MenuItem>
+                    <MenuItem value={"15"}>Orgânicos</MenuItem>
+                    <MenuItem value={"16"}>Reciclaveis Geral</MenuItem>
                   </Select>
                   {fieldState.error && (
                     <FormHelperText style={{ color: "red" }}>

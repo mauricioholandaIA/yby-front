@@ -1,6 +1,8 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { Button, IconButton } from "@mui/material";
+import ImageIcon from "@mui/icons-material/Image";
+import { IconButton } from "@mui/material";
+
 import {
   DataGrid,
   GridColDef,
@@ -9,7 +11,6 @@ import {
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 
-import { set } from "react-hook-form";
 import ModalDeleteComponent from "./modal-delete";
 import ModalFormComponent from "./modal-form";
 import ModalComponent from "./modal-image";
@@ -50,7 +51,14 @@ const TableComponent = ({ collections }: any) => {
           });
         };
 
-        return <Button onClick={onClick}>Click</Button>;
+        // return <Button onClick={onClick}>Click</Button>;
+        return (
+          <>
+            <IconButton onClick={onClick} size="medium">
+              <ImageIcon style={{ color: "#9B9794" }} />
+            </IconButton>
+          </>
+        );
       },
     },
 
@@ -77,10 +85,10 @@ const TableComponent = ({ collections }: any) => {
         return (
           <>
             <IconButton onClick={onClick} size="medium">
-              <EditIcon />
+              <EditIcon style={{ color: "#9B9794" }} />
             </IconButton>
             <IconButton onClick={onDelete} size="medium">
-              <DeleteIcon />
+              <DeleteIcon style={{ color: "#9B9794" }} />
             </IconButton>
           </>
         );

@@ -66,25 +66,27 @@ const ModalComponent = ({ open, handleClose, images }: any) => {
             </div>
           </div>
 
-          <div>
-            <Typography style={{ marginBottom: "10px", fontSize: "12px" }}>
-              AVARIA
-            </Typography>
-            <div
-              style={{
-                padding: "10px",
-                border: "1px solid #15853B",
-                borderRadius: "2px",
-              }}
-            >
-              <img
-                width="250"
-                height="250"
-                src={`http://localhost:1337${images?.imageAvaria}`}
-                alt="Imagem"
-              />
+          {images?.imageAvaria && (
+            <div>
+              <Typography style={{ marginBottom: "10px", fontSize: "12px" }}>
+                AVARIA
+              </Typography>
+              <div
+                style={{
+                  padding: "10px",
+                  border: "1px solid #15853B",
+                  borderRadius: "2px",
+                }}
+              >
+                <img
+                  width="250"
+                  height="250"
+                  src={`http://localhost:1337${images?.imageAvaria}`}
+                  alt="Imagem"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </Box>
     </Modal>

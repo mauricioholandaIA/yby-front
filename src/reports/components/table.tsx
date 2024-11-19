@@ -1,33 +1,16 @@
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Modal,
-  Paper,
-  Snackbar,
-  styled,
-  Table,
-  TableBody,
-  TableCell,
-  tableCellClasses,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { Button, IconButton } from "@mui/material";
 import {
   DataGrid,
-  GridApi,
   GridColDef,
-  GridToolbarColumnsButton,
   GridToolbarContainer,
-  GridToolbarDensitySelector,
   GridToolbarExport,
-  GridToolbarFilterButton,
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 
+import { set } from "react-hook-form";
+import ModalDeleteComponent from "./modal-delete";
 import ModalFormComponent from "./modal-form";
 import ModalComponent from "./modal-image";
 
@@ -37,6 +20,7 @@ const TableComponent = ({ collections }: any) => {
   const [rows, setRows] = useState<any>([]);
   const [open, setOpen] = useState(false);
   const [openModalForm, setOpenModalForm] = useState(false);
+  const [openModalDelete, setOpenModalDelete] = useState(false);
   const [formData, setFormData] = useState<any>();
 
   const [images, setImages] = useState<any>();
@@ -79,51 +63,30 @@ const TableComponent = ({ collections }: any) => {
       headerAlign: "right",
       renderCell: (params) => {
         const onClick = (e: { stopPropagation: () => void }) => {
-          e.stopPropagation(); // don't select this row after clicking
+          e.stopPropagation();
           setOpenModalForm(true);
+          setFormData(params.row);
+        };
+
+        const onDelete = async (e: { stopPropagation: () => void }) => {
+          e.stopPropagation();
+          setOpenModalDelete(true);
           setFormData(params.row);
         };
 
         return (
           <>
-            <Button onClick={onClick}>Click</Button>
+            <IconButton onClick={onClick} size="medium">
+              <EditIcon />
+            </IconButton>
+            <IconButton onClick={onDelete} size="medium">
+              <DeleteIcon />
+            </IconButton>
           </>
         );
       },
     },
   ];
-
-  //   const rows = [
-  //     {
-  //       id: 1,
-  //       createdAt: "2023-01-01",
-  //       pev: "PEV 4",
-  //       waste: "Vidro",
-  //       weight: "Coleta",
-  //     },
-  //     {
-  //       id: 2,
-
-  //       createdAt: "2023-01-01",
-  //       pev: "PEV 4",
-  //       waste: "Vidro",
-  //       weight: "Coleta",
-  //     },
-  //     {
-  //       id: 3,
-  //       createdAt: "2023-01-01",
-  //       pev: "PEV 4",
-  //       waste: "Vidro",
-  //       weight: "Coleta",
-  //     },
-  //     {
-  //       id: 4,
-  //       createdAt: "2023-01-01",
-  //       pev: "PEV 4",
-  //       waste: "Vidro",
-  //       weight: "Coleta",
-  //     },
-  //   ];
 
   useEffect(() => {
     const formatCollection = (data: any) => {
@@ -159,6 +122,8 @@ const TableComponent = ({ collections }: any) => {
     );
   }
 
+  console.log("rows", formData);
+
   if (rows.length === 0) {
     return <></>;
   }
@@ -178,6 +143,14 @@ const TableComponent = ({ collections }: any) => {
           open={openModalForm}
           handleClose={() => setOpenModalForm(false)}
           data={formData}
+        />
+      )}
+
+      {openModalDelete && (
+        <ModalDeleteComponent
+          open={openModalDelete}
+          handleClose={() => setOpenModalDelete(false)}
+          documentId={formData?.documentId}
         />
       )}
 

@@ -60,4 +60,20 @@ const editCollection = async ({ documentId, data }: any) => {
   }
 };
 
-export { createCollection, editCollection, getCollection, uploadImage };
+const deleteCollection = async (documentId: any) => {
+  try {
+    const response = await api.delete(`/collections/${documentId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao deletar:", error);
+    return null;
+  }
+};
+
+export {
+  createCollection,
+  deleteCollection,
+  editCollection,
+  getCollection,
+  uploadImage,
+};

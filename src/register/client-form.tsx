@@ -1,13 +1,25 @@
-import { Button, Divider, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Divider,
+  FormHelperText,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Box, styled } from "@mui/system";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { createClient } from "../api/client";
 import { AddressFormComponent } from "./components/address-form-component";
+
+import { yupResolver } from "@hookform/resolvers/yup";
+import React from "react";
+import * as yup from "yup";
+
+import { IMaskInput } from "react-imask";
 
 const FormContainer = styled(Box)({
   display: "flex",
   flexWrap: "wrap",
-  gap: "24px",
+  gap: "20px",
   marginTop: "16px",
   marginBottom: "16px",
 });
@@ -19,16 +31,6 @@ const FormField = styled(Box)<{ size?: string }>`
   flex-grow: 1;
 `;
 
-interface Address {
-  cep: string;
-  rua: string;
-  numeroRua: string;
-  bairro: string;
-  estado: string;
-  cidade: string;
-  // weekDays: string[];
-}
-
 interface ClientFormData {
   client_cnpj: string;
   client_socialName: string;
@@ -37,11 +39,95 @@ interface ClientFormData {
   client_phone: string;
   client_username: string;
   client_password: string;
-  addresses: Address[]; // Define o tipo para o array de endereços
+  client_cep: string;
+  client_street: string;
+  client_street_number: string;
+  client_neighborhood: string;
+  client_city: string;
+  client_state: string;
 }
 
+interface CustomProps {
+  onChange: (event: { target: { name: string; value: string } }) => void;
+  name: string;
+}
+
+const PhoneMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
+  function TextMaskCustom(props, ref) {
+    const { onChange, ...other } = props;
+    return (
+      <IMaskInput
+        {...other}
+        mask="(00) 0000-0000"
+        definitions={{
+          "#": /[1-9]/,
+        }}
+        inputRef={ref}
+        onAccept={(value: any) =>
+          onChange({ target: { name: props.name, value } })
+        }
+        overwrite
+      />
+    );
+  }
+);
+
+const CNPJMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
+  function TextMaskCustom(props, ref) {
+    const { onChange, ...other } = props;
+    return (
+      <IMaskInput
+        {...other}
+        mask="00.000.000/0000-00"
+        definitions={{
+          "#": /[1-9]/,
+        }}
+        inputRef={ref}
+        onAccept={(value: any) =>
+          onChange({ target: { name: props.name, value } })
+        }
+        overwrite
+      />
+    );
+  }
+);
+
+const schema = yup.object().shape({
+  client_cnpj: yup
+    .string()
+    .required("CNPJ é obrigatório")
+    .min(14, "CNPJ deve ter pelo menos 14 dígitos"),
+  client_socialName: yup.string().required("Razão Social é obrigatória"),
+  client_responsibleName: yup
+    .string()
+    .required("Nome do Responsável é obrigatório"),
+  client_email: yup
+    .string()
+    .required("E-mail é obrigatório")
+    .email("Formato de e-mail inválido")
+    .matches(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      "E-mail inválido"
+    ),
+  client_phone: yup
+    .string()
+    .required("Telefone é obrigatório")
+    .min(10, "Telefone deve ter pelo menos 10 dígitos"),
+  client_username: yup.string().required("Usuário é obrigatório"),
+  client_password: yup.string().required("Senha de acesso é obrigatória"),
+  client_cep: yup
+    .string()
+    .required("CEP é obrigatório")
+    .min(8, "CEP deve ter 8 dígitos"),
+  client_street: yup.string().required("Rua é obrigatória"),
+  client_street_number: yup.number().required("Número da Rua é obrigatório"),
+  client_neighborhood: yup.string().required("Bairro é obrigatório"),
+  client_state: yup.string().required("Estado é obrigatório"),
+  client_city: yup.string().required("Cidade é obrigatória"),
+});
+
 export default function ClientForm() {
-  const { control, handleSubmit } = useForm<ClientFormData>({
+  const { control, handleSubmit } = useForm({
     defaultValues: {
       client_cnpj: "",
       client_socialName: "",
@@ -50,99 +136,47 @@ export default function ClientForm() {
       client_phone: "",
       client_username: "",
       client_password: "",
-      addresses: [], // Inicializa como um array vazio
+      client_cep: "",
+      client_street: "",
+      client_street_number: 0,
+      client_neighborhood: "",
+      client_state: "",
     },
+    resolver: yupResolver(schema),
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "addresses",
-  });
+  const onSubmit = async (data: any) => {
+    data.client_cnpj = data.client_cnpj.replace(/[./-]/g, "");
+    data.client_phone = data.client_phone.replace(/[\(\)\s-]/g, "");
+    data.client_cep = data.client_cep.replace(/[-]/g, "");
 
-  const onSubmit = async (data: ClientFormData) => {
-    console.log("Form data:", data);
+    // todo: ajustar ordem de criacao no back , para nao ter 2 empresas publicadas com msm nome
 
-    // const formData = new FormData();
+    try {
+      const createdClient = await createClient({
+        cnpj: data.client_cnpj,
+        social_name: data.client_socialName,
+        responsible_name: data.client_responsibleName,
+        email: data.client_email,
+        phone: data.client_phone,
+        password: data.client_password,
 
-    // Object.entries(data).forEach(([key, value]) => {
-    //   if (typeof value === "string" || value instanceof Blob) {
-    //     formData.append(key, value);
-    //   } else if (Array.isArray(value)) {
-    //     formData.append(key, JSON.stringify(value));
-    //   } else if (value !== null && value !== undefined) {
-    //     formData.append(key, String(value));
-    //   }
-    // });
-
-    // console.log("Form data processed:", data);
-
-    const createdClient = await createClient({
-      cnpj: data.client_cnpj,
-      social_name: data.client_socialName,
-      responsible_name: data.client_responsibleName,
-      email: data.client_email,
-      phone: data.client_phone,
-      password: data.client_password,
-
-      adress_data: {
-        street: data.addresses[0].rua,
-        number: data.addresses[0].numeroRua,
-        neighborhood: data.addresses[0].bairro,
-        city: data.addresses[0].cidade,
-        state: data.addresses[0].estado,
-        cep: data.addresses[0].cep,
-      },
-    });
-  };
-
-  const formFields = {
-    section: "Dados básicos",
-    fields: [
-      {
-        name: "client_socialName",
-        label: "Razão Social",
-        placeholder: "Razão Social",
-        required: true,
-      },
-      {
-        name: "client_cnpj",
-        label: "CNPJ",
-        placeholder: "Número de CNPJ",
-        required: true,
-      },
-      {
-        name: "client_responsibleName",
-        label: "Nome do Responsável",
-        placeholder: "Nome do responsável",
-        required: true,
-      },
-      {
-        name: "client_email",
-        label: "E-mail",
-        placeholder: "E-mail",
-        required: true,
-      },
-      {
-        name: "client_phone",
-        label: "Telefone",
-        placeholder: "Telefone",
-        required: true,
-      },
-      {
-        name: "client_username",
-        label: "Usuário",
-        placeholder: "Nome de usuário",
-        required: true,
-      },
-      {
-        name: "client_password",
-        label: "Senha de acesso",
-        placeholder: "Senha",
-        type: "password",
-        required: true,
-        size: "390px",
-      },
-    ],
+        adress_data: {
+          cep: data.client_cep,
+          street: data.client_street,
+          number: data.client_street_number,
+          neighborhood: data.client_neighborhood,
+          city: data.client_city,
+          state: data.client_state,
+        },
+      });
+      // if (createdClient) {
+      //   alert("Cliente criado com sucesso!");
+      // }
+    } catch (error) {
+      console.error("Error creating client:", error);
+      alert("Erro ao criar cliente");
+    }
   };
 
   return (
@@ -152,47 +186,236 @@ export default function ClientForm() {
           Dados básicos
         </Typography>
         <Divider />
+
+        {/* // */}
         <FormContainer>
-          {formFields.fields.map(
-            ({ name, label, placeholder, required, type = "outlined" }) => (
-              <FormField key={name}>
-                <Controller
-                  name={name as any}
-                  control={control}
-                  rules={{ required }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      id={name}
-                      type={type}
-                      placeholder={placeholder}
-                      required={required}
-                      fullWidth
-                      label={label}
-                      variant="outlined"
-                      size="small"
-                      // focused
-                      autoComplete="off"
-                    />
+          <FormField key={"client_socialName"}>
+            <Controller
+              name={"client_socialName"}
+              control={control}
+              rules={{ required: true }}
+              render={({ field, fieldState }) => (
+                <>
+                  <TextField
+                    {...field}
+                    id={"client_socialName"}
+                    type="outlined"
+                    placeholder={"Razão Social"}
+                    required={true}
+                    fullWidth
+                    label={"Razão Social"}
+                    variant="outlined"
+                    size="small"
+                    autoComplete="off"
+                    error={fieldState.error ? true : false}
+                  />
+                  {fieldState.error && (
+                    <FormHelperText style={{ color: "red" }}>
+                      {fieldState.error.message}
+                    </FormHelperText>
                   )}
-                />
-              </FormField>
-            )
-          )}
+                </>
+              )}
+            />
+          </FormField>
+
+          <FormField key={"client_cnpj"}>
+            <Controller
+              name={"client_cnpj"}
+              control={control}
+              rules={{ required: true }}
+              render={({ field, fieldState }) => (
+                <>
+                  <TextField
+                    {...field}
+                    id={"client_cnpj"}
+                    label="Número de CNPJ"
+                    required={true}
+                    placeholder={"CNPJ"}
+                    type="outlined"
+                    slotProps={{
+                      input: {
+                        inputComponent: CNPJMaskCustom as any,
+                      },
+                    }}
+                    size="small"
+                    autoComplete="off"
+                    error={fieldState.error ? true : false}
+                    variant="outlined"
+                    fullWidth
+                  />
+                  {fieldState.error && (
+                    <FormHelperText style={{ color: "red" }}>
+                      {fieldState.error.message}
+                    </FormHelperText>
+                  )}
+                </>
+              )}
+            />
+          </FormField>
+
+          <FormField key={"client_responsibleName"}>
+            <Controller
+              name={"client_responsibleName"}
+              control={control}
+              rules={{ required: true }}
+              render={({ field, fieldState }) => (
+                <>
+                  <TextField
+                    {...field}
+                    id={"client_responsibleName"}
+                    type="outlined"
+                    placeholder={"Nome do Responsável"}
+                    required={true}
+                    fullWidth
+                    label={"Nome do Responsável"}
+                    variant="outlined"
+                    size="small"
+                    autoComplete="off"
+                    error={fieldState.error ? true : false}
+                  />
+                  {fieldState.error && (
+                    <FormHelperText style={{ color: "red" }}>
+                      {fieldState.error.message}
+                    </FormHelperText>
+                  )}
+                </>
+              )}
+            />
+          </FormField>
+
+          <FormField key={"client_email"}>
+            <Controller
+              name={"client_email"}
+              control={control}
+              rules={{ required: true }}
+              render={({ field, fieldState }) => (
+                <>
+                  <TextField
+                    {...field}
+                    id={"client_email"}
+                    type="outlined"
+                    placeholder={"E-mail do cliente"}
+                    required={true}
+                    fullWidth
+                    label={"E-mail"}
+                    variant="outlined"
+                    size="small"
+                    autoComplete="off"
+                    error={fieldState.error ? true : false}
+                  />
+                  {fieldState.error && (
+                    <FormHelperText style={{ color: "red" }}>
+                      {fieldState.error.message}
+                    </FormHelperText>
+                  )}
+                </>
+              )}
+            />
+          </FormField>
+
+          <FormField key={"client_phone"}>
+            <Controller
+              name={"client_phone"}
+              control={control}
+              rules={{ required: true }}
+              render={({ field, fieldState }) => (
+                <>
+                  <TextField
+                    {...field}
+                    id={"client_phone"}
+                    label="Telefone"
+                    type="outlined"
+                    slotProps={{
+                      input: {
+                        inputComponent: PhoneMaskCustom as any,
+                      },
+                    }}
+                    size="small"
+                    autoComplete="off"
+                    error={fieldState.error ? true : false}
+                    variant="outlined"
+                    fullWidth
+                  />
+                  {fieldState.error && (
+                    <FormHelperText style={{ color: "red" }}>
+                      {fieldState.error.message}
+                    </FormHelperText>
+                  )}
+                </>
+              )}
+            />
+          </FormField>
+
+          <FormField key={"client_username"}>
+            <Controller
+              name={"client_username"}
+              control={control}
+              rules={{ required: true }}
+              render={({ field, fieldState }) => (
+                <>
+                  <TextField
+                    {...field}
+                    id={"client_username"}
+                    type="outlined"
+                    placeholder={"Nome de usuário"}
+                    required={true}
+                    fullWidth
+                    label={"Usuário"}
+                    variant="outlined"
+                    size="small"
+                    autoComplete="off"
+                    error={fieldState.error ? true : false}
+                  />
+                  {fieldState.error && (
+                    <FormHelperText style={{ color: "red" }}>
+                      {fieldState.error.message}
+                    </FormHelperText>
+                  )}
+                </>
+              )}
+            />
+          </FormField>
+
+          <FormField key={"client_password"}>
+            <Controller
+              name={"client_password"}
+              control={control}
+              rules={{ required: true }}
+              render={({ field, fieldState }) => (
+                <>
+                  <TextField
+                    {...field}
+                    id={"client_password"}
+                    type="password"
+                    placeholder={"Senha de acesso"}
+                    required={true}
+                    fullWidth
+                    label={"Senha"}
+                    variant="outlined"
+                    size="small"
+                    autoComplete="off"
+                    error={fieldState.error ? true : false}
+                  />
+                  {fieldState.error && (
+                    <FormHelperText style={{ color: "red" }}>
+                      {fieldState.error.message}
+                    </FormHelperText>
+                  )}
+                </>
+              )}
+            />
+          </FormField>
         </FormContainer>
         <Typography fontSize={20} gutterBottom>
           Endereço
         </Typography>
         <Divider />
         <div>
-          {/* {fields.map((field, index) => ( */}
           <AddressFormComponent
             key={"AddressFormComponent"}
             control={control}
-            index={0}
-            remove={remove}
           />
-          {/* ))} */}
         </div>
         <div
           style={{

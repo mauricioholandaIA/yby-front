@@ -7,6 +7,7 @@ const createCooperative = async ({
   cooperative_name: string;
   cooperative_code: string;
 }) => {
+  // todo criar o usuario da cooperativa antes de criar a cooperativa
   console.log(cooperative_name, cooperative_code);
   try {
     const response = await api.post("/cooperatives", {
@@ -15,10 +16,10 @@ const createCooperative = async ({
         cooperative_code_access: cooperative_code,
       },
     });
-
     return response.data;
   } catch (error) {
-    console.error("Erro ao fazer login:", error);
+    console.error("Erro ao criar a cooperativa:", error);
+    alert("Erro ao criar a cooperativa");
 
     return null;
   }

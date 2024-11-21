@@ -1,17 +1,16 @@
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { yupResolver } from "@hookform/resolvers/yup";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import {
   Button,
   Divider,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
+  FormHelperText,
   TextField,
   Typography,
 } from "@mui/material";
 import { Box, styled } from "@mui/system";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
+import * as yup from "yup";
 import { createCooperative } from "../api/cooperative";
 
 const FormContainer = styled(Box)({
@@ -29,44 +28,40 @@ const FormField = styled(Box)<{ size?: string }>`
   flex-grow: 1;
 `;
 
+const schema = yup.object().shape({
+  cooperative_name: yup.string().required("Campo obrigatório"),
+  cooperative_code: yup.string().required("Campo obrigatório"),
+});
+
 export default function CooperativeForm() {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       cooperative_name: "",
       cooperative_code: "",
     },
+    resolver: yupResolver(schema),
   });
 
   const onSubmit = async (data: any) => {
     console.log("Form data:", data);
 
-    const cooperative = await createCooperative({
-      cooperative_name: data.cooperative_name,
-      cooperative_code: data.cooperative_code,
-    });
+    try {
+      const response = await createCooperative({
+        cooperative_name: data.cooperative_name,
+        cooperative_code: data.cooperative_code,
+      });
 
-    console.log(cooperative);
-  };
-
-  const formFields = {
-    section: "Dados básicos",
-    fields: [
-      {
-        name: "cooperative_name",
-        label: "Nome da Cooperativa",
-        placeholder: "Nome da Cooperativa",
-        required: true,
-        size: "390px",
-      },
-      {
-        name: "cooperative_code",
-        label: "Código de acesso",
-        placeholder: "Código de acesso",
-        required: true,
-        size: "390px",
-        copy: true,
-      },
-    ],
+      if (!response) {
+        console.error("Error creating cooperative", response);
+        alert("Cooperativa criada com sucesso!");
+        return;
+      } else {
+        console.log("Cooperativa criada com sucesso!", response);
+        alert("Cooperativa criada com sucesso!");
+      }
+    } catch (error) {
+      console.error("Error creating cooperative:", error);
+    }
   };
 
   return (
@@ -84,53 +79,83 @@ export default function CooperativeForm() {
           }}
         >
           <FormContainer>
-            {formFields.fields.map(
-              ({ name, label, placeholder, required, copy }) => (
-                <FormField key={name}>
-                  <Controller
-                    name={name as "cooperative_name" | "cooperative_code"}
-                    control={control}
-                    rules={{ required }}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        id={name}
-                        type={"outlined"}
-                        placeholder={placeholder}
-                        required={required}
-                        fullWidth
-                        label={label}
-                        variant="outlined"
-                        size="small"
-                        focused
-                        autoComplete="off"
-                        slotProps={{
-                          input: {
-                            endAdornment: (
-                              <>
-                                {copy && (
-                                  <ContentCopyIcon
-                                    style={{ cursor: "pointer" }}
-                                    onClick={() => {
-                                      navigator.clipboard.writeText(
-                                        field.value
-                                      );
-                                      field.onChange(field.value);
-                                      field.onBlur();
-                                      alert("Cópiado para a área");
-                                    }}
-                                  />
-                                )}
-                              </>
-                            ),
-                          },
-                        }}
-                      />
+            <FormField size="390px" key={"cooperative_name"}>
+              <Controller
+                name={"cooperative_name"}
+                control={control}
+                rules={{ required: true }}
+                render={({ field, fieldState }) => (
+                  <>
+                    <TextField
+                      {...field}
+                      id={"cooperative_name"}
+                      type="outlined"
+                      placeholder={"Nome da Cooperativa"}
+                      required={true}
+                      fullWidth
+                      label={"Nome da Cooperativa"}
+                      variant="outlined"
+                      size="small"
+                      autoComplete="off"
+                      error={fieldState.error ? true : false}
+                    />
+
+                    {fieldState.error && (
+                      <FormHelperText style={{ color: "red" }}>
+                        {fieldState.error.message}
+                      </FormHelperText>
                     )}
-                  />
-                </FormField>
-              )
-            )}
+                  </>
+                )}
+              />
+            </FormField>
+
+            <FormField size="390px" key={"cooperative_code"}>
+              <Controller
+                name={"cooperative_code"}
+                control={control}
+                rules={{ required: true }}
+                render={({ field, fieldState }) => (
+                  <>
+                    <TextField
+                      {...field}
+                      id={"cooperative_code"}
+                      type="outlined"
+                      placeholder={"Código de acesso"}
+                      required={true}
+                      fullWidth
+                      label={"Código de acesso"}
+                      variant="outlined"
+                      size="small"
+                      autoComplete="off"
+                      error={fieldState.error ? true : false}
+                      slotProps={{
+                        input: {
+                          endAdornment: (
+                            <>
+                              <ContentCopyIcon
+                                style={{ cursor: "pointer" }}
+                                onClick={() => {
+                                  navigator.clipboard.writeText(field.value);
+                                  field.onChange(field.value);
+                                  field.onBlur();
+                                  alert("Cópiado para a área");
+                                }}
+                              />
+                            </>
+                          ),
+                        },
+                      }}
+                    />
+                    {fieldState.error && (
+                      <FormHelperText style={{ color: "red" }}>
+                        {fieldState.error.message}
+                      </FormHelperText>
+                    )}
+                  </>
+                )}
+              />
+            </FormField>
           </FormContainer>
           <div style={{ alignContent: "center" }}>
             <Button

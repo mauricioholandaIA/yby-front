@@ -46,7 +46,6 @@ export default function CollectionPoint() {
     event: React.MouseEvent<HTMLElement>,
     value: any
   ) => {
-    console.log(value);
     setSelectedTab(value);
     setSelectedPEVS(undefined);
   };

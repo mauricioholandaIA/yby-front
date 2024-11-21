@@ -19,17 +19,16 @@ import ListItemButton from "@mui/material/ListItemButton";
 import * as React from "react";
 import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-// import YbySvg from "../assets/yby-simple";
+
+import EventIcon from "@mui/icons-material/Event";
+import FolderIcon from "@mui/icons-material/Folder";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 import { AuthContext } from "../context/auth-context";
 
 const drawerWidth = 240;
 
 interface Props {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * Remove this when copying and pasting into your project.
-   */
   window?: () => Window;
 }
 
@@ -38,7 +37,7 @@ export default function ResponsiveDrawerLayout(props: Props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
-
+  const [open, setOpen] = React.useState(false);
   const { user, logout } = useContext(AuthContext);
 
   const container =
@@ -61,8 +60,6 @@ export default function ResponsiveDrawerLayout(props: Props) {
       setMobileOpen(!mobileOpen);
     }
   };
-
-  const [open, setOpen] = React.useState(true);
 
   const handleClick = () => {
     setOpen(!open);
@@ -91,9 +88,12 @@ export default function ResponsiveDrawerLayout(props: Props) {
         <>
           <ListItemButton onClick={handleClick}>
             <ListItemIcon>
-              <Person />
+              <PersonAddIcon />
             </ListItemIcon>
-            <ListItemText primary="Cadastro" />
+            <ListItemText
+              primary="Cadastro"
+              style={{ color: "black", fontWeight: "bold" }}
+            />
             {open ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
 
@@ -116,25 +116,34 @@ export default function ResponsiveDrawerLayout(props: Props) {
 
           <ListItemButton onClick={() => navigate("/planejamento")}>
             <ListItemIcon>
-              <Person />
+              <EventIcon />
             </ListItemIcon>
-            <ListItemText primary="Planejamento" />
+            <ListItemText
+              style={{ color: "black", fontWeight: "bold" }}
+              primary="Planejamento"
+            />
           </ListItemButton>
         </>
       )}
+
+      <ListItemButton onClick={() => navigate("/relatorios")}>
+        <ListItemIcon>
+          <FolderIcon />
+        </ListItemIcon>
+        <ListItemText
+          style={{ color: "black", fontWeight: "bold" }}
+          primary="Relatórios"
+        />
+      </ListItemButton>
 
       <ListItemButton onClick={() => navigate("/ponto-coleta")}>
         <ListItemIcon>
           <Place />
         </ListItemIcon>
-        <ListItemText primary="PEVs" />
-      </ListItemButton>
-
-      <ListItemButton onClick={() => navigate("/relatorios")}>
-        <ListItemIcon>
-          <Person />
-        </ListItemIcon>
-        <ListItemText primary="Relatórios" />
+        <ListItemText
+          style={{ color: "black", fontWeight: "bold" }}
+          primary="PEVs"
+        />
       </ListItemButton>
 
       <Box sx={{ position: "absolute", bottom: 0, width: "100%" }}>

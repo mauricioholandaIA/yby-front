@@ -1,15 +1,19 @@
-import Box from "@mui/material/Box";
+import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { useContext, useState } from "react";
+import { useContext } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { styled as styledComponents } from "styled-components";
 import { authClient } from "../api/auth";
 import YbyMarca from "../assets/yby-marca";
 import { AuthContext } from "../context/auth-context";
+
+import { FormHelperText } from "@mui/material";
+import * as yup from "yup";
 
 const Card = styledComponents.div`
   display: flex;
@@ -42,42 +46,26 @@ const SignInContainer = styledComponents.div`
     overflow-y: hidden;
 `;
 
+const schema = yup.object().shape({
+  cooperativePassword: yup.string().required("Senha é obrigatória"),
+});
+
 export default function SignInClient() {
   const { login } = useContext(AuthContext);
-
-  const [passwordError, setPasswordError] = useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  const validateInputs = () => {
-    const password = document.getElementById(
-      "client-password"
-    ) as HTMLInputElement;
-    let isValid = true;
+  const { control, handleSubmit, setError } = useForm({
+    defaultValues: {
+      cooperativePassword: "",
+    },
+    resolver: yupResolver(schema),
+  });
 
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage("Password must be at least 6 characters long.");
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage("");
-    }
-
-    return isValid;
-  };
-
-  const handleSingIn = async () => {
-    const isValid = validateInputs();
-    if (isValid) {
-      const password = document.getElementById(
-        "client-password"
-      ) as HTMLInputElement;
-      // com a senha , fazer login e com os dados de usuario da resposta salvar no contexto
-
+  const onSubmit = async (data: any) => {
+    try {
       const client = await authClient({
-        identifier: `${password.value}@coop.com`,
-        password: password.value,
+        identifier: `${data.cooperativePassword}@coop.com`,
+        password: data.cooperativePassword,
       });
 
       const formattedClient = {
@@ -94,6 +82,12 @@ export default function SignInClient() {
         login(formattedClient);
         navigate("/ponto-coleta");
       }
+    } catch (error) {
+      console.log(error);
+      setError("cooperativePassword", {
+        type: "server",
+        message: "Código de acesso inválido",
+      });
     }
   };
 
@@ -112,55 +106,62 @@ export default function SignInClient() {
           fontSize={20}
           style={{
             marginTop: "10px ",
-            marginBottom: "10px",
+            marginBottom: "6px",
             textAlign: "start",
           }}
         >
           Conecte-se à YBY
         </Typography>
         <Divider />
-        <Box
-          component="form"
-          noValidate
-          sx={{
+
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          style={{
             display: "flex",
             flexDirection: "column",
             width: "100%",
-            gap: 2,
-            marginTop: "20px",
+            gap: "16px",
+            marginTop: "28px",
           }}
         >
-          <FormControl>
-            <TextField
-              type={"outlined"}
-              label={"Código de acesso"}
-              variant="outlined"
-              size="small"
-              focused
-              autoComplete="off"
-              error={passwordError}
-              helperText={passwordErrorMessage}
-              name="password"
-              placeholder="••••••"
-              id="client-password"
-              autoFocus
-              required
-              fullWidth
-              color={passwordError ? "error" : "primary"}
-            />
-          </FormControl>
+          <Controller
+            name={`cooperativePassword`}
+            control={control}
+            render={({ field, fieldState }) => (
+              <FormControl>
+                <TextField
+                  {...field}
+                  id="cooperativePassword"
+                  type="text"
+                  placeholder="Código de acesso"
+                  required
+                  fullWidth
+                  label="Código de acesso"
+                  variant="outlined"
+                  size="small"
+                  autoComplete="off"
+                  error={fieldState.error ? true : false}
+                />
+                {fieldState.error && (
+                  <FormHelperText style={{ color: "red" }}>
+                    Codigo de acesso inválido
+                  </FormHelperText>
+                )}
+              </FormControl>
+            )}
+          />
 
           <Link to="/signIn">Ir para login do cliente</Link>
 
           <Button
             fullWidth
             variant="contained"
-            onClick={handleSingIn}
+            type="submit"
             style={{ color: "white" }}
           >
             Entrar
           </Button>
-        </Box>
+        </form>
       </Card>
     </SignInContainer>
   );

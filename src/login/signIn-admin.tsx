@@ -1,16 +1,20 @@
+import { FormHelperText } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import * as React from "react";
 import { useContext } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { styled as styledComponents } from "styled-components";
-import { authAdmin, authClient } from "../api/auth";
-import YbyMarca from "../assets/yby-marca";
+import { authAdmin } from "../api/auth";
+import YbyLogo from "../assets/yby-logo";
 import { AuthContext } from "../context/auth-context";
+
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
 const Card = styledComponents.div`
   display: flex;
@@ -25,6 +29,7 @@ const Card = styledComponents.div`
   
   padding: 20px;
   background-color: white;
+  border-radius: 20px;
 
 
   overflow-x: hidden;
@@ -42,73 +47,28 @@ const SignInContainer = styledComponents.div`
     overflow-y: hidden;
 `;
 
+const schema = yup.object().shape({
+  adminIdentifier: yup.string().required("Email é obrigatório").email(),
+  adminPassword: yup.string().required("Senha é obrigatória"),
+});
+
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (emailError || passwordError) {
-      event.preventDefault();
-      return;
-    }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-  };
+  const { control, handleSubmit, setError } = useForm({
+    defaultValues: {
+      adminIdentifier: "",
+      adminPassword: "",
+    },
+    resolver: yupResolver(schema),
+  });
 
-  const validateInputs = () => {
-    const email = document.getElementById(
-      "admin-identifier"
-    ) as HTMLInputElement;
-    const password = document.getElementById(
-      "admin-password"
-    ) as HTMLInputElement;
-
-    let isValid = true;
-
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage("Please enter a valid email address.");
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage("");
-    }
-
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage("Password must be at least 6 characters long.");
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage("");
-    }
-
-    return isValid;
-  };
-
-  const handleSingIn = async () => {
-    const isValid = validateInputs();
-
-    if (isValid) {
-      const email = document.getElementById(
-        "admin-identifier"
-      ) as HTMLInputElement;
-      const password = document.getElementById(
-        "admin-password"
-      ) as HTMLInputElement;
-
-      console.log(email.value, password.value);
-
+  const onSubmit = async (data: any) => {
+    try {
       const admin = await authAdmin({
-        identifier: email.value,
-        password: password.value,
+        identifier: data.adminIdentifier,
+        password: data.adminPassword,
       });
 
       const formattedAdmin = {
@@ -125,16 +85,25 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         login(formattedAdmin);
         navigate("/ponto-coleta");
       }
+    } catch (error) {
+      setError("adminIdentifier", {
+        type: "server",
+        message: "Erro ao fazer login",
+      });
+      setError("adminPassword", {
+        type: "server",
+        message: "Erro ao fazer login",
+      });
     }
   };
 
   return (
     <SignInContainer>
       <Card>
-        <YbyMarca
+        <YbyLogo
           style={{
-            width: "100%",
-            maxWidth: "100px",
+            width: "200px",
+            maxWidth: "200px",
             height: "auto",
             margin: "auto",
           }}
@@ -142,76 +111,90 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         <Typography
           fontSize={20}
           style={{
-            marginTop: "10px ",
-            marginBottom: "10px",
+            marginTop: "12px ",
+            marginBottom: "6px",
             textAlign: "start",
           }}
         >
           Conecte-se à YBY
         </Typography>
         <Divider />
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          noValidate
-          sx={{
+
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          style={{
             display: "flex",
             flexDirection: "column",
             width: "100%",
-            gap: 2,
-            marginTop: "20px",
+            gap: "16px",
+            marginTop: "28px",
           }}
         >
-          <FormControl>
-            <TextField
-              type={"outlined"}
-              label={"Endereço de e-mail"}
-              variant="outlined"
-              size="small"
-              focused
-              autoComplete="off"
-              error={passwordError}
-              helperText={passwordErrorMessage}
-              name="password"
-              placeholder="••••••"
-              id="admin-identifier"
-              autoFocus
-              required
-              fullWidth
-              color={passwordError ? "error" : "primary"}
-            />
-          </FormControl>
-          <FormControl>
-            <TextField
-              type={"outlined"}
-              label={"Senha"}
-              variant="outlined"
-              size="small"
-              focused
-              autoComplete="off"
-              error={passwordError}
-              helperText={passwordErrorMessage}
-              name="password"
-              placeholder="••••••"
-              id="admin-password"
-              autoFocus
-              required
-              fullWidth
-              color={passwordError ? "error" : "primary"}
-            />
-          </FormControl>
+          <Controller
+            name={`adminIdentifier`}
+            control={control}
+            render={({ field, fieldState }) => (
+              <FormControl>
+                <TextField
+                  {...field}
+                  id="adminIdentifier"
+                  type="text"
+                  placeholder="Seu e-mail"
+                  required
+                  fullWidth
+                  label="Endereço de e-mail"
+                  variant="outlined"
+                  size="small"
+                  autoComplete="off"
+                  error={fieldState.error ? true : false}
+                />
+                {fieldState.error && (
+                  <FormHelperText style={{ color: "red" }}>
+                    e-mail invalido
+                  </FormHelperText>
+                )}
+              </FormControl>
+            )}
+          />
+
+          <Controller
+            name={`adminPassword`}
+            control={control}
+            render={({ field, fieldState }) => (
+              <FormControl>
+                <TextField
+                  {...field}
+                  id="adminPassword"
+                  type="password"
+                  placeholder="Sua senha"
+                  required
+                  fullWidth
+                  label="Senha"
+                  variant="outlined"
+                  size="small"
+                  autoComplete="off"
+                  error={fieldState.error ? true : false}
+                />
+                {fieldState.error && (
+                  <FormHelperText style={{ color: "red" }}>
+                    senha invalida
+                  </FormHelperText>
+                )}
+              </FormControl>
+            )}
+          />
 
           <Link to="/signIn-client">Ir para login da cooperativa</Link>
 
           <Button
             fullWidth
+            type="submit"
             variant="contained"
-            onClick={handleSingIn}
             style={{ color: "white" }}
           >
             Entrar
           </Button>
-        </Box>
+        </form>
       </Card>
     </SignInContainer>
   );

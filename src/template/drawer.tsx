@@ -130,6 +130,13 @@ export default function ResponsiveDrawerLayout(props: Props) {
         <ListItemText primary="PEVs" />
       </ListItemButton>
 
+      <ListItemButton onClick={() => navigate("/relatorios")}>
+        <ListItemIcon>
+          <Person />
+        </ListItemIcon>
+        <ListItemText primary="Relatórios" />
+      </ListItemButton>
+
       <Box sx={{ position: "absolute", bottom: 0, width: "100%" }}>
         <Button
           variant="contained"

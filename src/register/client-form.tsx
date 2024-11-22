@@ -96,7 +96,7 @@ const schema = yup.object().shape({
   client_cnpj: yup
     .string()
     .required("CNPJ é obrigatório")
-    .min(14, "CNPJ deve ter pelo menos 14 dígitos"),
+    .min(18, "CNPJ deve ter pelo menos 14 dígitos"),
   client_socialName: yup.string().required("Razão Social é obrigatória"),
   client_responsibleName: yup
     .string()
@@ -112,9 +112,12 @@ const schema = yup.object().shape({
   client_phone: yup
     .string()
     .required("Telefone é obrigatório")
-    .min(10, "Telefone deve ter pelo menos 10 dígitos"),
+    .min(14, "Telefone deve ter pelo menos 10 dígitos"),
   client_username: yup.string().required("Usuário é obrigatório"),
-  client_password: yup.string().required("Senha de acesso é obrigatória"),
+  client_password: yup
+    .string()
+    .required("Senha de acesso é obrigatória")
+    .min(6, "Senha deve ter pelo menos 6 dígitos"),
   client_cep: yup
     .string()
     .required("CEP é obrigatório")

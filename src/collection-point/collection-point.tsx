@@ -55,12 +55,31 @@ export default function CollectionPoint() {
     setSelectedTab("coleta");
   };
 
-  function buscarPorIds(ids: string | any[], getPevs: { data: any[] }) {
+  function buscarPorIds(
+    resultIdsAndDays: { documentId: string; day: string[] }[],
+    getPevs: { data: any[] }
+  ) {
+    // console.log("resultIdsAndDays", resultIdsAndDays);
+
     const empresasEncontradas = getPevs?.data.filter(
-      (item: { documentId: any }) => ids.includes(item.documentId)
+      (item: { documentId: any }) =>
+        resultIdsAndDays
+          .map((result: any) => result.documentId)
+          .includes(item.documentId)
     );
+
     if (empresasEncontradas.length > 0) {
-      return empresasEncontradas;
+      const empresasEncontradasComDias = empresasEncontradas.map(
+        (item: { documentId: any }) => ({
+          ...item,
+          days: resultIdsAndDays
+            .filter((result) => result.documentId === item.documentId)
+            .map((result) => result.day)
+            .flat(),
+        })
+      );
+
+      return empresasEncontradasComDias;
     } else {
       return [];
       // return `Nenhuma empresa encontrada para os IDs fornecidos.`;
@@ -68,30 +87,33 @@ export default function CollectionPoint() {
   }
 
   useEffect(() => {
-    console.log(currentUser);
-
     const handleGetPevs = async () => {
       try {
         const response = await getListOfPevsByCooperative();
-        console.log(response.data);
+        const dias = ["seg", "ter", "qua", "qui", "sex", "sab", "dom"];
+
         const resultadoDosIds = response.data
           .filter((item: any) => {
-            const dias = ["seg", "ter", "qua", "qui", "sex", "sab", "dom"];
             return dias.some(
               (dia) =>
                 item[dia] &&
                 item[dia].documentId === currentUser?.cooperative_id
             );
           })
-          .map(
-            (item: { client: { documentId: any } }) => item.client.documentId
-          );
-        console.log("listar os ids", resultadoDosIds);
-        const getPevs = await getClients();
-        console.log("all clients", getPevs);
-        const resultado = buscarPorIds(resultadoDosIds, getPevs);
-        console.log("listar os itens", resultado);
+          .map((item: { [key: string]: any }) => {
+            const diasAtendidos = dias.filter(
+              (dia) =>
+                item[dia] &&
+                item[dia].documentId === currentUser?.cooperative_id
+            );
+            return {
+              documentId: item.client.documentId,
+              day: diasAtendidos,
+            };
+          });
 
+        const getPevs = await getClients();
+        const resultado = buscarPorIds(resultadoDosIds, getPevs);
         setPevs(resultado);
       } catch (error) {
         console.error("Erro ao buscar os Pevs:", error);

@@ -1,12 +1,11 @@
-import React, { useEffect } from "react";
+import { TextField } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { getCooperatives } from "../../api/cooperative";
 import PevForm from "./pev-form";
 
 const TableComponent = ({ planningList }: { planningList: any }) => {
-  const headerColumns = ["SEG", "TER", "QUA", "QUI", "SEX", ""];
-
   const [cooperatives, setCooperatives] = React.useState<any[]>([]);
-  console.log(planningList);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const dataPev = planningList.map(
     (cooperative: {
@@ -54,11 +53,20 @@ const TableComponent = ({ planningList }: { planningList: any }) => {
     })
   );
 
+  const handleSearchTermChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredDataPev = dataPev.filter((item: any) =>
+    item.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   useEffect(() => {
     const getCooperativesList = async () => {
       try {
         const response = await getCooperatives();
-        console.log("cooperatives", response.data);
         setCooperatives(response.data);
       } catch (error) {
         console.error("Erro ao buscar as cooperativas:", error);
@@ -71,22 +79,18 @@ const TableComponent = ({ planningList }: { planningList: any }) => {
 
   return (
     <div>
-      {/* <div
-        style={{
-          backgroundColor: "#F9F5ED",
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        {headerColumns.map((column, index) => (
-          <div style={{}} key={index}>
-            {column}
-          </div>
-        ))}
-      </div> */}
+      <TextField
+        id="filter-basic"
+        label="Pesquisar"
+        variant="outlined"
+        onChange={handleSearchTermChange}
+        placeholder="Pesquisar por título"
+        value={searchTerm}
+        style={{ width: "300px" }}
+      />
+
       <div>
-        {dataPev.map((pev: any, index: any) => (
+        {filteredDataPev.map((pev: any, index: any) => (
           <PevForm title={pev?.title} cooperatives={cooperatives} pev={pev} />
         ))}
       </div>

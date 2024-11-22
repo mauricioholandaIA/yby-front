@@ -29,8 +29,14 @@ const FormField = styled(Box)<{ size?: string }>`
 `;
 
 const schema = yup.object().shape({
-  cooperative_name: yup.string().required("Campo obrigatório"),
-  cooperative_code: yup.string().required("Campo obrigatório"),
+  cooperative_name: yup
+    .string()
+    .required("Campo obrigatório")
+    .min(6, "Pelo menos 6 digitos"),
+  cooperative_code: yup
+    .string()
+    .required("Campo obrigatório")
+    .min(6, "Pelo menos 6 digitos"),
 });
 
 export default function CooperativeForm() {

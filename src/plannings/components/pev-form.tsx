@@ -2,12 +2,14 @@ import TuneIcon from "@mui/icons-material/Tune";
 import {
   Button,
   Checkbox,
+  Divider,
   FormControl,
   FormHelperText,
   IconButton,
   InputLabel,
   MenuItem,
   Select,
+  Typography,
 } from "@mui/material";
 import { type } from "os";
 import { Controller, useForm } from "react-hook-form";
@@ -57,13 +59,34 @@ const PevForm = ({ title = "", cooperatives, pev }: any) => {
             display: "flex",
             flexDirection: "column",
             marginTop: "20px",
-            border: "1px solid #ccc",
-            padding: "10px",
+            border: "1px solid #15853B",
+            padding: "20px",
             borderRadius: "5px",
-            backgroundColor: "rgba(221, 195, 147, 0.2)",
           }}
         >
-          <div style={{ width: "20%", maxWidth: "100%" }}>{title}</div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography style={{ fontWeight: "500", fontSize: "20px" }}>
+              {title}
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              style={{ color: "white" }}
+            >
+              SALVAR
+            </Button>
+          </div>
+
+          <Divider style={{ marginTop: "16px", marginBottom: "16px" }} />
+
           <div
             style={{
               display: "flex",
@@ -147,17 +170,6 @@ const PevForm = ({ title = "", cooperatives, pev }: any) => {
                 )}
               />
             ))}
-
-            <div key="submit" style={{ marginTop: "40px" }}>
-              <Button
-                variant="contained"
-                color="primary"
-                type="submit"
-                style={{ color: "white" }}
-              >
-                salvar
-              </Button>
-            </div>
           </div>
         </div>
       </form>

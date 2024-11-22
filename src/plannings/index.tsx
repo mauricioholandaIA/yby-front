@@ -36,7 +36,9 @@ const PlanningList = () => {
   return (
     <StyledContainer>
       <StyledCenterContainer>
-        <Typography variant="h4" component="h1">
+        <Typography
+          style={{ marginBottom: "16px", fontWeight: "500", fontSize: "36px" }}
+        >
           Planejamento Geral
         </Typography>
 

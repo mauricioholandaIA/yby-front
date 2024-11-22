@@ -15,6 +15,7 @@ const editPlanning = async ({ documentId, data }: any) => {
     const response = await api.put(`/plannings/${documentId}`, {
       data,
     });
+    alert("Editado com sucesso!");
     return response.data;
   } catch (error) {
     console.error("Erro ao editar:", error);

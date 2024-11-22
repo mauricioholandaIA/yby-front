@@ -66,8 +66,7 @@ export default function CollectionForm({
       collectionPoint: selectedPEV?.id?.toString() || "",
       residuos: [],
       weight: "0",
-      // hasAvaria: "",
-      // avariaDescription: "",
+
       coletorImage: "",
       avariaImage: "",
     },
@@ -94,8 +93,6 @@ export default function CollectionForm({
   };
 
   const onSubmit = async (data: any) => {
-    console.log("data", data);
-
     try {
       let responseUploadImage;
       let responseAvariaImage = null;
@@ -132,7 +129,9 @@ export default function CollectionForm({
         colector: responseUploadImage
           ? { id: responseUploadImage[0].id }
           : null,
-        avaria: responseAvariaImage ? { id: responseAvariaImage[0].id } : null,
+        breakdown: responseAvariaImage
+          ? { id: responseAvariaImage[0].id }
+          : null,
       };
 
       const response = await createCollection(formatData);
@@ -143,6 +142,11 @@ export default function CollectionForm({
 
       if (avariaFile && !responseAvariaImage) {
         alert("Não foi possível fazer o upload da foto da avaria.");
+      }
+
+      if (response) {
+        alert("Coleta criada com sucesso!");
+        window.location.reload();
       }
 
       return response;
@@ -193,7 +197,7 @@ export default function CollectionForm({
               name={"collectionPoint"}
               control={control}
               render={({ field, fieldState }) => (
-                <FormControl fullWidth>
+                <FormControl fullWidth sx={{ maxWidth: "350px" }}>
                   <InputLabel id="collectionPoint">Ponto de coleta</InputLabel>
                   <Select
                     error={fieldState.error ? true : false}
@@ -233,7 +237,7 @@ export default function CollectionForm({
               name={"residuos"}
               control={control}
               render={({ field, fieldState }) => (
-                <FormControl fullWidth>
+                <FormControl fullWidth sx={{ maxWidth: "350px" }}>
                   <InputLabel id="residuos">Tipo de residuos</InputLabel>
                   <Select
                     error={fieldState.error ? true : false}

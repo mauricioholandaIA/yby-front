@@ -4,8 +4,10 @@ import MenuIcon from "@mui/icons-material/Menu";
 import {
   Button,
   Collapse,
+  Divider,
   ListItemIcon,
   ListItemText,
+  Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -24,6 +26,7 @@ import EventIcon from "@mui/icons-material/Event";
 import FolderIcon from "@mui/icons-material/Folder";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
+import LogoutIcon from "@mui/icons-material/Logout";
 import { AuthContext } from "../context/auth-context";
 
 const drawerWidth = 240;
@@ -39,6 +42,10 @@ export default function ResponsiveDrawerLayout(props: Props) {
   const [isClosing, setIsClosing] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const { user, logout } = useContext(AuthContext);
+
+  const isClient = !!user?.client_id;
+  const isCooperative = !!user?.cooperative_id;
+  const isAdmin = !!user?.isAdmin;
 
   const container =
     window !== undefined ? () => window().document.body : undefined;
@@ -71,6 +78,93 @@ export default function ResponsiveDrawerLayout(props: Props) {
   };
 
   const ybyPng = require("../assets/ybyBlack.png");
+
+  const AdminMenu = () => {
+    return (
+      <>
+        <ListItemButton onClick={handleClick}>
+          <ListItemIcon>
+            <PersonAddIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Cadastro"
+            style={{ color: "black", fontWeight: "bold" }}
+          />
+          {open ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+
+        <Collapse in={open} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              onClick={() => navigate("/cadastro/cliente")}
+            >
+              <ListItemText primary="Clientes" />
+            </ListItemButton>
+            <ListItemButton sx={{ pl: 4 }}>
+              <ListItemText
+                primary="Cooperativas"
+                onClick={() => navigate("/cadastro/cooperativa")}
+              />
+            </ListItemButton>
+          </List>
+        </Collapse>
+
+        <ListItemButton onClick={() => navigate("/planejamento")}>
+          <ListItemIcon>
+            <EventIcon />
+          </ListItemIcon>
+          <ListItemText
+            style={{ color: "black", fontWeight: "bold" }}
+            primary="Planejamento"
+          />
+        </ListItemButton>
+
+        <ListItemButton onClick={() => navigate("/relatorios")}>
+          <ListItemIcon>
+            <FolderIcon />
+          </ListItemIcon>
+          <ListItemText
+            style={{ color: "black", fontWeight: "bold" }}
+            primary="Relatórios"
+          />
+        </ListItemButton>
+      </>
+    );
+  };
+
+  const ClientMenu = () => {
+    return (
+      <>
+        <ListItemButton onClick={() => navigate("/relatorios")}>
+          <ListItemIcon>
+            <FolderIcon />
+          </ListItemIcon>
+          <ListItemText
+            style={{ color: "black", fontWeight: "bold" }}
+            primary="Relatórios"
+          />
+        </ListItemButton>
+      </>
+    );
+  };
+
+  const CooperativeMenu = () => {
+    return (
+      <>
+        <ListItemButton onClick={() => navigate("/ponto-coleta")}>
+          <ListItemIcon>
+            <Place />
+          </ListItemIcon>
+          <ListItemText
+            style={{ color: "black", fontWeight: "bold" }}
+            primary="PEVs"
+          />
+        </ListItemButton>
+      </>
+    );
+  };
+
   const drawer = (
     <div
       style={{ backgroundColor: " rgba(221, 195, 147, 0.2)", height: "100%" }}
@@ -84,69 +178,13 @@ export default function ResponsiveDrawerLayout(props: Props) {
         <img src={ybyPng} alt="YBY Logo" width="100" height="100" />
       </Box>
 
-      {user?.isAdmin && (
-        <>
-          <ListItemButton onClick={handleClick}>
-            <ListItemIcon>
-              <PersonAddIcon />
-            </ListItemIcon>
-            <ListItemText
-              primary="Cadastro"
-              style={{ color: "black", fontWeight: "bold" }}
-            />
-            {open ? <ExpandLess /> : <ExpandMore />}
-          </ListItemButton>
-
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <ListItemButton
-                sx={{ pl: 4 }}
-                onClick={() => navigate("/cadastro/cliente")}
-              >
-                <ListItemText primary="Clientes" />
-              </ListItemButton>
-              <ListItemButton sx={{ pl: 4 }}>
-                <ListItemText
-                  primary="Cooperativas"
-                  onClick={() => navigate("/cadastro/cooperativa")}
-                />
-              </ListItemButton>
-            </List>
-          </Collapse>
-
-          <ListItemButton onClick={() => navigate("/planejamento")}>
-            <ListItemIcon>
-              <EventIcon />
-            </ListItemIcon>
-            <ListItemText
-              style={{ color: "black", fontWeight: "bold" }}
-              primary="Planejamento"
-            />
-          </ListItemButton>
-        </>
-      )}
-
-      <ListItemButton onClick={() => navigate("/relatorios")}>
-        <ListItemIcon>
-          <FolderIcon />
-        </ListItemIcon>
-        <ListItemText
-          style={{ color: "black", fontWeight: "bold" }}
-          primary="Relatórios"
-        />
-      </ListItemButton>
-
-      <ListItemButton onClick={() => navigate("/ponto-coleta")}>
-        <ListItemIcon>
-          <Place />
-        </ListItemIcon>
-        <ListItemText
-          style={{ color: "black", fontWeight: "bold" }}
-          primary="PEVs"
-        />
-      </ListItemButton>
+      {isAdmin && <AdminMenu />}
+      {isClient && <ClientMenu />}
+      {isCooperative && <CooperativeMenu />}
 
       <Box sx={{ position: "absolute", bottom: 0, width: "100%" }}>
+        {/* LogoutIcon */}
+        <Divider />
         <Button
           variant="contained"
           onClick={() => {
@@ -154,12 +192,15 @@ export default function ResponsiveDrawerLayout(props: Props) {
           }}
           style={{
             width: "100%",
-            color: "black",
-            backgroundColor: "white",
             borderRadius: 0,
+            backgroundColor: "rgba(221, 195, 147, 0.1)",
+            justifyContent: "flex-start",
           }}
         >
-          Sair
+          <LogoutIcon />
+          <Typography style={{ marginLeft: 8, fontSize: "14px" }}>
+            Sair
+          </Typography>
         </Button>
       </Box>
     </div>

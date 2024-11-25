@@ -13,12 +13,17 @@ import Reports from "../reports";
 const MainRoutes = () => {
   const { user: currentUser } = useContext(AuthContext);
 
+  const isClient = !!currentUser?.client_id;
+  const isCooperative = !!currentUser?.cooperative_id;
+  const isAdmin = !!currentUser?.isAdmin;
+
   return (
     <Routes>
       {!currentUser && (
         <>
           <Route path="/signIn" element={<SignIn />} />
           <Route path="/signIn-client" element={<SignInClient />} />
+          <Route path="*" element={<Navigate to="/signIn" />} />
         </>
       )}
 
@@ -26,7 +31,7 @@ const MainRoutes = () => {
       <Route element={<ResponsiveDrawerLayout />}>
         {currentUser && (
           <>
-            {currentUser.isAdmin && (
+            {isAdmin && (
               <>
                 <Route
                   path="/cadastro"
@@ -40,17 +45,29 @@ const MainRoutes = () => {
                   path="/cadastro/cooperativa"
                   element={<Register type="cooperativa" />}
                 />
-                <Route path="/ponto-coleta" element={<CollectionPoint />} />
+                {/* <Route path="/ponto-coleta" element={<CollectionPoint />} /> */}
 
                 <Route path="/planejamento" element={<PlanningList />} />
 
                 <Route path="/relatorios" element={<Reports />} />
+
+                <Route path="*" element={<Navigate to="/relatorios" />} />
               </>
             )}
-            {!currentUser.isAdmin && (
-              <Route path="/ponto-coleta" element={<CollectionPoint />} />
+
+            {isCooperative && (
+              <>
+                <Route path="/ponto-coleta" element={<CollectionPoint />} />
+                <Route path="*" element={<Navigate to="/ponto-coleta" />} />
+              </>
             )}
-            <Route path="*" element={<Navigate to="/cadastro" />} />
+
+            {isClient && (
+              <>
+                <Route path="/relatorios" element={<Reports />} />
+                <Route path="*" element={<Navigate to="/relatorios" />} />
+              </>
+            )}
           </>
         )}
       </Route>

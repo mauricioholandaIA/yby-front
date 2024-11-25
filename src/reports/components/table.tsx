@@ -9,14 +9,17 @@ import {
   GridToolbarContainer,
   GridToolbarExport,
 } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
+import { format } from "date-fns";
+import { useContext, useEffect, useState } from "react";
 
+import { AuthContext } from "../../context/auth-context";
 import ModalDeleteComponent from "./modal-delete";
 import ModalFormComponent from "./modal-form";
 import ModalComponent from "./modal-image";
 
-const TableComponent = ({ collections }: any) => {
-  //   console.log("collections", collections);
+const TableComponent = ({ collections, refreshPage }: any) => {
+  const { user: currentUser } = useContext(AuthContext);
+  const isAdmin = !!currentUser?.isAdmin;
 
   const [rows, setRows] = useState<any>([]);
   const [open, setOpen] = useState(false);
@@ -26,10 +29,10 @@ const TableComponent = ({ collections }: any) => {
 
   const [images, setImages] = useState<any>();
 
-  const columns: GridColDef[] = [
-    { field: "createdAt", headerName: "Data | Horario", width: 200 },
+  const columnsAdmin: GridColDef[] = [
+    { field: "createdAt", headerName: "Data | Horário", width: 200 },
     { field: "pev", headerName: "PEV", width: 200 },
-    { field: "waste", headerName: "Tipos de residuoes", width: 200 },
+    { field: "waste", headerName: "Tipos de resíduos", width: 200 },
     {
       field: "weight",
       headerName: "Coleta",
@@ -38,7 +41,6 @@ const TableComponent = ({ collections }: any) => {
     {
       field: "fotos",
       headerName: "Registro em fotos",
-      //   description: "This column has a value getter and is not sortable.",
       sortable: false,
       width: 200,
       renderCell: (params) => {
@@ -51,7 +53,6 @@ const TableComponent = ({ collections }: any) => {
           });
         };
 
-        // return <Button onClick={onClick}>Click</Button>;
         return (
           <>
             <IconButton onClick={onClick} size="medium">
@@ -61,10 +62,9 @@ const TableComponent = ({ collections }: any) => {
         );
       },
     },
-
     {
       field: "action",
-      headerName: "Action",
+      headerName: "Acoes",
       width: 150,
       sortable: false,
       align: "right",
@@ -75,7 +75,6 @@ const TableComponent = ({ collections }: any) => {
           setOpenModalForm(true);
           setFormData(params.row);
         };
-
         const onDelete = async (e: { stopPropagation: () => void }) => {
           e.stopPropagation();
           setOpenModalDelete(true);
@@ -96,6 +95,41 @@ const TableComponent = ({ collections }: any) => {
     },
   ];
 
+  const columnsClient: GridColDef[] = [
+    { field: "createdAt", headerName: "Data | Horário", width: 250 },
+    { field: "pev", headerName: "PEV", width: 200 },
+    { field: "waste", headerName: "Tipos de resíduos", width: 250 },
+    {
+      field: "weight",
+      headerName: "Coleta",
+      width: 200,
+    },
+    {
+      field: "fotos",
+      headerName: "Registro em fotos",
+      sortable: false,
+      width: 200,
+      renderCell: (params) => {
+        const onClick = (e: { stopPropagation: () => void }) => {
+          e.stopPropagation();
+          setOpen(true);
+          setImages({
+            imageColector: params.row.imageColectorUrl,
+            imageAvaria: params.row.imageAvaria,
+          });
+        };
+
+        return (
+          <>
+            <IconButton onClick={onClick} size="medium">
+              <ImageIcon style={{ color: "#9B9794" }} />
+            </IconButton>
+          </>
+        );
+      },
+    },
+  ];
+
   useEffect(() => {
     const formatCollection = (data: any) => {
       const formattedData = data.map((collection: any) => {
@@ -105,7 +139,7 @@ const TableComponent = ({ collections }: any) => {
           pev: collection.pev,
           waste: collection.waste,
           weight: collection.weight,
-          createdAt: collection.createdAt,
+          createdAt: format(collection.createdAt, "dd/MM/yyyy | HH:mm"),
           imageAvaria: collection.imageAvaria,
           imageColectorUrl: collection.imageColectorUrl,
           wastesIds: collection.wastesIds,
@@ -122,15 +156,10 @@ const TableComponent = ({ collections }: any) => {
   function CustomToolbar() {
     return (
       <GridToolbarContainer>
-        {/* <GridToolbarColumnsButton /> */}
-        {/* <GridToolbarFilterButton /> */}
-        {/* <GridToolbarDensitySelector /> */}
         <GridToolbarExport />
       </GridToolbarContainer>
     );
   }
-
-  console.log("rows", formData);
 
   if (rows.length === 0) {
     return <></>;
@@ -162,10 +191,10 @@ const TableComponent = ({ collections }: any) => {
         />
       )}
 
-      <div style={{ height: 600, width: "100%" }}>
+      <div style={{ height: 600, width: "100%", marginTop: "32px" }}>
         <DataGrid
           rows={rows}
-          columns={columns}
+          columns={isAdmin ? columnsAdmin : columnsClient}
           sx={{
             ".MuiDataGrid-toolbarContainer": {
               backgroundColor: "#F9F5ED",

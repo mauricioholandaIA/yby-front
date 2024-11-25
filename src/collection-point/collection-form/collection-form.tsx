@@ -141,6 +141,7 @@ export default function CollectionForm({
       const formatData = {
         wastes: wastes,
         weight,
+        client_id: collectionPoint,
         client: {
           id: collectionPoint,
         },

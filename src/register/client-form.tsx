@@ -130,7 +130,7 @@ const schema = yup.object().shape({
 });
 
 export default function ClientForm() {
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     defaultValues: {
       client_cnpj: "",
       client_socialName: "",
@@ -173,12 +173,14 @@ export default function ClientForm() {
           state: data.client_state,
         },
       });
-      // if (createdClient) {
-      //   alert("Cliente criado com sucesso!");
-      // }
+      if (createdClient) {
+        alert("Cliente criado com sucesso!");
+        reset();
+      }
     } catch (error) {
       console.error("Error creating client:", error);
       alert("Erro ao criar cliente");
+      reset();
     }
   };
 

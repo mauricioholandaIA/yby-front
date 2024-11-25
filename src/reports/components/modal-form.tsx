@@ -34,8 +34,6 @@ const ModalFormComponent = ({ open, handleClose, data }: any) => {
   const [avariaImage, setAvariaImage] = useState<any>(true);
 
   const onSubmit = async (data: any) => {
-    console.log(data);
-
     const formatData = {
       justification: data.justify,
       weight: data.weight,
@@ -50,6 +48,7 @@ const ModalFormComponent = ({ open, handleClose, data }: any) => {
     });
     handleClose();
     alert("Editado com sucesso!");
+    window.location.reload();
   };
 
   return (

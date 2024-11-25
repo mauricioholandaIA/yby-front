@@ -48,6 +48,23 @@ const getCollection = async () => {
   }
 };
 
+const getCollectionClient = async ({
+  documentId,
+}: {
+  documentId: string | undefined;
+}) => {
+  try {
+    // http://localhost:1337/api/collections?filters[client][documentId][$eq]=iu68tri9wj493mqkgoku414y&populate=*
+    const response = await api.get(
+      `/collections?filters[client][documentId][$eq]=${documentId}&populate=*`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao buscar as coletas:", error);
+    return null;
+  }
+};
+
 const editCollection = async ({ documentId, data }: any) => {
   try {
     const response = await api.put(`/collections/${documentId}`, {
@@ -75,5 +92,6 @@ export {
   deleteCollection,
   editCollection,
   getCollection,
+  getCollectionClient,
   uploadImage,
 };

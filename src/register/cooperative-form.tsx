@@ -37,13 +37,15 @@ const schema = yup.object().shape({
     .string()
     .required("Campo obrigatório")
     .min(6, "Pelo menos 6 digitos"),
+  cooperative_employees: yup.number().required("Campo obrigatório").min(1),
 });
 
 export default function CooperativeForm() {
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     defaultValues: {
       cooperative_name: "",
       cooperative_code: "",
+      cooperative_employees: 1,
     },
     resolver: yupResolver(schema),
   });
@@ -55,15 +57,18 @@ export default function CooperativeForm() {
       const response = await createCooperative({
         cooperative_name: data.cooperative_name,
         cooperative_code: data.cooperative_code,
+        cooperative_employees: data.cooperative_employees,
       });
 
       if (!response) {
         console.error("Error creating cooperative", response);
         alert("Cooperativa criada com sucesso!");
+        reset();
         return;
       } else {
         console.log("Cooperativa criada com sucesso!", response);
         alert("Cooperativa criada com sucesso!");
+        reset();
       }
     } catch (error) {
       console.error("Error creating cooperative:", error);
@@ -152,6 +157,36 @@ export default function CooperativeForm() {
                           ),
                         },
                       }}
+                    />
+                    {fieldState.error && (
+                      <FormHelperText style={{ color: "red" }}>
+                        {fieldState.error.message}
+                      </FormHelperText>
+                    )}
+                  </>
+                )}
+              />
+            </FormField>
+
+            <FormField size="390px" key={"cooperative_employees"}>
+              <Controller
+                name={"cooperative_employees"}
+                control={control}
+                rules={{ required: true }}
+                render={({ field, fieldState }) => (
+                  <>
+                    <TextField
+                      {...field}
+                      id={"cooperative_employees"}
+                      type="number"
+                      placeholder={"Número de colaboradores"}
+                      required={true}
+                      fullWidth
+                      label={"Número de colaboradores"}
+                      variant="outlined"
+                      size="small"
+                      autoComplete="off"
+                      error={fieldState.error ? true : false}
                     />
                     {fieldState.error && (
                       <FormHelperText style={{ color: "red" }}>

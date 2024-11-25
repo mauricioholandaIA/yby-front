@@ -6,6 +6,7 @@ const createCooperative = async ({
 }: {
   cooperative_name: string;
   cooperative_code: string;
+  cooperative_employees: number;
 }) => {
   // todo criar o usuario da cooperativa antes de criar a cooperativa
   console.log(cooperative_name, cooperative_code);
@@ -14,6 +15,7 @@ const createCooperative = async ({
       data: {
         cooperative_name,
         cooperative_code_access: cooperative_code,
+        cooperative_employees: 0,
       },
     });
     return response.data;

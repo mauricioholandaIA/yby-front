@@ -1,9 +1,10 @@
 import { Tab, Table, Tabs, Typography } from "@mui/material";
 import { type } from "os";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { styled as styledComponents } from "styled-components";
-import { getCollection } from "../api/collection";
+import { getCollection, getCollectionClient } from "../api/collection";
+import { AuthContext } from "../context/auth-context";
 import TableComponent from "./components/table";
 
 const StyledContainer = styledComponents.div`
@@ -22,6 +23,10 @@ export default function Reports() {
   const navigate = useNavigate();
 
   const [collections, setCollections] = useState<any>([]);
+
+  const { user: currentUser } = useContext(AuthContext);
+
+  const isClient = !!currentUser?.client_id;
 
   const formatCollection = (data: any) => {
     const formattedData = data.map((collection: any) => {
@@ -47,14 +52,26 @@ export default function Reports() {
   };
 
   useEffect(() => {
-    const getCollectionsData = async () => {
-      const response = await getCollection();
-      //   console.log(response.data);
-      const formattedData = formatCollection(response.data);
-      setCollections(formattedData);
-    };
+    if (isClient) {
+      const getCollectionsData = async () => {
+        const response = await getCollectionClient({
+          documentId: currentUser?.client_id,
+        });
+        //   console.log(response.data);
+        const formattedData = formatCollection(response.data);
+        setCollections(formattedData);
+      };
+      getCollectionsData();
+    } else {
+      const getCollectionsData = async () => {
+        const response = await getCollection();
+        //   console.log(response.data);
+        const formattedData = formatCollection(response.data);
+        setCollections(formattedData);
+      };
 
-    getCollectionsData();
+      getCollectionsData();
+    }
   }, []);
 
   return (

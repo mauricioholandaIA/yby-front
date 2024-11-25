@@ -71,6 +71,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         password: data.adminPassword,
       });
 
+      console.log(admin);
+
       const formattedAdmin = {
         jwt: admin.jwt,
         username: admin.user.username,

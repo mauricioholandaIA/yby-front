@@ -6,10 +6,10 @@ import {
   FormHelperText,
   InputLabel,
   MenuItem,
-  OutlinedInput,
   Radio,
   RadioGroup,
   Select,
+  TextField,
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/system";
@@ -45,13 +45,13 @@ const StyledImagePlaceholder = styled("div")({
 
 const schema = yup.object().shape({
   collectionPoint: yup.string().required("Ponto de coleta é obrigatório"),
-  residuos: yup.array().required("Residuos é obrigatório"),
+  residuos: yup
+    .array()
+    .required("Residuos é obrigatório")
+    .min(1, "Residuos é obrigatório"),
   weight: yup.string().required("Peso é obrigatório"),
-  // hasAvaria: yup.string().required("Avaria é obrigatório"),
-
-  coletorImage: yup.mixed().required("Foto do coletor é obrigatória"),
-  // avariaImage: yup.mixed().required("Foto do coletor é obrigatória"),
-  avariaImage: yup.mixed(),
+  coletorImage: yup.string().required("Foto do coletor é obrigatória"),
+  avariaImage: yup.string(),
 });
 
 export default function CollectionForm({
@@ -61,14 +61,20 @@ export default function CollectionForm({
   selectedPEV: any;
   pevs: any;
 }) {
-  const { control, handleSubmit } = useForm({
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors },
+
+    setValue,
+  } = useForm({
     defaultValues: {
       collectionPoint: selectedPEV?.id?.toString() || "",
       residuos: [],
-      weight: "0",
-
-      coletorImage: "",
-      avariaImage: "",
+      weight: undefined,
+      avariaImage: undefined,
+      coletorImage: undefined,
     },
     resolver: yupResolver(schema),
   });
@@ -78,21 +84,33 @@ export default function CollectionForm({
 
   const [coletorImage, setColetorImage] = useState<any>(null);
   const [avariaImage, setAvariaImage] = useState<any>(null);
+  const [selectedValue, setSelectedValue] = React.useState("no");
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     setImage: (url: string) => void,
-    setFile: (file: File) => void
+    setFile: (file: File) => void,
+    setType: "coletorImage" | "avariaImage"
   ) => {
     if (event.target.files) {
       const selectedFile = event.target.files[0];
       const previewUrl = URL.createObjectURL(selectedFile);
       setImage(previewUrl);
       setFile(selectedFile);
+      setValue(setType, previewUrl);
     }
   };
 
   const onSubmit = async (data: any) => {
+    if (!coletorFile) {
+      setError("coletorImage", { message: "Foto do coletor é obrigatória" });
+      return;
+    }
+    if (!avariaFile && selectedValue === "yes") {
+      setError("avariaImage", { message: "Foto da avaria é obrigatória" });
+      return;
+    }
+
     try {
       let responseUploadImage;
       let responseAvariaImage = null;
@@ -154,8 +172,6 @@ export default function CollectionForm({
       throw new Error("Falha no upload");
     }
   };
-
-  const [selectedValue, setSelectedValue] = React.useState("a");
 
   const handleChangeRadio = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedValue(event.target.value);
@@ -321,24 +337,45 @@ export default function CollectionForm({
             id="image-upload-coletor"
             name="file"
             onChange={(event) =>
-              handleFileChange(event, setColetorImage, setColetorFile)
+              handleFileChange(
+                event,
+                setColetorImage,
+                setColetorFile,
+                "coletorImage"
+              )
             }
             accept="image/*"
             style={{ display: "none" }}
           />
 
+          {errors.coletorImage && (
+            <FormHelperText style={{ color: "red" }}>
+              {errors.coletorImage.message}
+            </FormHelperText>
+          )}
+
           <Controller
-            name="weight"
+            name={`weight`}
             control={control}
-            render={({ field }) => (
-              <OutlinedInput
-                style={{ marginTop: "10px" }}
-                {...field}
-                id="weight"
-                type="text"
-                placeholder="peso em kg"
-                fullWidth
-              />
+            render={({ field, fieldState }) => (
+              <FormControl>
+                <TextField
+                  style={{ marginTop: "16px", width: "350px" }}
+                  {...field}
+                  id="weight"
+                  placeholder="peso em kg"
+                  required
+                  label="Peso (kg)"
+                  variant="outlined"
+                  autoComplete="off"
+                  error={fieldState.error ? true : false}
+                />
+                {fieldState.error && (
+                  <FormHelperText style={{ color: "red" }}>
+                    {fieldState.error.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
             )}
           />
         </div>
@@ -362,37 +399,49 @@ export default function CollectionForm({
               {avariaImage ? (
                 <StyledImage src={avariaImage} alt="Preview Avaria" />
               ) : (
-                <StyledImagePlaceholder
-                  onClick={() =>
-                    document.getElementById("image-upload-avaria")?.click()
-                  }
-                >
-                  <div style={{ display: "flex", flexDirection: "column" }}>
-                    <AddAPhotoIcon
-                      style={{
-                        fontSize: 40,
-                        color: "rgb(0, 0, 0, 0.35)",
-                        alignSelf: "center",
-                      }}
-                    />
-                    <Typography
-                      variant="body1"
-                      style={{
-                        color: "rgb(0, 0, 0, 0.35)",
-                        textAlign: "center",
-                      }}
-                    >
-                      Toque para inserir foto da Avaria
-                    </Typography>
-                  </div>
-                </StyledImagePlaceholder>
+                <>
+                  <StyledImagePlaceholder
+                    onClick={() =>
+                      document.getElementById("image-upload-avaria")?.click()
+                    }
+                  >
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <AddAPhotoIcon
+                        style={{
+                          fontSize: 40,
+                          color: "rgb(0, 0, 0, 0.35)",
+                          alignSelf: "center",
+                        }}
+                      />
+                      <Typography
+                        variant="body1"
+                        style={{
+                          color: "rgb(0, 0, 0, 0.35)",
+                          textAlign: "center",
+                        }}
+                      >
+                        Toque para inserir foto da Avaria
+                      </Typography>
+                    </div>
+                  </StyledImagePlaceholder>
+                  {errors.avariaImage && (
+                    <FormHelperText style={{ color: "red" }}>
+                      {errors.avariaImage.message}
+                    </FormHelperText>
+                  )}
+                </>
               )}
               <input
                 type="file"
                 id="image-upload-avaria"
                 name="file"
                 onChange={(event) =>
-                  handleFileChange(event, setAvariaImage, setAvariaFile)
+                  handleFileChange(
+                    event,
+                    setAvariaImage,
+                    setAvariaFile,
+                    "avariaImage"
+                  )
                 }
                 accept="image/*"
                 style={{ display: "none" }}

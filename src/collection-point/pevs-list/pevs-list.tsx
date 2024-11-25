@@ -113,7 +113,7 @@ export const PEVSList = ({
               </div>
 
               <Typography style={{ fontWeight: "400", fontSize: "14px" }}>
-                {`${pev?.adress_data[0]?.street},No.${pev?.adress_data[0]?.number}, ${pev?.adress_data[0]?.neighborhood}, ${pev?.adress_data[0]?.city}, ${pev?.adress_data[0]?.state}, cep:${pev?.adress_data[0]?.cep}`}
+                {`${pev?.adress_data[0]?.street}, ${pev?.adress_data[0]?.number}.`}
               </Typography>
 
               <div

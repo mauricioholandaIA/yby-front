@@ -111,7 +111,7 @@ const schema = yup.object().shape({
     ),
   client_phone: yup
     .string()
-    .required("Telefone é obrigatório")
+    // .required("Telefone é obrigatório")
     .min(14, "Telefone deve ter pelo menos 10 dígitos"),
   client_username: yup.string().required("Usuário é obrigatório"),
   client_password: yup
@@ -174,7 +174,7 @@ export default function ClientForm() {
         },
       });
       if (createdClient) {
-        alert("Cliente criado com sucesso!");
+        // alert("Cliente criado com sucesso!");
         reset();
       }
     } catch (error) {
@@ -187,10 +187,16 @@ export default function ClientForm() {
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Typography fontSize={20} marginTop={"16px"}>
+        <Typography
+          fontSize={20}
+          marginTop={"16px"}
+          color="#4B3838"
+          fontWeight={"500"}
+          gutterBottom
+        >
           Dados básicos
         </Typography>
-        <Divider />
+        <Divider style={{ backgroundColor: "#4B3838" }} />
 
         {/* // */}
         <FormContainer>
@@ -412,10 +418,16 @@ export default function ClientForm() {
             />
           </FormField>
         </FormContainer>
-        <Typography fontSize={20} gutterBottom>
+        <Typography
+          fontSize={20}
+          gutterBottom
+          color="#4B3838"
+          fontWeight={"500"}
+        >
           Endereço
         </Typography>
-        <Divider />
+        <Divider style={{ backgroundColor: "#4B3838" }} />
+
         <div>
           <AddressFormComponent
             key={"AddressFormComponent"}
@@ -429,12 +441,7 @@ export default function ClientForm() {
             marginTop: "10px",
           }}
         >
-          <Button
-            style={{ color: "#ffff" }}
-            type="submit"
-            variant="contained"
-            color="primary"
-          >
+          <Button style={{ color: "#ffff" }} type="submit" variant="contained">
             Cadastrar
           </Button>
         </div>

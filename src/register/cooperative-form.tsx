@@ -78,10 +78,17 @@ export default function CooperativeForm() {
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Typography fontSize={20} marginTop={"16px"}>
+        <Typography
+          fontSize={20}
+          marginTop={"16px"}
+          color="#4B3838"
+          fontWeight={"500"}
+          gutterBottom
+        >
           Dados básicos
         </Typography>
-        <Divider />
+        <Divider style={{ backgroundColor: "#4B3838" }} />
+
         <div
           style={{
             display: "flex",
@@ -203,7 +210,6 @@ export default function CooperativeForm() {
               style={{ color: "#ffff" }}
               type="submit"
               variant="contained"
-              color="primary"
             >
               Cadastrar
             </Button>

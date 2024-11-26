@@ -6,6 +6,7 @@ import { IconButton } from "@mui/material";
 import {
   DataGrid,
   GridColDef,
+  GridColumnMenuManageItem,
   GridToolbarContainer,
   GridToolbarExport,
 } from "@mui/x-data-grid";
@@ -16,6 +17,36 @@ import { AuthContext } from "../../context/auth-context";
 import ModalDeleteComponent from "./modal-delete";
 import ModalFormComponent from "./modal-form";
 import ModalComponent from "./modal-image";
+
+const localizedTextsMap = {
+  columnMenuUnsort: "Não classificado",
+  columnMenuSortAsc: "Classificar por ordem crescente",
+  columnMenuSortDesc: "Classificar por ordem decrescente",
+  columnMenuFilter: "Filtro",
+  columnMenuHideColumn: "Ocultar",
+  columnMenuShowColumns: "Mostrar colunas",
+  columnMenuExpandGroup: "Expandir grupo",
+  columnMenuManageColumns: "Gerenciar colunas",
+  toolbarExport: "Exportar",
+  filterPanelColumns: "Colunas",
+  filterPanelOperators: "Operadores",
+  filterPanelInputLabel: "Valor",
+  filterOperatorContains: "Contém",
+  filterOperatorDoesNotContain: "Não contém",
+  filterOperatorEquals: "Igual",
+  filterOperatorDoesNotEqual: "Não igual",
+  filterOperatorStartsWith: "Começa com",
+  filterOperatorEndsWith: "Termina com",
+  filterOperatorIs: "Igual",
+  filterOperatorNot: "Não",
+  filterOperatorAfter: "Após",
+  filterOperatorOnOrAfter: "Em ou após",
+  filterOperatorBefore: "Antes",
+  filterOperatorOnOrBefore: "Em ou antes",
+  filterOperatorIsEmpty: "Vazio",
+  filterOperatorIsNotEmpty: "Não vazio",
+  filterOperatorIsAnyOf: "Qualquer um de",
+};
 
 const TableComponent = ({ collections, refreshPage }: any) => {
   const { user: currentUser } = useContext(AuthContext);
@@ -35,7 +66,7 @@ const TableComponent = ({ collections, refreshPage }: any) => {
     { field: "waste", headerName: "Tipos de resíduos", width: 200 },
     {
       field: "weight",
-      headerName: "Coleta",
+      headerName: "Coleta (kg)",
       width: 200,
     },
     {
@@ -64,11 +95,11 @@ const TableComponent = ({ collections, refreshPage }: any) => {
     },
     {
       field: "action",
-      headerName: "Acoes",
+      headerName: "Ações",
       width: 150,
       sortable: false,
-      align: "right",
-      headerAlign: "right",
+      // align: "right",
+      // headerAlign: "right",
       renderCell: (params) => {
         const onClick = (e: { stopPropagation: () => void }) => {
           e.stopPropagation();
@@ -101,7 +132,7 @@ const TableComponent = ({ collections, refreshPage }: any) => {
     { field: "waste", headerName: "Tipos de resíduos", width: 250 },
     {
       field: "weight",
-      headerName: "Coleta",
+      headerName: "Coleta (kg)",
       width: 200,
     },
     {
@@ -155,8 +186,23 @@ const TableComponent = ({ collections, refreshPage }: any) => {
 
   function CustomToolbar() {
     return (
-      <GridToolbarContainer>
-        <GridToolbarExport />
+      <GridToolbarContainer
+        sx={{ backgroundColor: "#f0f0f0", padding: "10px" }}
+      >
+        <GridToolbarExport
+          slotProps={{
+            button: {
+              color: "primary",
+              sx: {
+                backgroundColor: "primary.main",
+                color: "#F9F5ED",
+                "&:hover": {
+                  backgroundColor: "primary.dark",
+                },
+              },
+            },
+          }}
+        />
       </GridToolbarContainer>
     );
   }
@@ -191,7 +237,7 @@ const TableComponent = ({ collections, refreshPage }: any) => {
         />
       )}
 
-      <div style={{ height: 600, width: "100%", marginTop: "32px" }}>
+      <div style={{ height: 550, width: "100%", marginTop: "32px" }}>
         <DataGrid
           rows={rows}
           columns={isAdmin ? columnsAdmin : columnsClient}
@@ -227,6 +273,7 @@ const TableComponent = ({ collections, refreshPage }: any) => {
           slots={{
             toolbar: CustomToolbar,
           }}
+          localeText={localizedTextsMap}
         />
       </div>
     </>

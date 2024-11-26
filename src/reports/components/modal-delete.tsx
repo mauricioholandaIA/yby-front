@@ -36,11 +36,13 @@ const ModalDeleteComponent = ({ open, handleClose, documentId }: any) => {
             flexDirection: "column",
           }}
         >
-          <Typography style={{ fontWeight: "bold", fontSize: "18px" }}>
-            Tem certeza que deseja excluir o PEV do relatório?{" "}
+          <Typography
+            style={{ fontWeight: "bold", fontSize: "18px", color: "#4B3838" }}
+          >
+            Tem certeza que deseja excluir o PEV do relatório?
           </Typography>
 
-          <Typography style={{ fontSize: "12px" }}>
+          <Typography style={{ fontSize: "14px" }}>
             Essa ação não poderá ser desfeita.
           </Typography>
         </div>
@@ -51,6 +53,7 @@ const ModalDeleteComponent = ({ open, handleClose, documentId }: any) => {
               marginTop: "20px",
               color: "primary",
               width: "120px",
+              height: "42px",
             }}
             onClick={handleClose}
           >
@@ -67,6 +70,7 @@ const ModalDeleteComponent = ({ open, handleClose, documentId }: any) => {
               marginTop: "20px",
               color: "white",
               width: "80px",
+              height: "42px",
             }}
           >
             Sim

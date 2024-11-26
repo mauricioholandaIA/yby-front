@@ -195,10 +195,14 @@ export default function ResponsiveDrawerLayout(props: Props) {
             borderRadius: 0,
             backgroundColor: "rgba(221, 195, 147, 0.1)",
             justifyContent: "flex-start",
+            color: "rgba(0, 0, 0, 0.50)",
+            textTransform: "none",
           }}
         >
           <LogoutIcon />
-          <Typography style={{ marginLeft: 8, fontSize: "14px" }}>
+          <Typography
+            style={{ marginLeft: 8, fontSize: "14px", textTransform: "none" }}
+          >
             Sair
           </Typography>
         </Button>

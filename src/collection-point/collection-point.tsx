@@ -13,7 +13,7 @@ const StyledContainer = styledComponents.div`
   display: flex;
   flex-direction: column;
   width: 90%;
-  padding: 20px;
+  padding: 25px;
   align-items: center;
   justify-content: center;
   overflow-x: hidden;

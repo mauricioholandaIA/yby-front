@@ -1,46 +1,66 @@
-import TuneIcon from "@mui/icons-material/Tune";
 import {
   Button,
   Checkbox,
   Divider,
   FormControl,
   FormHelperText,
-  IconButton,
   InputLabel,
   MenuItem,
   Select,
   Typography,
 } from "@mui/material";
-import { type } from "os";
 import { Controller, useForm } from "react-hook-form";
 import { editPlanning } from "../../api/planning";
 
 const PevForm = ({ title = "", cooperatives, pev }: any) => {
   const columns = ["segunda", "terca", "quarta", "quinta", "sexta"];
-
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, setError } = useForm({
     defaultValues: {
       id: pev.id,
-      segunda: pev?.seg?.value,
-      terca: pev?.ter?.value,
-      quarta: pev?.qua?.value,
-      quinta: pev?.qui?.value,
-      sexta: pev?.sex?.value,
+      segunda: pev?.seg?.value || false,
+      terca: pev?.ter?.value || false,
+      quarta: pev?.qua?.value || false,
+      quinta: pev?.qui?.value || false,
+      sexta: pev?.sex?.value || false,
     },
   });
 
   const onSubmit = (data: any) => {
-    console.log(data);
-
     const documentId = data.id;
     delete data.id;
 
+    // Verificação de erro antes de continuar
+    if (data.segunda === true) {
+      setError("segunda", { message: "Valor inválido" });
+      return; // Interrompe a execução se houver erro
+    }
+
+    if (data.terca === true) {
+      setError("terca", { message: "Valor inválido" });
+      return; // Interrompe a execução se houver erro
+    }
+
+    if (data.quarta === true) {
+      setError("quarta", { message: "Valor inválido" });
+      return; // Interrompe a execução se houver erro
+    }
+
+    if (data.quinta === true) {
+      setError("quinta", { message: "Valor inválido" });
+      return; // Interrompe a execução se houver erro
+    }
+
+    if (data.sexta === true) {
+      setError("sexta", { message: "Valor inválido" });
+      return; // Interrompe a execução se houver erro
+    }
+
     const formatData = {
-      seg: data.segunda,
-      ter: data.terca,
-      qua: data.quarta,
-      qui: data.quinta,
-      sex: data.sexta,
+      seg: data.segunda === false ? undefined : data.segunda,
+      ter: data.terca === false ? undefined : data.terca,
+      qua: data.quarta === false ? undefined : data.quarta,
+      qui: data.quinta === false ? undefined : data.quinta,
+      sex: data.sexta === false ? undefined : data.sexta,
     };
 
     try {
@@ -77,7 +97,6 @@ const PevForm = ({ title = "", cooperatives, pev }: any) => {
             </Typography>
             <Button
               variant="contained"
-              color="primary"
               type="submit"
               style={{ color: "white" }}
             >
@@ -116,10 +135,6 @@ const PevForm = ({ title = "", cooperatives, pev }: any) => {
                           alignItems: "center",
                         }}
                       >
-                        <div>
-                          {column.charAt(0).toUpperCase() + column.slice(1)}
-                        </div>
-
                         <Checkbox
                           name={`pev.${column}`}
                           checked={field.value}
@@ -133,14 +148,23 @@ const PevForm = ({ title = "", cooperatives, pev }: any) => {
                             }
                           }}
                         />
+                        <div>
+                          {column === "terca"
+                            ? "Terça"
+                            : column.charAt(0).toUpperCase() + column.slice(1)}
+                        </div>
                       </div>
 
-                      <FormControl fullWidth>
+                      <FormControl
+                        sx={{ height: "55px", marginTop: "8px" }}
+                        fullWidth
+                      >
                         <InputLabel size="small" id="cooperativas">
-                          cooperativas
+                          Cooperativa
                         </InputLabel>
                         <Select
                           {...field}
+                          color="secondary"
                           name={`pev.${pev.id}.${column}`}
                           error={fieldState.error ? true : false}
                           labelId="cooperativas"
@@ -155,7 +179,10 @@ const PevForm = ({ title = "", cooperatives, pev }: any) => {
                               key={cooperative.id}
                               value={cooperative.id}
                             >
-                              {cooperative?.cooperative_name}
+                              {cooperative?.cooperative_name
+                                .charAt(0)
+                                .toUpperCase() +
+                                cooperative?.cooperative_name.slice(1)}
                             </MenuItem>
                           ))}
                         </Select>

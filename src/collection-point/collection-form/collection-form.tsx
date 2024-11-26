@@ -1,9 +1,12 @@
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ImageIcon from "@mui/icons-material/Image";
 import {
   Button,
   FormControl,
   FormControlLabel,
   FormHelperText,
+  IconButton,
   InputLabel,
   MenuItem,
   Radio,
@@ -66,7 +69,6 @@ export default function CollectionForm({
     handleSubmit,
     setError,
     formState: { errors },
-
     setValue,
   } = useForm({
     defaultValues: {
@@ -92,13 +94,26 @@ export default function CollectionForm({
     setFile: (file: File) => void,
     setType: "coletorImage" | "avariaImage"
   ) => {
-    if (event.target.files) {
-      const selectedFile = event.target.files[0];
-      const previewUrl = URL.createObjectURL(selectedFile);
-      setImage(previewUrl);
-      setFile(selectedFile);
-      setValue(setType, previewUrl);
+    console.log(event.target.files);
+    if (event?.target?.files) {
+      const selectedFile = event.target.files?.[0];
+      if (selectedFile) {
+        const previewUrl = URL.createObjectURL(selectedFile);
+        setImage(previewUrl);
+        setFile(selectedFile);
+        setValue(setType, previewUrl);
+      }
     }
+  };
+
+  const handleClearImage = (
+    setImage: (url: string) => void,
+    setFile: any,
+    setType: "coletorImage" | "avariaImage"
+  ) => {
+    setImage("");
+    setFile(null);
+    setValue(setType, undefined);
   };
 
   const onSubmit = async (data: any) => {
@@ -164,7 +179,7 @@ export default function CollectionForm({
       }
 
       if (response) {
-        alert("Coleta criada com sucesso!");
+        alert("Coleta registrada com sucesso!");
         window.location.reload();
       }
 
@@ -179,7 +194,7 @@ export default function CollectionForm({
   };
 
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
       <form
         onSubmit={handleSubmit(onSubmit)}
         style={{
@@ -193,9 +208,8 @@ export default function CollectionForm({
         <div
           style={{
             display: "flex",
-            height: "40px",
             width: "100%",
-            marginBottom: "5px",
+            marginBottom: "16px",
             alignItems: "center",
             justifyContent: "start",
             flexDirection: "row",
@@ -208,7 +222,8 @@ export default function CollectionForm({
             Sobre a coleta
           </Typography>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           <div>
             <Controller
               name={"collectionPoint"}
@@ -264,12 +279,12 @@ export default function CollectionForm({
                     label="Tipo de residuo"
                     multiple
                   >
-                    <MenuItem value={"11"}>Papel</MenuItem>
-                    <MenuItem value={"13"}>Plástico</MenuItem>
-                    <MenuItem value={"12"}>Metal</MenuItem>
-                    <MenuItem value={"14"}>Vidro</MenuItem>
-                    <MenuItem value={"15"}>Orgânicos</MenuItem>
-                    <MenuItem value={"16"}>Reciclaveis Geral</MenuItem>
+                    <MenuItem value={"2"}>Papel</MenuItem>
+                    <MenuItem value={"1"}>Plástico</MenuItem>
+                    <MenuItem value={"3"}>Metal</MenuItem>
+                    <MenuItem value={"4"}>Vidro</MenuItem>
+                    <MenuItem value={"6"}>Orgânicos</MenuItem>
+                    <MenuItem value={"5"}>Reciclaveis Geral</MenuItem>
                   </Select>
                   {fieldState.error && (
                     <FormHelperText style={{ color: "red" }}>
@@ -284,8 +299,8 @@ export default function CollectionForm({
 
         <div
           style={{
+            marginTop: "10px",
             display: "flex",
-            height: "40px",
             alignItems: "center",
             justifyContent: "start",
           }}
@@ -299,17 +314,65 @@ export default function CollectionForm({
         </div>
 
         <div>
-          <Typography style={{ fontSize: "14px", fontWeight: "400" }}>
+          <Typography
+            style={{
+              fontSize: "14px",
+              fontWeight: "500",
+              marginBottom: "10px",
+              width: "100%",
+            }}
+          >
             Coletor
           </Typography>
           {coletorImage ? (
-            <StyledImage
-              onClick={() =>
-                document.getElementById("image-upload-coletor")?.click()
-              }
-              src={coletorImage}
-              alt="Preview Coletor"
-            />
+            <>
+              <StyledImage src={coletorImage} alt="Preview Coletor" />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  backgroundColor: "rgba(21, 133, 59, 0.08)",
+                  padding: "8px",
+                  borderRadius: "8px",
+                  marginTop: "16px",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "8px",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <ImageIcon
+                    style={{ color: coletorImage ? "#9B9794" : "#C7C4C2" }}
+                  />
+                  <Typography
+                    style={{
+                      fontSize: "14px",
+                      textDecoration: coletorImage ? "none" : "line-through",
+                      color: coletorImage ? "#9B9794" : "#C7C4C2",
+                    }}
+                  >
+                    Imagem do coletor
+                  </Typography>
+                </div>
+                <IconButton
+                  onClick={() =>
+                    handleClearImage(
+                      setColetorImage,
+                      setColetorFile,
+                      "coletorImage"
+                    )
+                  }
+                  size="medium"
+                >
+                  <DeleteIcon style={{ color: "#9B9794" }} />
+                </IconButton>
+              </div>
+            </>
           ) : (
             <StyledImagePlaceholder
               onClick={() =>
@@ -322,13 +385,14 @@ export default function CollectionForm({
                     fontSize: 40,
                     color: "rgb(0, 0, 0, 0.35)",
                     alignSelf: "center",
+                    marginBottom: "10px",
                   }}
                 />
                 <Typography
                   variant="body1"
-                  style={{ color: "rgb(0, 0, 0, 0.35)", textAlign: "center" }}
+                  style={{ color: "#4B3838", textAlign: "center" }}
                 >
-                  Toque para inserir foto do coletor
+                  Toque para inserir foto do <strong>coletor</strong>
                 </Typography>
               </div>
             </StyledImagePlaceholder>
@@ -359,9 +423,9 @@ export default function CollectionForm({
             name={`weight`}
             control={control}
             render={({ field, fieldState }) => (
-              <FormControl>
+              <FormControl fullWidth sx={{ maxWidth: "350px" }}>
                 <TextField
-                  style={{ marginTop: "16px", width: "350px" }}
+                  style={{ marginTop: "16px" }}
                   {...field}
                   id="weight"
                   placeholder="peso em kg"
@@ -382,23 +446,96 @@ export default function CollectionForm({
         </div>
 
         <div style={{ marginTop: "20px" }}>
-          <Typography style={{ fontSize: "14px", fontWeight: "400" }}>
+          <Typography
+            style={{
+              fontSize: "14px",
+              fontWeight: "500",
+              marginBottom: "10px",
+            }}
+          >
             Avaria
           </Typography>
 
-          <Typography sx={{ fontWeight: "bold" }}>
-            O seu coletor apresenta avarias (está danificado)?
-          </Typography>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              flexDirection: "row",
+              marginBottom: "20px",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography sx={{ fontWeight: "400", width: "150px" }}>
+              O seu coletor apresenta avarias (está danificado)?
+            </Typography>
 
-          <RadioGroup row value={selectedValue} onChange={handleChangeRadio}>
-            <FormControlLabel value="yes" control={<Radio />} label="Sim" />
-            <FormControlLabel value="no" control={<Radio />} label="Não" />
-          </RadioGroup>
+            <RadioGroup row value={selectedValue} onChange={handleChangeRadio}>
+              <FormControlLabel
+                labelPlacement="bottom"
+                value="yes"
+                control={<Radio />}
+                label="Sim"
+              />
+              <FormControlLabel
+                value="no"
+                control={<Radio />}
+                label="Não"
+                labelPlacement="bottom"
+              />
+            </RadioGroup>
+          </div>
 
           {selectedValue === "yes" && (
             <>
               {avariaImage ? (
-                <StyledImage src={avariaImage} alt="Preview Avaria" />
+                <>
+                  <StyledImage src={avariaImage} alt="Preview Avaria" />
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      backgroundColor: "rgba(21, 133, 59, 0.08)",
+                      padding: "8px",
+                      borderRadius: "8px",
+                      marginTop: "16px",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "8px",
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <ImageIcon
+                        style={{ color: avariaImage ? "#9B9794" : "#C7C4C2" }}
+                      />
+                      <Typography
+                        style={{
+                          fontSize: "14px",
+                          textDecoration: avariaImage ? "none" : "line-through",
+                          color: avariaImage ? "#9B9794" : "#C7C4C2",
+                        }}
+                      >
+                        Imagem da avaria
+                      </Typography>
+                    </div>
+                    <IconButton
+                      onClick={() =>
+                        handleClearImage(
+                          setAvariaImage,
+                          setAvariaFile,
+                          "avariaImage"
+                        )
+                      }
+                      size="medium"
+                    >
+                      <DeleteIcon style={{ color: "#9B9794" }} />
+                    </IconButton>
+                  </div>
+                </>
               ) : (
                 <>
                   <StyledImagePlaceholder
@@ -412,16 +549,17 @@ export default function CollectionForm({
                           fontSize: 40,
                           color: "rgb(0, 0, 0, 0.35)",
                           alignSelf: "center",
+                          marginBottom: "10px",
                         }}
                       />
                       <Typography
                         variant="body1"
                         style={{
-                          color: "rgb(0, 0, 0, 0.35)",
+                          color: "#4B3838",
                           textAlign: "center",
                         }}
                       >
-                        Toque para inserir foto da Avaria
+                        Toque para inserir foto da <strong>Avaria</strong>
                       </Typography>
                     </div>
                   </StyledImagePlaceholder>
@@ -455,9 +593,8 @@ export default function CollectionForm({
           style={{ marginTop: "20px", width: "100%", color: "white" }}
           type="submit"
           variant="contained"
-          color="primary"
         >
-          Cadastrar
+          Registrar coleta
         </Button>
       </form>
     </div>

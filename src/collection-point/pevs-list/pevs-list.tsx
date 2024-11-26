@@ -94,7 +94,7 @@ export const PEVSList = ({
                 display: "flex",
                 flexDirection: "column",
                 width: "95%",
-                backgroundColor: " rgba(221, 195, 147, 0.2)",
+                backgroundColor: "#F8F3E9",
                 padding: "12px",
                 gap: "12px",
               }}
@@ -113,7 +113,7 @@ export const PEVSList = ({
               </div>
 
               <Typography style={{ fontWeight: "400", fontSize: "14px" }}>
-                {`${pev?.adress_data[0]?.street}, ${pev?.adress_data[0]?.number}.`}
+                {`${pev?.adress_data[0]?.street}, ${pev?.adress_data[0]?.number}`}
               </Typography>
 
               <div
@@ -140,7 +140,6 @@ export const PEVSList = ({
               <Button
                 disabled={!compareDays(pev?.days)}
                 variant="outlined"
-                color="primary"
                 style={{
                   padding: "8px 16px",
                   borderRadius: "5px",

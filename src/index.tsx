@@ -8,10 +8,10 @@ import "./index.css";
 const theme = createTheme({
   palette: {
     primary: {
-      main: green[500],
+      main: "#15853B",
     },
     secondary: {
-      main: green[500],
+      main: "rgba(75,56,56)",
     },
   },
 
@@ -38,7 +38,7 @@ const theme = createTheme({
               borderColor: "#B2BAC2",
             },
             "&.Mui-focused fieldset": {
-              borderColor: "#6F7E8C",
+              borderColor: "rgba(75,56,56, 0.35)",
             },
           },
         },

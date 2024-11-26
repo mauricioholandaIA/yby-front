@@ -14,7 +14,7 @@ const StyledContainer = styledComponents.div`
 `;
 
 const StyledCenterContainer = styledComponents.div`
-    padding: 40px 40px 0;
+    padding: 50px 40px 0;
 `;
 
 export default function Register({ type }: { type: string }) {
@@ -44,7 +44,9 @@ export default function Register({ type }: { type: string }) {
   return (
     <StyledContainer>
       <StyledCenterContainer>
-        <Typography variant="h4" component="h1">
+        <Typography
+          style={{ fontSize: "32px", fontWeight: "600", color: "#4B3838" }}
+        >
           Cadastro
         </Typography>
 
@@ -59,7 +61,8 @@ export default function Register({ type }: { type: string }) {
         >
           <ToggleButton
             style={{
-              backgroundColor: value === 0 ? "#15853B" : "#C8C8C8",
+              backgroundColor:
+                value === 0 ? "#15853B" : "rgb(200, 200, 200, 0.5)",
               flex: 1,
               height: "36px",
               border: "0px",
@@ -68,7 +71,8 @@ export default function Register({ type }: { type: string }) {
               fontSize: "14px",
               textAlign: "center",
               cursor: "pointer",
-              color: "white",
+              fontWeight: "600",
+              color: value === 0 ? "white" : "#15853B",
             }}
             value="clientw"
             selected={value === 0}
@@ -78,7 +82,8 @@ export default function Register({ type }: { type: string }) {
           </ToggleButton>
           <ToggleButton
             style={{
-              backgroundColor: value === 1 ? "#15853B" : "#C8C8C8",
+              backgroundColor:
+                value === 1 ? "#15853B" : "rgb(200, 200, 200, 0.5)",
               flex: 1,
               height: "36px",
               border: "0px",
@@ -87,7 +92,8 @@ export default function Register({ type }: { type: string }) {
               fontSize: "14px",
               textAlign: "center",
               cursor: "pointer",
-              color: "white",
+              fontWeight: "600",
+              color: value === 1 ? "white" : "#15853B",
             }}
             value="cooperativa"
             selected={value === 1}

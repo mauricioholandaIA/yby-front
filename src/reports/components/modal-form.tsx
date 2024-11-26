@@ -78,10 +78,6 @@ const ModalFormComponent = ({ open, handleClose, data }: any) => {
             <Typography id="modal-modal-title" variant="h6" component="h2">
               Editar registro do PEV
             </Typography>
-
-            <IconButton onClick={handleClose} size="medium">
-              <CloseIcon />
-            </IconButton>
           </div>
 
           <Typography>
@@ -113,12 +109,12 @@ const ModalFormComponent = ({ open, handleClose, data }: any) => {
                       label="Tipo de residuos"
                       multiple
                     >
-                      <MenuItem value={"11"}>Papel</MenuItem>
-                      <MenuItem value={"13"}>Plástico</MenuItem>
-                      <MenuItem value={"12"}>Metal</MenuItem>
-                      <MenuItem value={"14"}>Vidro</MenuItem>
-                      <MenuItem value={"15"}>Orgânicos</MenuItem>
-                      <MenuItem value={"16"}>Reciclaveis Geral</MenuItem>
+                      <MenuItem value={"2"}>Papel</MenuItem>
+                      <MenuItem value={"1"}>Plástico</MenuItem>
+                      <MenuItem value={"3"}>Metal</MenuItem>
+                      <MenuItem value={"4"}>Vidro</MenuItem>
+                      <MenuItem value={"6"}>Orgânicos</MenuItem>
+                      <MenuItem value={"5"}>Reciclaveis Geral</MenuItem>
                     </Select>
                     {fieldState.error && (
                       <FormHelperText style={{ color: "red" }}>
@@ -262,9 +258,9 @@ const ModalFormComponent = ({ open, handleClose, data }: any) => {
                     style={{ marginTop: "10px" }}
                     id="justify"
                     type="text"
-                    placeholder={"editei o PEV porque..."}
+                    placeholder={"Editei o PEV porque..."}
                     fullWidth
-                    label={"Motivo da edicao"}
+                    label={"Motivo da edição"}
                     variant="outlined"
                     size="small"
                     rows={4}
@@ -283,7 +279,8 @@ const ModalFormComponent = ({ open, handleClose, data }: any) => {
                 style={{
                   marginTop: "20px",
                   color: "primary",
-                  width: "120px",
+                  width: "125px",
+                  height: "42px",
                 }}
                 onClick={handleClose}
               >
@@ -293,7 +290,12 @@ const ModalFormComponent = ({ open, handleClose, data }: any) => {
               <Button
                 type="submit"
                 variant="contained"
-                style={{ marginTop: "20px", color: "white", width: "120px" }}
+                style={{
+                  marginTop: "20px",
+                  color: "white",
+                  width: "100px",
+                  height: "42px",
+                }}
               >
                 Editar
               </Button>

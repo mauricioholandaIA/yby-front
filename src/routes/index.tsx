@@ -17,13 +17,14 @@ const MainRoutes = () => {
   const isCooperative = !!currentUser?.cooperative_id;
   const isAdmin = !!currentUser?.isAdmin;
 
+  console.log(currentUser);
+
   return (
     <Routes>
       {!currentUser && (
         <>
           <Route path="/signIn" element={<SignIn />} />
           <Route path="/signIn-client" element={<SignInClient />} />
-          <Route path="*" element={<Navigate to="/signIn" />} />
         </>
       )}
 
@@ -45,12 +46,8 @@ const MainRoutes = () => {
                   path="/cadastro/cooperativa"
                   element={<Register type="cooperativa" />}
                 />
-                {/* <Route path="/ponto-coleta" element={<CollectionPoint />} /> */}
-
                 <Route path="/planejamento" element={<PlanningList />} />
-
                 <Route path="/relatorios" element={<Reports />} />
-
                 <Route path="*" element={<Navigate to="/relatorios" />} />
               </>
             )}

@@ -16,7 +16,7 @@ const StyledContainer = styledComponents.div`
 `;
 
 const StyledCenterContainer = styledComponents.div`
-    padding: 40px 40px 0;
+    padding: 50px 40px 0;
 `;
 
 export default function Reports() {
@@ -77,8 +77,10 @@ export default function Reports() {
   return (
     <StyledContainer>
       <StyledCenterContainer>
-        <Typography variant="h4" component="h1">
-          Relatorios
+        <Typography
+          style={{ fontSize: "32px", fontWeight: "600", color: "#4B3838" }}
+        >
+          Relatórios
         </Typography>
 
         <TableComponent collections={collections} />

@@ -13,7 +13,7 @@ const StyledContainer = styledComponents.div`
 `;
 
 const StyledCenterContainer = styledComponents.div`
-    padding: 40px 40px 0;
+    padding: 50px 40px 0;
 `;
 
 const PlanningList = () => {
@@ -37,7 +37,7 @@ const PlanningList = () => {
     <StyledContainer>
       <StyledCenterContainer>
         <Typography
-          style={{ marginBottom: "16px", fontWeight: "500", fontSize: "36px" }}
+          style={{ fontSize: "32px", fontWeight: "600", color: "#4B3838" }}
         >
           Planejamento Geral
         </Typography>

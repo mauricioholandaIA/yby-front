@@ -1,5 +1,6 @@
 import {
   Button,
+  CircularProgress,
   Divider,
   FormHelperText,
   TextField,
@@ -11,7 +12,7 @@ import { createClient } from "../api/client";
 import { AddressFormComponent } from "./components/address-form-component";
 
 import { yupResolver } from "@hookform/resolvers/yup";
-import React from "react";
+import React, { useState } from "react";
 import * as yup from "yup";
 
 import { IMaskInput } from "react-imask";
@@ -130,6 +131,8 @@ const schema = yup.object().shape({
 });
 
 export default function ClientForm() {
+  const [loading, setLoading] = useState(false);
+
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
       client_cnpj: "",
@@ -149,12 +152,13 @@ export default function ClientForm() {
   });
 
   const onSubmit = async (data: any) => {
+    setLoading(true);
+
     data.client_cnpj = data.client_cnpj.replace(/[./-]/g, "");
     data.client_phone = data.client_phone.replace(/[\(\)\s-]/g, "");
     data.client_cep = data.client_cep.replace(/[-]/g, "");
 
     // todo: ajustar ordem de criacao no back , para nao ter 2 empresas publicadas com msm nome
-
     try {
       const createdClient = await createClient({
         cnpj: data.client_cnpj,
@@ -176,8 +180,11 @@ export default function ClientForm() {
       if (createdClient) {
         // alert("Cliente criado com sucesso!");
         reset();
+        setLoading(false);
       }
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error("Error creating client:", error);
       alert("Erro ao criar cliente");
       reset();
@@ -441,8 +448,17 @@ export default function ClientForm() {
             marginTop: "10px",
           }}
         >
-          <Button style={{ color: "#ffff" }} type="submit" variant="contained">
-            Cadastrar
+          <Button
+            disabled={loading}
+            style={{ color: "#ffff" }}
+            type="submit"
+            variant="contained"
+          >
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Cadastrar"
+            )}
           </Button>
         </div>
       </form>

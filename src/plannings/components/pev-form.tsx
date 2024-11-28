@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  CircularProgress,
   Divider,
   FormControl,
   FormHelperText,
@@ -9,6 +10,7 @@ import {
   Select,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { editPlanning } from "../../api/planning";
 
@@ -25,33 +27,45 @@ const PevForm = ({ title = "", cooperatives, pev }: any) => {
     },
   });
 
+  const [loading, setLoading] = useState(false);
+
   const onSubmit = (data: any) => {
+    setLoading(true);
     const documentId = data.id;
     delete data.id;
 
     // Verificação de erro antes de continuar
     if (data.segunda === true) {
       setError("segunda", { message: "Valor inválido" });
+      setLoading(false);
       return; // Interrompe a execução se houver erro
     }
 
     if (data.terca === true) {
       setError("terca", { message: "Valor inválido" });
+      setLoading(false);
+
       return; // Interrompe a execução se houver erro
     }
 
     if (data.quarta === true) {
       setError("quarta", { message: "Valor inválido" });
+      setLoading(false);
+
       return; // Interrompe a execução se houver erro
     }
 
     if (data.quinta === true) {
       setError("quinta", { message: "Valor inválido" });
+      setLoading(false);
+
       return; // Interrompe a execução se houver erro
     }
 
     if (data.sexta === true) {
       setError("sexta", { message: "Valor inválido" });
+      setLoading(false);
+
       return; // Interrompe a execução se houver erro
     }
 
@@ -65,7 +79,10 @@ const PevForm = ({ title = "", cooperatives, pev }: any) => {
 
     try {
       const response = editPlanning({ documentId, data: formatData });
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
+
       console.error("Erro ao fazer login:", error);
     }
   };
@@ -99,8 +116,13 @@ const PevForm = ({ title = "", cooperatives, pev }: any) => {
               variant="contained"
               type="submit"
               style={{ color: "white" }}
+              disabled={loading}
             >
-              SALVAR
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "SALVAR"
+              )}
             </Button>
           </div>
 

@@ -4,7 +4,7 @@ import Divider from "@mui/material/Divider";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { styled as styledComponents } from "styled-components";
@@ -12,7 +12,7 @@ import { authClient } from "../api/auth";
 import YbyMarca from "../assets/yby-marca";
 import { AuthContext } from "../context/auth-context";
 
-import { FormHelperText } from "@mui/material";
+import { CircularProgress, FormHelperText } from "@mui/material";
 import * as yup from "yup";
 
 const Card = styledComponents.div`
@@ -51,6 +51,8 @@ const schema = yup.object().shape({
 });
 
 export default function SignInClient() {
+  const [loading, setLoading] = useState(false);
+
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -63,6 +65,7 @@ export default function SignInClient() {
 
   const onSubmit = async (data: any) => {
     try {
+      setLoading(true);
       const client = await authClient({
         identifier: `${data.cooperativePassword}@coop.com`,
         password: data.cooperativePassword,
@@ -80,10 +83,13 @@ export default function SignInClient() {
 
       if (client) {
         login(formattedClient);
+        setLoading(false);
+
         navigate("/ponto-coleta");
       }
     } catch (error) {
       console.log(error);
+      setLoading(false);
       setError("cooperativePassword", {
         type: "server",
         message: "Código de acesso inválido",
@@ -154,12 +160,16 @@ export default function SignInClient() {
           <Link to="/signIn">Ir para login do cliente</Link>
 
           <Button
-            fullWidth
-            variant="contained"
+            disabled={loading}
+            style={{ color: "#ffff" }}
             type="submit"
-            style={{ color: "white" }}
+            variant="contained"
           >
-            Entrar
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Entrar"
+            )}
           </Button>
         </form>
       </Card>

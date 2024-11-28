@@ -4,6 +4,7 @@ import ImageIcon from "@mui/icons-material/Image";
 import {
   Box,
   Button,
+  CircularProgress,
   FormControl,
   FormHelperText,
   IconButton,
@@ -19,8 +20,6 @@ import { Controller, useForm } from "react-hook-form";
 import { editCollection } from "../../api/collection";
 
 const ModalFormComponent = ({ open, handleClose, data }: any) => {
-  console.log(data);
-
   const documentId = data.documentId;
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -30,10 +29,13 @@ const ModalFormComponent = ({ open, handleClose, data }: any) => {
     },
   });
 
+  const [loading, setLoading] = useState(false);
+
   const [coletorImage, setColetorImage] = useState<any>(true);
   const [avariaImage, setAvariaImage] = useState<any>(true);
 
   const onSubmit = async (data: any) => {
+    setLoading(true);
     const formatData = {
       justification: data.justify,
       weight: data.weight,
@@ -46,6 +48,7 @@ const ModalFormComponent = ({ open, handleClose, data }: any) => {
       documentId,
       data: formatData,
     });
+    setLoading(false);
     handleClose();
     alert("Editado com sucesso!");
     window.location.reload();
@@ -296,8 +299,13 @@ const ModalFormComponent = ({ open, handleClose, data }: any) => {
                   width: "100px",
                   height: "42px",
                 }}
+                disabled={loading}
               >
-                Editar
+                {loading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "Editar"
+                )}
               </Button>
             </div>
           </form>

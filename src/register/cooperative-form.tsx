@@ -2,13 +2,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import {
   Button,
+  CircularProgress,
   Divider,
   FormHelperText,
   TextField,
   Typography,
 } from "@mui/material";
 import { Box, styled } from "@mui/system";
-import React from "react";
+import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { createCooperative } from "../api/cooperative";
@@ -41,6 +42,8 @@ const schema = yup.object().shape({
 });
 
 export default function CooperativeForm() {
+  const [loading, setLoading] = useState(false);
+
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
       cooperative_name: "",
@@ -51,9 +54,8 @@ export default function CooperativeForm() {
   });
 
   const onSubmit = async (data: any) => {
-    console.log("Form data:", data);
-
     try {
+      setLoading(true);
       const response = await createCooperative({
         cooperative_name: data.cooperative_name,
         cooperative_code: data.cooperative_code,
@@ -61,16 +63,19 @@ export default function CooperativeForm() {
       });
 
       if (!response) {
+        setLoading(false);
         console.error("Error creating cooperative", response);
         alert("Cooperativa criada com sucesso!");
         reset();
         return;
       } else {
+        setLoading(false);
         console.log("Cooperativa criada com sucesso!", response);
         alert("Cooperativa criada com sucesso!");
         reset();
       }
     } catch (error) {
+      setLoading(false);
       console.error("Error creating cooperative:", error);
     }
   };
@@ -207,11 +212,16 @@ export default function CooperativeForm() {
           </FormContainer>
           <div style={{ alignContent: "center" }}>
             <Button
+              disabled={loading}
               style={{ color: "#ffff" }}
               type="submit"
               variant="contained"
             >
-              Cadastrar
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Cadastrar"
+              )}
             </Button>
           </div>
         </div>

@@ -3,6 +3,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ImageIcon from "@mui/icons-material/Image";
 import {
   Button,
+  CircularProgress,
   FormControl,
   FormControlLabel,
   FormHelperText,
@@ -88,6 +89,8 @@ export default function CollectionForm({
   const [avariaImage, setAvariaImage] = useState<any>(null);
   const [selectedValue, setSelectedValue] = React.useState("no");
 
+  const [loading, setLoading] = useState(false);
+
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     setImage: (url: string) => void,
@@ -117,12 +120,15 @@ export default function CollectionForm({
   };
 
   const onSubmit = async (data: any) => {
+    setLoading(true);
     if (!coletorFile) {
       setError("coletorImage", { message: "Foto do coletor é obrigatória" });
+      setLoading(false);
       return;
     }
     if (!avariaFile && selectedValue === "yes") {
       setError("avariaImage", { message: "Foto da avaria é obrigatória" });
+      setLoading(false);
       return;
     }
 
@@ -135,6 +141,8 @@ export default function CollectionForm({
       } catch (error) {
         console.error("Erro ao fazer upload da foto do coletor:", error);
         responseUploadImage = null;
+        setLoading(false);
+        return;
       }
 
       if (avariaFile) {
@@ -142,6 +150,8 @@ export default function CollectionForm({
           responseAvariaImage = await uploadImage(avariaFile);
         } catch (error) {
           console.error("Erro ao fazer upload da foto da avaria:", error);
+          setLoading(false);
+          return;
         }
       }
 
@@ -179,12 +189,14 @@ export default function CollectionForm({
       }
 
       if (response) {
+        setLoading(false);
         alert("Coleta registrada com sucesso!");
         window.location.reload();
       }
 
       return response;
     } catch (error) {
+      setLoading(false);
       throw new Error("Falha no upload");
     }
   };
@@ -593,8 +605,13 @@ export default function CollectionForm({
           style={{ marginTop: "20px", width: "100%", color: "white" }}
           type="submit"
           variant="contained"
+          disabled={loading}
         >
-          Registrar coleta
+          {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            "Registrar coleta"
+          )}
         </Button>
       </form>
     </div>

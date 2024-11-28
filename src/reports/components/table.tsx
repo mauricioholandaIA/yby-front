@@ -139,6 +139,7 @@ const TableComponent = ({ collections, refreshPage }: any) => {
       field: "fotos",
       headerName: "Registro em fotos",
       sortable: false,
+      filterable: false,
       width: 200,
       renderCell: (params) => {
         const onClick = (e: { stopPropagation: () => void }) => {
@@ -259,11 +260,12 @@ const TableComponent = ({ collections, refreshPage }: any) => {
               fontWeight: 400,
               fontSize: "14px",
             },
+
             ".MuiDataGrid-sortIcon": {
               opacity: "inherit !important",
             },
             ".MuiDataGrid-iconButtonContainer": {
-              marginLeft: "50px !important",
+              marginLeft: "80px !important",
             },
             ".MuiDataGrid-footerContainer": {
               display: "none",

@@ -1,11 +1,11 @@
-import { FormHelperText } from "@mui/material";
+import { CircularProgress, FormHelperText } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { styled as styledComponents } from "styled-components";
@@ -56,6 +56,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
+  const [loading, setLoading] = useState(false);
+
   const { control, handleSubmit, setError } = useForm({
     defaultValues: {
       adminIdentifier: "",
@@ -66,6 +68,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
 
   const onSubmit = async (data: any) => {
     try {
+      setLoading(true);
+
       const admin = await authAdmin({
         identifier: data.adminIdentifier,
         password: data.adminPassword,
@@ -86,8 +90,11 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       if (admin) {
         login(formattedAdmin);
         navigate("/ponto-coleta");
+        setLoading(false);
       }
     } catch (error) {
+      setLoading(false);
+
       setError("adminIdentifier", {
         type: "server",
         message: "Erro ao fazer login",
@@ -192,9 +199,10 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             fullWidth
             type="submit"
             variant="contained"
+            disabled={loading}
             style={{ color: "white" }}
           >
-            Entrar
+            {loading ? <CircularProgress size={20} /> : "Entrar"}
           </Button>
         </form>
       </Card>

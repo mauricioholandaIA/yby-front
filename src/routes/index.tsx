@@ -25,6 +25,7 @@ const MainRoutes = () => {
         <>
           <Route path="/signIn" element={<SignIn />} />
           <Route path="/signIn-client" element={<SignInClient />} />
+          <Route path="/" element={<Navigate to="/signIn" />} />
         </>
       )}
 

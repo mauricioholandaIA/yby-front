@@ -1,4 +1,4 @@
-name: Deploy to AWS Elastic Beanstalk
+name: Deploy React App to AWS Elastic Beanstalk
 
 on:
   push:
@@ -6,41 +6,31 @@ on:
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
+
     steps:
-      - name: Checkout Latest Repo
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Generate Deployment Package
-        run: zip -r yby-front.zip * -x "**.git**"
-
-      - name: Get timestamp
-        uses: gerred/actions/current-time@master
-        id: current-time
-
-      - name: Run string replace
-        uses: frabert/replace-string-action@master
-        id: format-time
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          pattern: '[:\.]+'
-          string: "${{ steps.current-time.outputs.time }}"
-          replace-with: '-'
-          flags: 'g'
+          node-version: '14'
 
-      - name: Deploy to EB
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build React app
+        run: npm run build
+
+      - name: Deploy to AWS Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: yby-front-app
-          environment_name: yby-front-env
-          version_label: "app-${{ steps.format-time.outputs.replaced }}"
+          application_name: your-application-name
+          environment_name: your-environment-name
           region: us-east-1
-          deployment_package: yby-front.zip
-
-      - name: Deployed!
-        run: echo App deployed to Elastic Beanstalk
+          version_label: ${{ github.run_id }}
+          deployment_package: deploy.zip

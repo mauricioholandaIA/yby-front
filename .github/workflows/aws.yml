@@ -36,7 +36,8 @@ jobs:
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         application_name: yby-front-app
         environment_name: yby-front-env
-        version_label: 12119970518
+        version_label: ${{ steps.generate_version_label.outputs.version_label }}
         region: us-east-1
         deployment_package: deploy.zip
         use_existing_version_if_available: true
+        wait_for_environment_recovery: 120

@@ -6,7 +6,6 @@ import { IconButton } from "@mui/material";
 import {
   DataGrid,
   GridColDef,
-  GridColumnMenuManageItem,
   GridToolbarContainer,
   GridToolbarExport,
 } from "@mui/x-data-grid";
@@ -61,19 +60,20 @@ const TableComponent = ({ collections, refreshPage }: any) => {
   const [images, setImages] = useState<any>();
 
   const columnsAdmin: GridColDef[] = [
-    { field: "createdAt", headerName: "Data | Horário", width: 200 },
+    { field: "createdAt", headerName: "Data | Horário", width: 250 },
     { field: "pev", headerName: "PEV", width: 200 },
-    { field: "waste", headerName: "Tipos de resíduos", width: 200 },
+    { field: "waste", headerName: "Tipos de resíduos", width: 270 },
     {
       field: "weight",
       headerName: "Coleta (kg)",
-      width: 200,
+      sortable: false,
+      width: 150,
     },
     {
       field: "fotos",
       headerName: "Registro em fotos",
       sortable: false,
-      width: 200,
+      width: 160,
       renderCell: (params) => {
         const onClick = (e: { stopPropagation: () => void }) => {
           e.stopPropagation();
@@ -96,7 +96,7 @@ const TableComponent = ({ collections, refreshPage }: any) => {
     {
       field: "action",
       headerName: "Ações",
-      width: 150,
+      width: 100,
       sortable: false,
       // align: "right",
       // headerAlign: "right",
@@ -129,18 +129,18 @@ const TableComponent = ({ collections, refreshPage }: any) => {
   const columnsClient: GridColDef[] = [
     { field: "createdAt", headerName: "Data | Horário", width: 250 },
     { field: "pev", headerName: "PEV", width: 200 },
-    { field: "waste", headerName: "Tipos de resíduos", width: 250 },
+    { field: "waste", headerName: "Tipos de resíduos", width: 270 },
     {
       field: "weight",
       headerName: "Coleta (kg)",
-      width: 200,
+      width: 150,
     },
     {
       field: "fotos",
       headerName: "Registro em fotos",
       sortable: false,
       filterable: false,
-      width: 200,
+      width: 160,
       renderCell: (params) => {
         const onClick = (e: { stopPropagation: () => void }) => {
           e.stopPropagation();

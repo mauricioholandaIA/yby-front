@@ -78,7 +78,7 @@ const PevForm = ({ title = "", cooperatives, pev }: any) => {
     };
 
     try {
-      const response = editPlanning({ documentId, data: formatData });
+      editPlanning({ documentId, data: formatData });
       setLoading(false);
     } catch (error) {
       setLoading(false);

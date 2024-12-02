@@ -1,7 +1,5 @@
 import { ToggleButton } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-// import { useNavigate } from "react-router-dom";
-import { tab } from "@testing-library/user-event/dist/tab";
 import { styled as styledComponents } from "styled-components";
 import { getClients } from "../api/client";
 import { getListOfPevsByCooperative } from "../api/cooperative";
@@ -32,7 +30,6 @@ const StyledTabContainer = styledComponents.div`
 `;
 
 export default function CollectionPoint() {
-  // const navigate = useNavigate();
   const { user: currentUser } = useContext(AuthContext);
 
   console.log(currentUser);
@@ -122,7 +119,7 @@ export default function CollectionPoint() {
     };
 
     handleGetPevs();
-  }, []);
+  }, [currentUser?.cooperative_id]);
 
   return (
     <StyledContainer>

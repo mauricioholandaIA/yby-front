@@ -1,5 +1,3 @@
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-
 import EventIcon from "@mui/icons-material/Event";
 import { Button, Card, TextField, Typography } from "@mui/material";
 import { Key, useState } from "react";

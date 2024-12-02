@@ -1,5 +1,4 @@
-import { ExpandLess, ExpandMore, Person, Place } from "@mui/icons-material";
-import MailIcon from "@mui/icons-material/Mail";
+import { ExpandLess, ExpandMore, Place } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
   Button,

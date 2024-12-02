@@ -26,8 +26,9 @@ jobs:
     - name: Generate deployment package
       run: zip -r deploy.zip . -x '*.git*'
 
-    - name: List files in the repository
-      run: ls -la
+    - name: Generate version label
+      run: echo "::set-output name=version_label::$(date +%Y%m%d%H%M%S)-${{ github.sha }}"
+      id: generate_version_label
 
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v22

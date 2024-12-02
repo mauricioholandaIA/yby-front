@@ -1,7 +1,5 @@
-import { Tab, Table, Tabs, Typography } from "@mui/material";
-import { type } from "os";
+import { Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
 import { styled as styledComponents } from "styled-components";
 import { getCollection, getCollectionClient } from "../api/collection";
 import { AuthContext } from "../context/auth-context";
@@ -20,8 +18,6 @@ const StyledCenterContainer = styledComponents.div`
 `;
 
 export default function Reports() {
-  const navigate = useNavigate();
-
   const [collections, setCollections] = useState<any>([]);
 
   const { user: currentUser } = useContext(AuthContext);
@@ -72,6 +68,7 @@ export default function Reports() {
 
       getCollectionsData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

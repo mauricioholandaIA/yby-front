@@ -1,6 +1,6 @@
-import { Tab, Tabs, ToggleButton, Typography } from "@mui/material";
+import { ToggleButton, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { styled as styledComponents } from "styled-components";
 import ClientForm from "./client-form";
 import CooperativeForm from "./cooperative-form";

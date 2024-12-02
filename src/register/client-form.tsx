@@ -32,21 +32,21 @@ const FormField = styled(Box)<{ size?: string }>`
   flex-grow: 1;
 `;
 
-interface ClientFormData {
-  client_cnpj: string;
-  client_socialName: string;
-  client_responsibleName: string;
-  client_email: string;
-  client_phone: string;
-  client_username: string;
-  client_password: string;
-  client_cep: string;
-  client_street: string;
-  client_street_number: string;
-  client_neighborhood: string;
-  client_city: string;
-  client_state: string;
-}
+// interface ClientFormData {
+//   client_cnpj: string;
+//   client_socialName: string;
+//   client_responsibleName: string;
+//   client_email: string;
+//   client_phone: string;
+//   client_username: string;
+//   client_password: string;
+//   client_cep: string;
+//   client_street: string;
+//   client_street_number: string;
+//   client_neighborhood: string;
+//   client_city: string;
+//   client_state: string;
+// }
 
 interface CustomProps {
   onChange: (event: { target: { name: string; value: string } }) => void;
@@ -155,7 +155,7 @@ export default function ClientForm() {
     setLoading(true);
 
     data.client_cnpj = data.client_cnpj.replace(/[./-]/g, "");
-    data.client_phone = data.client_phone.replace(/[\(\)\s-]/g, "");
+    data.client_phone = data.client_phone.replace(/[()\s-]/g, "");
     data.client_cep = data.client_cep.replace(/[-]/g, "");
 
     // todo: ajustar ordem de criacao no back , para nao ter 2 empresas publicadas com msm nome

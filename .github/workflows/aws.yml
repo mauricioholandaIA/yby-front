@@ -25,10 +25,8 @@ jobs:
           ls -la
 
     - name: Install dependencies
-      run: npm install
-    
-    - name: Run npm audit fix
-      run: npm audit fix --force
+      run: npm install --no-audit
+
       
     - name: Run build
       run: npm run build

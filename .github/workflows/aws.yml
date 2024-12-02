@@ -27,9 +27,15 @@ jobs:
     - name: Install dependencies
       run: npm install
 
+    - name: Update yargs-parse
+      run: npm install yargs-parser@18.1.1
+    
+    - name: update yargs
+      run: npm install yargs@17.0.0
+    
     - name: Run npm audit fix
       run: npm audit fix --force
-
+      
     - name: Run build
       run: npm run build
       

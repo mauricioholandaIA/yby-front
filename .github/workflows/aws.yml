@@ -26,6 +26,8 @@ jobs:
     - name: Listas folder
       run: |
           ls -la
+          rm package-lock.json
+          ls -la
           
     - name: Generate deployment package
       run: zip -r deploy.zip . -x '*.git*'

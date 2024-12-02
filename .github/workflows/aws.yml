@@ -22,7 +22,11 @@ jobs:
 
     - name: Run build
       run: npm run build
-
+      
+    - name: Listas folder
+        run: |
+          ls -la
+          
     - name: Generate deployment package
       run: zip -r deploy.zip . -x '*.git*'
 

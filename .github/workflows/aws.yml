@@ -1,4 +1,4 @@
-name: Deploy React App to AWS Elastic Beanstalk
+name: Deploy to Elastic Beanstalk
 
 on:
   push:
@@ -8,29 +8,34 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout source code
+      uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
 
-      - name: Install dependencies
-        run: npm install
+    - name: Install dependencies
+      run: npm install
 
-      - name: Build React app
-        run: npm run build
+    - name: Run build
+      run: npm run build
 
-      - name: Deploy to AWS Elastic Beanstalk
-        uses: einaregilsson/beanstalk-deploy@v21
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: your-application-name
-          environment_name: your-environment-name
-          region: us-east-1
-          version_label: ${{ github.run_id }}
-          deployment_package: deploy.zip
+    - name: Generate deployment package
+      run: zip -r deploy.zip . -x '*.git*'
+
+    - name: List files in the repository
+      run: ls -la
+
+    - name: Deploy to EB
+      uses: einaregilsson/beanstalk-deploy@v22
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        application_name: yby-front-app
+        environment_name: yby-front-env
+        version_label: 12119970518
+        region: us-east-1
+        deployment_package: deploy.zip

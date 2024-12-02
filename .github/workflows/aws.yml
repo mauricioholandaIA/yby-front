@@ -20,7 +20,7 @@ jobs:
     - name: Listas folder
       run: |
           ls -la
-          rm package-lock.json
+          rm -f package-lock.json
           rm -rf node_modules
           ls -la
 
@@ -36,7 +36,6 @@ jobs:
     - name: Listas folder
       run: |
           ls -la
-          rm package-lock.json
           ls -la
           
     - name: Generate deployment package

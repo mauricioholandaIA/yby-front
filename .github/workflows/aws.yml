@@ -24,7 +24,7 @@ jobs:
       run: npm run build
       
     - name: Listas folder
-        run: |
+      run: |
           ls -la
           
     - name: Generate deployment package

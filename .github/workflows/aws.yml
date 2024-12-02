@@ -17,6 +17,13 @@ jobs:
       with:
         node-version: '20.15.1'
 
+    - name: Listas folder
+      run: |
+          ls -la
+          rm package-lock.json
+          rm -rf node_modules
+          ls -la
+
     - name: Install dependencies
       run: npm install
 

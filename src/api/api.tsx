@@ -1,13 +1,12 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:1337/api",
+  baseURL: `${process.env.BACKEND_URL}/api`,
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
   },
 });
-
 
 // Interceptor para adicionar o token a todas as requisições
 api.interceptors.request.use(
@@ -25,8 +24,5 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-
-
-
 
 export default api;

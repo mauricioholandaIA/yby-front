@@ -60,7 +60,7 @@ const ModalComponent = ({ open, handleClose, images }: any) => {
               <img
                 width="250"
                 height="250"
-                src={`http://localhost:1337${images?.imageColector}`}
+                src={`http://44.201.188.105:1337${images?.imageColector}`}
                 alt="Imagem"
               />
             </div>
@@ -81,7 +81,7 @@ const ModalComponent = ({ open, handleClose, images }: any) => {
                 <img
                   width="250"
                   height="250"
-                  src={`http://localhost:1337${images?.imageAvaria}`}
+                  src={`http://44.201.188.105:1337/${images?.imageAvaria}`}
                   alt="Imagem"
                 />
               </div>

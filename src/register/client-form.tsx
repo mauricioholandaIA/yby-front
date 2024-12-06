@@ -124,7 +124,10 @@ const schema = yup.object().shape({
     .required("CEP é obrigatório")
     .min(8, "CEP deve ter 8 dígitos"),
   client_street: yup.string().required("Rua é obrigatória"),
-  client_street_number: yup.number().required("Número da Rua é obrigatório"),
+  client_street_number: yup
+    .number()
+    .typeError("Número da rua é obrigatório.")
+    .required("Número da rua é obrigatório."),
   client_neighborhood: yup.string().required("Bairro é obrigatório"),
   client_state: yup.string().required("Estado é obrigatório"),
   client_city: yup.string().required("Cidade é obrigatória"),
@@ -133,7 +136,7 @@ const schema = yup.object().shape({
 export default function ClientForm() {
   const [loading, setLoading] = useState(false);
 
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit, reset, setError } = useForm({
     defaultValues: {
       client_cnpj: "",
       client_socialName: "",
@@ -179,7 +182,8 @@ export default function ClientForm() {
       });
       if (createdClient) {
         // alert("Cliente criado com sucesso!");
-        reset();
+        window.location.reload();
+
         setLoading(false);
       }
       setLoading(false);

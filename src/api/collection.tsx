@@ -54,13 +54,14 @@ const getCollectionClient = async ({
   documentId: string | undefined;
 }) => {
   try {
-    // http://localhost:1337/api/collections?filters[client][documentId][$eq]=iu68tri9wj493mqkgoku414y&populate=*
     const response = await api.get(
       `/collections?filters[client][documentId][$eq]=${documentId}&populate=*`
     );
+    alert("Editado com sucesso!");
     return response.data;
   } catch (error) {
     console.error("Erro ao buscar as coletas:", error);
+    alert("falha ao editar coleta!");
     return null;
   }
 };

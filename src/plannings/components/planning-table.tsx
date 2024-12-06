@@ -59,9 +59,11 @@ const TableComponent = ({ planningList }: { planningList: any }) => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredDataPev = dataPev.filter((item: any) =>
-    item.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredDataPev = dataPev
+    .filter((item: any) =>
+      item.title.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a: any, b: any) => a.title.localeCompare(b.title));
 
   useEffect(() => {
     const getCooperativesList = async () => {

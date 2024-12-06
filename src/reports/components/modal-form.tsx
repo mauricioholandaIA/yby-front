@@ -1,3 +1,4 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ImageIcon from "@mui/icons-material/Image";
 import {
@@ -16,16 +17,33 @@ import {
 import Modal from "@mui/material/Modal";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import * as yup from "yup";
 import { editCollection } from "../../api/collection";
+
+const schema = yup.object().shape({
+  residuos: yup
+    .array()
+    .required("Residuos é obrigatório")
+    .min(1, "Residuos é obrigatório"),
+  weight: yup
+    .number()
+    .typeError("Peso precisa ser um número")
+    .required("Peso é obrigatório"),
+  justify: yup.string().required("Justificação é obrigatória"),
+});
 
 const ModalFormComponent = ({ open, handleClose, data }: any) => {
   const documentId = data.documentId;
+
+  console.log(data);
+
   const { control, handleSubmit } = useForm({
     defaultValues: {
       residuos: data.wastesIds || [],
       weight: data.weight || "",
       justify: "",
     },
+    resolver: yupResolver(schema),
   });
 
   const [loading, setLoading] = useState(false);
@@ -37,7 +55,7 @@ const ModalFormComponent = ({ open, handleClose, data }: any) => {
     setLoading(true);
     const formatData = {
       justification: data.justify,
-      weight: data.weight,
+      weight: data.weight.toString(),
       wastes: data.residuos,
       ...(coletorImage === false && { colector: null }),
       ...(avariaImage === false && { breakdown: null }),
@@ -49,7 +67,7 @@ const ModalFormComponent = ({ open, handleClose, data }: any) => {
     });
     setLoading(false);
     handleClose();
-    alert("Editado com sucesso!");
+
     window.location.reload();
   };
 
@@ -254,21 +272,29 @@ const ModalFormComponent = ({ open, handleClose, data }: any) => {
               <Controller
                 name={`justify`}
                 control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    style={{ marginTop: "10px" }}
-                    id="justify"
-                    type="text"
-                    placeholder={"Editei o PEV porque..."}
-                    fullWidth
-                    label={"Motivo da edição"}
-                    variant="outlined"
-                    size="small"
-                    rows={4}
-                    multiline
-                    autoComplete="off"
-                  />
+                render={({ field, fieldState }) => (
+                  <FormControl fullWidth>
+                    <TextField
+                      {...field}
+                      style={{ marginTop: "10px" }}
+                      id="justify"
+                      type="text"
+                      placeholder={"Editei o PEV porque..."}
+                      fullWidth
+                      label={"Motivo da edição"}
+                      variant="outlined"
+                      size="small"
+                      rows={4}
+                      multiline
+                      autoComplete="off"
+                    />
+
+                    {fieldState.error && (
+                      <FormHelperText style={{ color: "red" }}>
+                        {fieldState.error.message}
+                      </FormHelperText>
+                    )}
+                  </FormControl>
                 )}
               />
             </div>

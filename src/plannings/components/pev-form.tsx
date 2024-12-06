@@ -70,11 +70,11 @@ const PevForm = ({ title = "", cooperatives, pev }: any) => {
     }
 
     const formatData = {
-      seg: data.segunda === false ? undefined : data.segunda,
-      ter: data.terca === false ? undefined : data.terca,
-      qua: data.quarta === false ? undefined : data.quarta,
-      qui: data.quinta === false ? undefined : data.quinta,
-      sex: data.sexta === false ? undefined : data.sexta,
+      seg: data.segunda === false ? null : data.segunda,
+      ter: data.terca === false ? null : data.terca,
+      qua: data.quarta === false ? null : data.quarta,
+      qui: data.quinta === false ? null : data.quinta,
+      sex: data.sexta === false ? null : data.sexta,
     };
 
     try {

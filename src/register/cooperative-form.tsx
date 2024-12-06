@@ -38,7 +38,10 @@ const schema = yup.object().shape({
     .string()
     .required("Campo obrigatório")
     .min(6, "Pelo menos 6 digitos"),
-  cooperative_employees: yup.number().required("Campo obrigatório").min(1),
+  cooperative_employees: yup
+    .number()
+    .required("Campo obrigatório")
+    .min(1, "Pelo menos 1 funcionário"),
 });
 
 export default function CooperativeForm() {

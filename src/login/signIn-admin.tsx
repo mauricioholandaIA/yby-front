@@ -192,7 +192,9 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             )}
           />
 
-          <Link to="/signIn-client">Ir para login da cooperativa</Link>
+          <Link style={{ width: "200px" }} to="/signIn-client">
+            Ir para login da cooperativa
+          </Link>
 
           <Button
             fullWidth

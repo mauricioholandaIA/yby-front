@@ -59,15 +59,6 @@ jobs:
             ls -l /home/ubuntu/yby-front-app
 
 
-      - name: Check Dockerfile permissions on EC2
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          port: 22
-          script: |
-            ls -l /home/ubuntu/yby-front-app/Dockerfile
 
       - name: SSH into EC2 and prepare environment
         uses: appleboy/ssh-action@master

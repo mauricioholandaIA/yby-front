@@ -7,6 +7,6 @@ RUN npm run build
 
 FROM nginx:1.22.1-alpine as prod-stage
 COPY --from=build-stage /app/build /usr/share/nginx/html
-COPY location.conf /etc/nginx/conf.d/location.conf
+COPY /home/ubuntu/yby-front-app/location.conf /etc/nginx/conf.d/location.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

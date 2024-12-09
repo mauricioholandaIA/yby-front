@@ -193,7 +193,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
           />
 
           <Link style={{ width: "200px" }} to="/signIn-client">
-            Ir para login da cooperativa
+            Ir para login da cooperativa.
           </Link>
 
           <Button

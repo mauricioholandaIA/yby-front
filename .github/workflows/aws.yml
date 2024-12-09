@@ -31,6 +31,16 @@ jobs:
           source: "yby-front-app.zip"
           target: "/home/ubuntu"
 
+      - name: Copy nginx.conf to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          port: 22
+          source: "nginx.conf"
+          target: "/home/ubuntu/yby-front-app"
+
       - name: SSH into EC2 and prepare environment
         uses: appleboy/ssh-action@master
         with:
@@ -53,9 +63,11 @@ jobs:
             sudo docker network prune -f
             sudo docker system prune -a --volumes -f
             
-            # Build and run the Docker container
-            sudo docker build -t yby-front-app .
-            sudo docker run -d -p 80:80 yby-front-app
+            # Build and run the Docker container with a new tag
+            DOCKER_TAG=$(date +%Y%m%d%H%M%S)
+            sudo docker build -t yby-front-app:$DOCKER_TAG .
+            sudo docker run -d -p 80:80 yby-front-app:$DOCKER_TAG
+
 
       - name: Deployed to EC2!
         run: echo Strapi App deployed to EC2

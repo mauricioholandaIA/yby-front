@@ -158,7 +158,7 @@ export default function SignInClient() {
           />
 
           <Link style={{ width: "200px" }} to="/signIn">
-            Ir para login do cliente
+            Ir para login do cliente Teste
           </Link>
 
           <Button

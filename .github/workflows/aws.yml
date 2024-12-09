@@ -31,14 +31,14 @@ jobs:
           source: "yby-front-app.zip"
           target: "/home/ubuntu"
 
-      - name: Copy nginx.conf to EC2
+      - name: Copy location.conf to EC2
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           port: 22
-          source: "nginx.conf"
+          source: "location.conf"
           target: "/home/ubuntu/yby-front-app"
 
       - name: SSH into EC2 and prepare environment

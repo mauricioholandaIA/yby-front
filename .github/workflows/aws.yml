@@ -14,6 +14,13 @@ jobs:
     steps:
       - name: Checkout Latest Repo
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Clear Cache
+        run: |
+          rm -rf ~/.cache/yarn
+          rm -rf ~/.cache/pip
 
       - name: Delete existing zip file for Strapi App
         run: rm -f yby-front-app.zip
@@ -41,6 +48,26 @@ jobs:
           source: "location.conf"
           target: "/home/ubuntu/yby-front-app"
 
+      - name: List files on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          port: 22
+          script: |
+            ls -l /home/ubuntu/yby-front-app
+
+      - name: Check Dockerfile version on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          port: 22
+          script: |
+            stat -c %y /home/ubuntu/yby-front-app/Dockerfile
+
       - name: SSH into EC2 and prepare environment
         uses: appleboy/ssh-action@master
         with:
@@ -62,12 +89,11 @@ jobs:
             sudo docker volume prune -f
             sudo docker network prune -f
             sudo docker system prune -a --volumes -f
-            
+
             # Build and run the Docker container with a new tag
             DOCKER_TAG=$(date +%Y%m%d%H%M%S)
             sudo docker build -t yby-front-app:$DOCKER_TAG .
             sudo docker run -d -p 80:80 yby-front-app:$DOCKER_TAG
-
 
       - name: Deployed to EC2!
         run: echo Strapi App deployed to EC2

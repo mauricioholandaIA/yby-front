@@ -15,7 +15,7 @@ jobs:
 
       - name: Save repository as zip
         run: |
-          zip -r my-app.zip .
+          zip -r yby-front-app.zip .
 
       - name: Copy to EC2
         uses: appleboy/scp-action@master

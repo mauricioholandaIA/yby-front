@@ -15,7 +15,7 @@ jobs:
 
       - name: Save repository as zip
         run: |
-          zip -r yby-front-app.zip .
+          zip -r my-app.zip .
 
       - name: Copy to EC2
         uses: appleboy/scp-action@master
@@ -23,8 +23,8 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: "yby-front-app.zip"
-          target: "/home/ubuntu"
+          source: "my-app.zip"
+          target: "/home/ec2-user"
 
       - name: SSH into EC2 and run Docker
         uses: appleboy/ssh-action@master
@@ -33,12 +33,13 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            cd /home/ubuntu
-            unzip yby-front-app.zip
-            docker build -t yby-front-app .
-            docker run -d -p 80:80 yby-front-app
-            sudo cp location.conf /etc/nginx/conf.d/location.conf
-            sudo systemctl restart nginx
+            cd /home/ec2-user
+            unzip my-app.zip
+            docker build -t my-app .
+            docker run -d -p 80:80 my-app
+            CONTAINER_ID=$(docker ps -q --filter ancestor=my-app)
+            docker cp location.conf $CONTAINER_ID:/etc/nginx/conf.d/location.conf
+            docker exec $CONTAINER_ID nginx -s reload
 
       - name: Clean up
         uses: appleboy/ssh-action@master
@@ -47,5 +48,5 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            rm -rf /home/ubuntu/yby-front-app.zip
-            rm -rf /home/ubuntu/my-app
+            rm -rf /home/ec2-user/my-app.zip
+            rm -rf /home/ec2-user/my-app

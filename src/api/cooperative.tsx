@@ -9,7 +9,6 @@ const createCooperative = async ({
   cooperative_employees: number;
 }) => {
   // todo criar o usuario da cooperativa antes de criar a cooperativa
-  console.log(cooperative_name, cooperative_code);
   try {
     const response = await api.post("/cooperatives", {
       data: {

@@ -74,7 +74,6 @@ export default function CooperativeForm() {
         return;
       } else {
         setLoading(false);
-        console.log("Cooperativa criada com sucesso!", response);
         alert("Cooperativa criada com sucesso!");
         reset();
       }

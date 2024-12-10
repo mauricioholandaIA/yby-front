@@ -88,7 +88,6 @@ export default function SignInClient() {
         navigate("/ponto-coleta");
       }
     } catch (error) {
-      console.log(error);
       setLoading(false);
       setError("cooperativePassword", {
         type: "server",

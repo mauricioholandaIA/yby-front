@@ -32,8 +32,6 @@ const StyledTabContainer = styledComponents.div`
 export default function CollectionPoint() {
   const { user: currentUser } = useContext(AuthContext);
 
-  console.log(currentUser);
-
   const [selectedTab, setSelectedTab] = useState("pevs");
   const [selectedPEVS, setSelectedPEVS] = useState();
 
@@ -56,8 +54,6 @@ export default function CollectionPoint() {
     resultIdsAndDays: { documentId: string; day: string[] }[],
     getPevs: { data: any[] }
   ) {
-    // console.log("resultIdsAndDays", resultIdsAndDays);
-
     const empresasEncontradas = getPevs?.data.filter(
       (item: { documentId: any }) =>
         resultIdsAndDays

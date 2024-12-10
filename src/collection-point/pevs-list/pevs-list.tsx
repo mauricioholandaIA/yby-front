@@ -127,7 +127,6 @@ export const PEVSList = ({
                   {pev?.days
                     .map((day) => {
                       const isToday = day === getCurrentDay();
-                      console.log(isToday, day, getCurrentDay());
                       return isToday ? "HOJE" : day.toUpperCase();
                     })
                     .sort((a, b) => (a === "HOJE" ? -1 : 1))

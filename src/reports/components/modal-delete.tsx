@@ -3,7 +3,6 @@ import Modal from "@mui/material/Modal";
 import { deleteCollection } from "../../api/collection";
 
 const ModalDeleteComponent = ({ open, handleClose, documentId }: any) => {
-  console.log(documentId);
   const handleDelete = async () => {
     await deleteCollection(documentId);
     handleClose();

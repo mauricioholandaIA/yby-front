@@ -17,8 +17,6 @@ const MainRoutes = () => {
   const isCooperative = !!currentUser?.cooperative_id;
   const isAdmin = !!currentUser?.isAdmin;
 
-  console.log(currentUser);
-
   return (
     <Routes>
       {!currentUser && (

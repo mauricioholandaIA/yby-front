@@ -35,8 +35,6 @@ const schema = yup.object().shape({
 const ModalFormComponent = ({ open, handleClose, data }: any) => {
   const documentId = data.documentId;
 
-  console.log(data);
-
   const { control, handleSubmit } = useForm({
     defaultValues: {
       residuos: data.wastesIds || [],

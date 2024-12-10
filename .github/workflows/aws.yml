@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Save repository as zip
         run: |
@@ -34,7 +34,7 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             sudo apt-get update -y
-            sudo apt-get install -y unzip docker.io
+            sudo apt-get install -y unzip docker
             sudo systemctl start docker
             sudo systemctl enable docker
             unzip /home/ubuntu/yby-front-app.zip -d /home/ubuntu/yby-front-app
@@ -42,8 +42,12 @@ jobs:
             sudo docker build -t yby-front-app .
             sudo docker run -d -p 80:80 yby-front-app
             CONTAINER_ID=$(docker ps -q --filter ancestor=yby-front-app)
-            sudo docker cp location.conf $CONTAINER_ID:/etc/nginx/conf.d/location.conf
-            sudo docker exec $CONTAINER_ID nginx -s reload
+            if [ -f location.conf ]; then
+              sudo docker cp location.conf $CONTAINER_ID:/etc/nginx/conf.d/location.conf
+              sudo docker exec $CONTAINER_ID nginx -s reload
+            else
+              echo "location.conf not found"
+            fi
 
       - name: Clean up
         uses: appleboy/ssh-action@master
@@ -54,3 +58,4 @@ jobs:
           script: |
             rm -rf /home/ubuntu/yby-front-app.zip
             rm -rf /home/ubuntu/yby-front-app
+            sudo docker rmi $(docker images -q -f dangling=true)

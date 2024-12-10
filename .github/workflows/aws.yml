@@ -1,4 +1,4 @@
-name: Docker EC2 Deploy
+name: Deploy to EC2
 
 on:
   push:
@@ -10,50 +10,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up SSH key
-        env:
-          EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+      - name: Save repository as zip
         run: |
-          echo "$EC2_PRIVATE_KEY" > /tmp/private_key.pem
-          chmod 600 /tmp/private_key.pem
+          zip -r yby-front-app.zip .
 
-      - name: Add EC2 instance to known_hosts
-        env:
-          PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
-        run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          echo $PUBLIC_KEY >> ~/.ssh/known_hosts
+      - name: Copy to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          source: "yby-front-app.zip"
+          target: "/home/ubuntu"
 
-      - name: Copy repository files to EC2
-        env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
-        run: |
-          scp -i /tmp/private_key.pem -r ./* $EC2_USERNAME@$EC2_HOST:~/app
+      - name: SSH into EC2 and run Docker
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            cd /home/ubuntu
+            unzip yby-front-app.zip
+            docker build -t yby-front-app .
+            docker run -d -p 80:80 yby-front-app
+            sudo cp location.conf /etc/nginx/conf.d/location.conf
+            sudo systemctl restart nginx
 
-      - name: Build Docker image and run container on EC2
-        env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
-        run: |
-          ssh -i /tmp/private_key.pem $EC2_USERNAME@$EC2_HOST "
-            mkdir -p ~/app
-            cd ~/app
-            docker ps -q | xargs -r docker container rm -f
-            docker images -q | xargs -r docker rmi -f
-            DOCKER_TAG=$(date +%Y%m%d%H%M%S)
-            docker build -t yby-front-app:$DOCKER_TAG .
-            docker run -d -p 80:80 yby-front-app:$DOCKER_TAG
-          "
-
-      - name: Cleanup
-        env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
-        run: |
-          ssh -i /tmp/private_key.pem $EC2_USERNAME@$EC2_HOST "rm -rf ~/app"
-          rm -f /tmp/private_key.pem
+      - name: Clean up
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            rm -rf /home/ubuntu/yby-front-app.zip
+            rm -rf /home/ubuntu/my-app

@@ -41,7 +41,7 @@ jobs:
             cd /home/ubuntu/yby-front-app
             sudo docker build -t yby-front-app .
             sudo docker run -d -p 80:80 yby-front-app
-            CONTAINER_ID=$(docker ps -q --filter ancestor=yby-front-app)
+            CONTAINER_ID=$(sudo docker ps -q --filter ancestor=yby-front-app)
             if [ -f location.conf ]; then
               sudo docker cp location.conf $CONTAINER_ID:/etc/nginx/conf.d/location.conf
               sudo docker exec $CONTAINER_ID nginx -s reload

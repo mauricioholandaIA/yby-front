@@ -37,7 +37,7 @@ const ModalFormComponent = ({ open, handleClose, data }: any) => {
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
-      residuos: data.wastesIds || [],
+      residuos: [],
       weight: data.weight || "",
       justify: "",
     },
@@ -120,8 +120,8 @@ const ModalFormComponent = ({ open, handleClose, data }: any) => {
                   <FormControl fullWidth>
                     <InputLabel id="residuos">Tipo de residuos</InputLabel>
                     <Select
-                      error={fieldState.error ? true : false}
                       {...field}
+                      error={fieldState.error ? true : false}
                       labelId="residuos"
                       id="Tipo de residuos"
                       label="Tipo de residuos"

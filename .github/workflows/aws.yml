@@ -17,6 +17,16 @@ jobs:
         run: |
           zip -r yby-front-app.zip .
 
+      - name: Clean up
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            rm -rf /home/ubuntu/yby-front-app.zip
+            rm -rf /home/ubuntu/yby-front-app
+
       - name: Copy to EC2
         uses: appleboy/scp-action@master
         with:
@@ -52,13 +62,5 @@ jobs:
             sudo docker run -d -p 80:80 yby-front-app
 
 
-      - name: Clean up
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script: |
-            rm -rf /home/ubuntu/yby-front-app.zip
-            rm -rf /home/ubuntu/yby-front-app
+
 

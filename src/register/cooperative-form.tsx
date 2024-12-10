@@ -37,7 +37,8 @@ const schema = yup.object().shape({
   cooperative_code: yup
     .string()
     .required("Campo obrigatório")
-    .min(6, "Pelo menos 6 digitos"),
+    .min(6, "Pelo menos 6 digitos")
+    .matches(/^[a-z]+$/, "Apenas letras minúsculas"),
   cooperative_employees: yup
     .number()
     .required("Campo obrigatório")
@@ -68,7 +69,7 @@ export default function CooperativeForm() {
       if (!response) {
         setLoading(false);
         console.error("Error creating cooperative", response);
-        alert("Cooperativa criada com sucesso!");
+        alert("Erro ao criar cooperativa");
         reset();
         return;
       } else {

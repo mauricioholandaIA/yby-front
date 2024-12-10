@@ -92,8 +92,13 @@ const TableComponent = ({ planningList }: { planningList: any }) => {
       />
 
       <div>
-        {filteredDataPev.map((pev: any, index: any) => (
-          <PevForm title={pev?.title} cooperatives={cooperatives} pev={pev} />
+        {filteredDataPev.map((pev: any) => (
+          <PevForm
+            key={pev.id}
+            title={pev?.title}
+            cooperatives={cooperatives}
+            pev={pev}
+          />
         ))}
       </div>
     </div>

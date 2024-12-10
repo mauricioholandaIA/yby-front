@@ -1,4 +1,4 @@
-name: Deploy React App to AWS Elastic Beanstalk and Strapi App to EC2
+name: Docker EC2 Deploy
 
 on:
   push:
@@ -8,84 +8,52 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x]
+
     steps:
-      - name: Checkout Latest Repo
+      - name: Checkout repository
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
 
-      - name: Clear Cache
+      - name: Set up SSH key
+        env:
+          EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
         run: |
-          rm -rf ~/.cache/yarn
-          rm -rf ~/.cache/pip
+          echo "$EC2_PRIVATE_KEY" > /tmp/private_key.pem
+          chmod 600 /tmp/private_key.pem
 
-      - name: Delete existing zip file for Strapi App
-        run: rm -f yby-front-app.zip
+      - name: Add EC2 instance to known_hosts
+        env:
+          PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo $PUBLIC_KEY >> ~/.ssh/known_hosts
 
-      - name: Zip files for Strapi App
-        run: zip -r yby-front-app.zip .
+      - name: Copy repository files to EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+        run: |
+          scp -i /tmp/private_key.pem -r ./* $EC2_USERNAME@$EC2_HOST:~/app
 
-      - name: Copy files to EC2
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          port: 22
-          source: "yby-front-app.zip"
-          target: "/home/ubuntu"
-
-      - name: Copy location.conf to EC2
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          port: 22
-          source: "location.conf"
-          target: "/home/ubuntu/yby-front-app"
-
-      - name: List files on EC2
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          port: 22
-          script: |
-            ls -l /home/ubuntu/yby-front-app
-
-
-
-      - name: SSH into EC2 and prepare environment
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          port: 22
-          script: |
-            sudo apt-get update
-            sudo apt-get install -y unzip docker.io
-            sudo systemctl start docker
-            sudo systemctl enable docker
-            unzip /home/ubuntu/yby-front-app.zip -d /home/ubuntu/yby-front-app
-            cd /home/ubuntu/yby-front-app
-
-            sudo docker ps -q | xargs -r sudo docker stop
-            sudo docker rm $(sudo docker ps -aq)
-            sudo docker rmi $(sudo docker images -q)
-            sudo docker volume prune -f
-            sudo docker network prune -f
-            sudo docker system prune -a --volumes -f
-
-            # Build and run the Docker container with a new tag
+      - name: Build Docker image and run container on EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+        run: |
+          ssh -i /tmp/private_key.pem $EC2_USERNAME@$EC2_HOST "
+            mkdir -p ~/app
+            cd ~/app
+            docker ps -q | xargs -r docker container rm -f
+            docker images -q | xargs -r docker rmi -f
             DOCKER_TAG=$(date +%Y%m%d%H%M%S)
-            sudo docker build -t yby-front-app:$DOCKER_TAG .
-            sudo docker run -d -p 80:80 yby-front-app:$DOCKER_TAG
+            docker build -t yby-front-app:$DOCKER_TAG .
+            docker run -d -p 80:80 yby-front-app:$DOCKER_TAG
+          "
 
-      - name: Deployed to EC2!
-        run: echo Strapi App deployed to EC2
+      - name: Cleanup
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+        run: |
+          ssh -i /tmp/private_key.pem $EC2_USERNAME@$EC2_HOST "rm -rf ~/app"
+          rm -f /tmp/private_key.pem

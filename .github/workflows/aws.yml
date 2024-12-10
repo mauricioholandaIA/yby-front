@@ -17,6 +17,16 @@ jobs:
         run: |
           zip -r yby-front-app.zip .
 
+      - name: Clean up
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            rm -rf /home/ubuntu/yby-front-app.zip
+            rm -rf /home/ubuntu/yby-front-app
+
       - name: Copy to EC2
         uses: appleboy/scp-action@master
         with:
@@ -40,23 +50,17 @@ jobs:
             sudo systemctl enable docker
             unzip /home/ubuntu/yby-front-app.zip -d /home/ubuntu/yby-front-app
             cd /home/ubuntu/yby-front-app
+
+            sudo docker ps -q | xargs -r sudo docker stop
+            sudo docker rm $(sudo docker ps -aq)
+            sudo docker rmi $(sudo docker images -q)
+            sudo docker volume prune -f
+            sudo docker network prune -f
+            sudo docker system prune -a --volumes -f
+            
             sudo docker build -t yby-front-app .
             sudo docker run -d -p 80:80 yby-front-app
-            CONTAINER_ID=$(sudo docker ps -q --filter ancestor=yby-front-app)
-            if [ -f location.conf ]; then
-              sudo docker cp location.conf $CONTAINER_ID:/etc/nginx/conf.d/location.conf
-              sudo docker exec $CONTAINER_ID nginx -s reload
-            else
-              echo "location.conf not found"
-            fi
 
-      - name: Clean up
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script: |
-            rm -rf /home/ubuntu/yby-front-app.zip
-            rm -rf /home/ubuntu/yby-front-app
-            sudo docker rmi $(docker images -q -f dangling=true)
+
+
+

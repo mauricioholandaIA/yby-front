@@ -61,4 +61,4 @@ jobs:
           script: |
             rm -rf /home/ubuntu/yby-front-app.zip
             rm -rf /home/ubuntu/yby-front-app
-            sudo docker rmi $(docker images -q -f dangling=true)
+

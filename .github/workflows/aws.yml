@@ -35,6 +35,7 @@ jobs:
           script: |
             sudo apt-get update -y
             sudo apt-get install -y unzip docker
+            sudo usermod -aG docker $USER
             sudo systemctl start docker
             sudo systemctl enable docker
             unzip /home/ubuntu/yby-front-app.zip -d /home/ubuntu/yby-front-app

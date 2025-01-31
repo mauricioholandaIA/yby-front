@@ -6,7 +6,9 @@ const App = () => {
   return (
     <AuthProvider>
       <BrowserRouter>
+
         <MainRoutes />
+        
       </BrowserRouter>
     </AuthProvider>
   );
